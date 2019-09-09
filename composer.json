@@ -1,0 +1,26 @@
+{
+    "name": "w2w/apie",
+    "description": "apie is a library to convert plain old php objects into a REST API with OpenAPI spec.",
+    "type": "library",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Pieter Jordaan",
+            "email": "pieter.jordaan@way2web.nl"
+        }
+    ],
+    "require": {
+        "php": "^7.0",
+        "symfony/serializer": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "W2w\\Lib\\Apie\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "W2w\\Lib\\Apie\\Tests\\": "tests/"
+        }
+    }
+}
