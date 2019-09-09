@@ -2,7 +2,7 @@
     "name": "w2w/apie",
     "description": "apie is a library to convert plain old php objects into a REST API with OpenAPI spec.",
     "type": "library",
-    "license": "GPL",
+    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Pieter Jordaan",
