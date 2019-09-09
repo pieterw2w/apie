@@ -5,6 +5,10 @@ namespace W2w\Lib\Apie;
 use Symfony\Component\Serializer\Mapping\ClassMetadataInterface;
 use Symfony\Component\Serializer\Mapping\Loader\LoaderInterface;
 
+/**
+ * Decorator for the Symfony serializer to always add a default group to all the properties.
+ * The default behaviour is to ignore properties with no serialization group.
+ */
 class BaseGroupLoader implements LoaderInterface
 {
     private $groups;

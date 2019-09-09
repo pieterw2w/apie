@@ -1,12 +1,15 @@
 <?php
 
-namespace W2w\Lib\Apie\Schema;
+namespace W2w\Lib\Apie\OpenApiSchema;
 
 use W2w\Lib\Apie\ApiResourceMetadataFactory;
 use W2w\Lib\Apie\ApiResources;
 use W2w\Lib\Apie\ClassResourceConverter;
 use erasys\OpenApi\Spec\v3 as OASv3;
 
+/**
+ * Class that generated an OpenAPI spec from a list of API resources.
+ */
 class OpenApiSpecGenerator
 {
     private $apiResources;
@@ -37,6 +40,11 @@ class OpenApiSpecGenerator
         $this->baseUrl = $baseUrl;
     }
 
+    /**
+     * Gets an OpenAPI spec document.
+     *
+     * @return OASv3\Document
+     */
     public function getOpenApiSpec(): OASv3\Document
     {
         $paths = [];
@@ -221,6 +229,11 @@ class OpenApiSpecGenerator
         return $doc;
     }
 
+    /**
+     * Returns the default HTTP headers we generated for every REST api call.
+     *
+     * @return array
+     */
     private function getDefaultHeaders(): array
     {
         return [
@@ -229,6 +242,13 @@ class OpenApiSpecGenerator
         ];
     }
 
+    /**
+     * Returns the content OpenAPI spec for a resource class and a certain operation.
+     *
+     * @param string $apiResourceClass
+     * @param string $operation
+     * @return OASv3\MediaType[]
+     */
     private function convertToContent(string $apiResourceClass, string $operation): array
     {
         $readWrite = $this->determineReadWrite($operation);
@@ -250,6 +270,13 @@ class OpenApiSpecGenerator
         ];
     }
 
+    /**
+     * Returns the content OpenAPI spec for a resource class when it returns an array of resources.
+     *
+     * @param string $apiResourceClass
+     * @param string $operation
+     * @return OASv3\MediaType[]
+     */
     private function convertToContentArray(string $apiResourceClass, string $operation): array
     {
         $readWrite = $this->determineReadWrite($operation);
@@ -278,6 +305,12 @@ class OpenApiSpecGenerator
         ];
     }
 
+    /**
+     * Determine if the operation is a read or a write.
+     *
+     * @param string $operation
+     * @return string
+     */
     private function determineReadWrite(string $operation): string
     {
         if ($operation === 'post' || $operation === 'put') {
@@ -287,6 +320,13 @@ class OpenApiSpecGenerator
         return 'read';
     }
 
+    /**
+     * Returns all paths of an api resource without an id in the url.
+     *
+     * @param string $apiResourceClass
+     * @param string $resourceName
+     * @return OASv3\PathItem
+     */
     private function convertAllToPathItem(string $apiResourceClass, string $resourceName): OASv3\PathItem
     {
         $paths = [];
@@ -349,6 +389,12 @@ class OpenApiSpecGenerator
         return new OASv3\PathItem($paths);
     }
 
+    /**
+     * Returns all paths of an api resource with an id in the url.
+     * @param string $apiResourceClass
+     * @param string $resourceName
+     * @return OASv3\PathItem
+     */
     private function convertToPathItem(string $apiResourceClass, string $resourceName): OASv3\PathItem
     {
         $paths = [
@@ -433,6 +479,13 @@ class OpenApiSpecGenerator
         return new OASv3\PathItem($paths);
     }
 
+    /**
+     * Returns if a specific REST API call is an allowed method.
+     *
+     * @param string $apiResourceClass
+     * @param string $operation
+     * @return bool
+     */
     private function allowed(string $apiResourceClass, string $operation): bool
     {
         $metadata = $this->apiResourceMetadataFactory->getMetadata($apiResourceClass);

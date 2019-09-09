@@ -5,15 +5,29 @@ namespace W2w\Lib\Apie;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use UnexpectedValueException;
 
+/**
+ * Class that does the action to retrieve an Api resource.
+ */
 class ApiResourceRetriever
 {
+    /**
+     * @var ApiResourceMetadataFactory
+     */
     private $factory;
 
+    /**
+     * @param ApiResourceMetadataFactory $factory
+     */
     public function __construct(ApiResourceMetadataFactory $factory)
     {
         $this->factory = $factory;
     }
 
+    /**
+     * @param string $resourceClass
+     * @param $id
+     * @return mixed
+     */
     public function retrieve(string $resourceClass, $id)
     {
         $metadata = $this->factory->getMetadata($resourceClass);
@@ -29,6 +43,12 @@ class ApiResourceRetriever
         return $result;
     }
 
+    /**
+     * @param string $resourceClass
+     * @param int $pageIndex
+     * @param int $numberOfItems
+     * @return iterable
+     */
     public function retrieveAll(string $resourceClass, int $pageIndex, int $numberOfItems)
     {
         $metadata = $this->factory->getMetadata($resourceClass);
@@ -50,6 +70,12 @@ class ApiResourceRetriever
         return $result;
     }
 
+    /**
+     * Returns a type display of an object instance.
+     *
+     * @param $object
+     * @return string
+     */
     private function getType($object)
     {
         if (is_object($object)) {

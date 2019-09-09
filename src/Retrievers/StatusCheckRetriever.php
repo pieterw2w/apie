@@ -1,24 +1,37 @@
 <?php
 
-namespace W2w\Lib\Apie\Retriever;
+namespace W2w\Lib\Apie\Retrievers;
 
-use App\Services\StatusCheck\StatusCheckInterface;
-use App\Services\StatusCheck\StatusCheckListInterface;
 use Generator;
 use LimitIterator;
 use RewindableGenerator;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use UnexpectedValueException;
+use W2w\Lib\Apie\ApiResources\Status;
+use W2w\Lib\Apie\StatusChecks\StatusCheckInterface;
+use W2w\Lib\Apie\StatusChecks\StatusCheckListInterface;
 
+/**
+ * Status check retriever retrieves instances of Status. A status check needs to implement StatusCheckInterface
+ * or StatusCheckListInterface and sent in the constructor of this method.
+ */
 class StatusCheckRetriever implements ApiResourceRetrieverInterface
 {
     private $statusChecks;
 
+    /**
+     * @param (StatusCheckInterface|StatusCheckListInterface)[] $statusChecks
+     */
     public function __construct(iterable $statusChecks)
     {
         $this->statusChecks = $statusChecks;
     }
 
+    /**
+     * Iterates over all status checks and creates a generator for it.
+     *
+     * @return Generator
+     */
     public function iterate(): Generator
     {
         foreach ($this->statusChecks as $statusCheck) {
@@ -41,6 +54,14 @@ class StatusCheckRetriever implements ApiResourceRetrieverInterface
         }
     }
 
+    /**
+     * Finds the correct status check or throw a 404 if it could not be found.
+     *
+     * @param string $resourceClass
+     * @param mixed $id
+     * @param array $context
+     * @return Status
+     */
     public function retrieve(string $resourceClass, $id, array $context)
     {
         foreach ($this->iterate() as $statusCheck) {
@@ -51,6 +72,15 @@ class StatusCheckRetriever implements ApiResourceRetrieverInterface
         throw new HttpException(404, 'Status ' . $id . ' not found!');
     }
 
+    /**
+     * Return all status check results.
+     *
+     * @param string $resourceClass
+     * @param array $context
+     * @param int $pageIndex
+     * @param int $numberOfItems
+     * @return Status[]
+     */
     public function retrieveAll(string $resourceClass, array $context, int $pageIndex, int $numberOfItems): iterable
     {
         return new LimitIterator(new RewindableGenerator(function () {

@@ -5,15 +5,30 @@ namespace W2w\Lib\Apie;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use UnexpectedValueException;
 
+/**
+ * Class that does the persist action by reading the metadata of an Api resource.
+ */
 class ApiResourcePersister
 {
+    /**
+     * @var ApiResourceMetadataFactory
+     */
     private $factory;
 
+    /**
+     * @param ApiResourceMetadataFactory $factory
+     */
     public function __construct(ApiResourceMetadataFactory $factory)
     {
         $this->factory = $factory;
     }
 
+    /**
+     * Persist a new resource.
+     *
+     * @param $resource
+     * @return mixed
+     */
     public function persistNew($resource)
     {
         $resourceClass = get_class($resource);
@@ -30,6 +45,13 @@ class ApiResourcePersister
         return $result;
     }
 
+    /**
+     * Persist an existing resource.
+     *
+     * @param $resource
+     * @param $id
+     * @return mixed
+     */
     public function persistExisting($resource, $id)
     {
         $resourceClass = get_class($resource);
@@ -47,6 +69,12 @@ class ApiResourcePersister
         return $result;
     }
 
+    /**
+     * Removes an existing resource.
+     *
+     * @param string $resourceClass
+     * @param $id
+     */
     public function delete(string $resourceClass, $id)
     {
         $metadata = $this->factory->getMetadata($resourceClass);
@@ -57,6 +85,12 @@ class ApiResourcePersister
         $metadata->getResourcePersister()->remove($resourceClass, $id, $metadata->getContext());
     }
 
+    /**
+     * Returns a type display of an object instance.
+     *
+     * @param $object
+     * @return string
+     */
     private function getType($object)
     {
         if (is_object($object)) {

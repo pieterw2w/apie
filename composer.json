@@ -10,8 +10,22 @@
         }
     ],
     "require": {
-        "php": "^7.0",
-        "symfony/serializer": "^4.0"
+        "php": "^7.2",
+        "symfony/serializer": "^4.0",
+        "psr/cache": "^1.0",
+        "symfony/http-kernel": "^4.0",
+        "symfony/property-access": "^4.0",
+        "symfony/property-info": "^4.0",
+        "doctrine/annotations": "^1.7",
+        "ramsey/uuid": "^3.8",
+        "erasys/openapi-php": "^2.1",
+        "psr/http-message": "^1.0",
+        "zendframework/zend-diactoros": "^2.1",
+        "jeroen/rewindable-generator": "^1.2",
+        "psr/container": "^1.0"
+    },
+    "suggest": {
+        "bruli/php-value-objects": "For serializing/deserializing value objects"
     },
     "autoload": {
         "psr-4": {
@@ -20,7 +34,11 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "W2w\\Lib\\Apie\\Tests\\": "tests/"
+            "W2w\\Tests\\Apie\\": "tests/"
         }
+    },
+    "require-dev": {
+        "bruli/php-value-objects": "^2.0",
+        "phpunit/phpunit": "^7.0.0|^8.0.0"
     }
 }

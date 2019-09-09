@@ -1,6 +1,6 @@
 <?php
 
-namespace W2w\Lib\Apie\Schema;
+namespace W2w\Lib\Apie\OpenApiSchema;
 
 use W2w\Lib\Apie\ClassResourceConverter;
 use erasys\OpenApi\Spec\v3\Schema;
@@ -12,20 +12,47 @@ use Symfony\Component\Serializer\Mapping\AttributeMetadataInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 
+/**
+ * Class that uses symfony/property-info and reflection to create a Schema instance of a class.
+ */
 class SchemaGenerator
 {
+    /**
+     * @var ClassMetadataFactory
+     */
     private $classMetadataFactory;
 
+    /**
+     * @var PropertyInfoExtractor
+     */
     private $propertyInfoExtractor;
 
+    /**
+     * @var ClassResourceConverter
+     */
     private $converter;
 
+    /**
+     * @var NameConverterInterface
+     */
     private $nameConverter;
 
+    /**
+     * @var Schema[]
+     */
     private $alreadyDefined = [];
 
+    /**
+     * @var Schema[]
+     */
     private $predefined = [];
 
+    /**
+     * @param ClassMetadataFactory $classMetadataFactory
+     * @param PropertyInfoExtractor $propertyInfoExtractor
+     * @param ClassResourceConverter $converter
+     * @param NameConverterInterface $nameConverter
+     */
     public function __construct(
         ClassMetadataFactory $classMetadataFactory,
         PropertyInfoExtractor $propertyInfoExtractor,
@@ -38,6 +65,12 @@ class SchemaGenerator
         $this->nameConverter = $nameConverter;
     }
 
+    /**
+     * Define a resource class and Schema manually.
+     * @param string $resourceClass
+     * @param Schema $schema
+     * @return SchemaGenerator
+     */
     public function defineSchemaForResource(string $resourceClass, Schema $schema): self
     {
         $this->predefined[$resourceClass] = $schema;
@@ -46,6 +79,15 @@ class SchemaGenerator
         return $this;
     }
 
+    /**
+     * Creates a schema recursively.
+     *
+     * @param string $resourceClass
+     * @param string $operation
+     * @param string[] $groups
+     * @param int $recursion
+     * @return Schema
+     */
     private function createSchemaRecursive(string $resourceClass, string $operation, array $groups, int $recursion = 0)
     {
         $metaData = $this->classMetadataFactory->getMetadataFor($resourceClass);
@@ -122,6 +164,15 @@ class SchemaGenerator
         return $schema;
     }
 
+    /**
+     * Returns true if a property is applicable for a specific operation and a specific serialization group.
+     *
+     * @param string $resourceClass
+     * @param AttributeMetadataInterface $attributeMetadata
+     * @param string $operation
+     * @param string[] $groups
+     * @return bool
+     */
     private function isPropertyApplicable(string $resourceClass, AttributeMetadataInterface $attributeMetadata, string $operation, array $groups): bool
     {
         if (!array_intersect($attributeMetadata->getGroups(), $groups)) {
@@ -142,16 +193,38 @@ class SchemaGenerator
         return true;
     }
 
+    /**
+     * Returns a Schema for a resource class, operation and serialization group tuple.
+     *
+     * @param string $resourceClass
+     * @param string $operation
+     * @param string[] $groups
+     * @return Schema
+     */
     public function createSchema(string $resourceClass, string $operation, array $groups)
     {
         return $this->createSchemaRecursive($resourceClass, $operation, $groups);
     }
 
+    /**
+     * Creates a unique cache key to be used for already defined schemas for performance reasons.
+     *
+     * @param string $resourceClass
+     * @param string $operation
+     * @param string[] $groups
+     * @return string
+     */
     private function getCacheKey(string $resourceClass, string $operation, array $groups)
     {
         return $resourceClass . ',' . $operation . ',' . implode(', ', $groups);
     }
 
+    /**
+     * Returns 'read' or 'write' as serialization group for the chosen HTTP method.
+     *
+     * @param string $operation
+     * @return string
+     */
     private function determineReadWrite(string $operation): string
     {
         if ($operation === 'post' || $operation === 'put') {
@@ -161,6 +234,12 @@ class SchemaGenerator
         return 'read';
     }
 
+    /**
+     * Returns OpenApi property type for scalars.
+     *
+     * @param string $type
+     * @return string
+     */
     private function translateType(string $type): string
     {
         switch ($type) {

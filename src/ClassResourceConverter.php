@@ -6,14 +6,31 @@ use InvalidArgumentException;
 use ReflectionClass;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 
+/**
+ * Converts between the api resource name in the url and the class name used in the code.
+ */
 class ClassResourceConverter implements NameConverterInterface
 {
+    /**
+     * @var NameConverterInterface
+     */
     private $nameConverter;
 
+    /**
+     * @var ApiResources
+     */
     private $resources;
 
+    /**
+     * @var bool
+     */
     private $showResources;
 
+    /**
+     * @param NameConverterInterface $nameConverter
+     * @param ApiResources $resources
+     * @param bool $showResources
+     */
     public function __construct(NameConverterInterface $nameConverter, ApiResources $resources, bool $showResources = true)
     {
         $this->nameConverter = $nameConverter;

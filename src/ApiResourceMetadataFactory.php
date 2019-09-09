@@ -2,16 +2,25 @@
 
 namespace W2w\Lib\Apie;
 
-use App\Annotations\ApiResource\ApiResource;
-use App\Models\ApiResources\ApiResourceClassMetadata;
 use Doctrine\Common\Annotations\Reader;
 use ReflectionClass;
 use RuntimeException;
+use W2w\Lib\Apie\Annotations\ApiResource;
+use W2w\Lib\Apie\Models\ApiResourceClassMetadata;
 
+/**
+ * Creates Api Resource metadata using annotations on the class.
+ */
 class ApiResourceMetadataFactory
 {
+    /**
+     * @var Reader
+     */
     private $reader;
 
+    /**
+     * @var ApiResourceFactoryInterface
+     */
     private $retrieverFactory;
 
     public function __construct(Reader $reader, ApiResourceFactoryInterface $retrieverFactory)

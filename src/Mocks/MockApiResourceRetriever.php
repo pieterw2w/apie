@@ -1,11 +1,11 @@
 <?php
 
-namespace W2w\Lib\Apie\Mock;
+namespace W2w\Lib\Apie\Mocks;
 
-use W2w\Lib\Apie\Normalizer\ContextualNormalizer;
-use W2w\Lib\Apie\Normalizer\EvilReflectionPropertyNormalizer;
-use W2w\Lib\Apie\Persister\ApiResourcePersisterInterface;
-use W2w\Lib\Apie\Retriever\ApiResourceRetrieverInterface;
+use W2w\Lib\Apie\Normalizers\ContextualNormalizer;
+use W2w\Lib\Apie\Normalizers\EvilReflectionPropertyNormalizer;
+use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
+use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Ramsey\Uuid\Uuid;
 use ReflectionClass;
@@ -13,6 +13,11 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
+/**
+ * If the implementation of a REST API is mocked this is the class that persists and retrieves all API resources.
+ *
+ * It does this by persisting it with a cache pool.
+ */
 class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiResourceRetrieverInterface
 {
     private $cacheItemPool;
@@ -31,6 +36,11 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
         $this->denormalizer = $denormalizer;
     }
 
+    /**
+     * @param $resource
+     * @param array $context
+     * @return mixed
+     */
     public function persistNew($resource, array $context = [])
     {
         $normalizedData = $this->normalizer->normalize($resource);
@@ -46,6 +56,12 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
         return $resource;
     }
 
+    /**
+     * @param $resource
+     * @param $int
+     * @param array $context
+     * @return mixed
+     */
     public function persistExisting($resource, $int, array $context = [])
     {
         $normalizedData = $this->normalizer->normalize($resource);
@@ -61,6 +77,11 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
         return $resource;
     }
 
+    /**
+     * @param string $resourceClass
+     * @param $id
+     * @param array $context
+     */
     public function remove(string $resourceClass, $id, array $context)
     {
         $cacheKey = 'mock-server.' . $this->shortName($resourceClass) . '.' . $id;
@@ -69,6 +90,12 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
         $this->cacheItemPool->commit();
     }
 
+    /**
+     * @param string $resourceClass
+     * @param $id
+     * @param array $context
+     * @return mixed
+     */
     public function retrieve(string $resourceClass, $id, array $context)
     {
         $cacheKey = 'mock-server.' . $this->shortName($resourceClass) . '.' . $id;
@@ -86,6 +113,13 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
         return $res;
     }
 
+    /**
+     * @param string $resourceClass
+     * @param array $context
+     * @param int $pageIndex
+     * @param int $numberOfItems
+     * @return iterable
+     */
     public function retrieveAll(string $resourceClass, array $context, int $pageIndex, int $numberOfItems): iterable
     {
         $cacheKey = 'mock-server-all.' . $this->shortName($resourceClass);
@@ -100,6 +134,12 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
         }, $ids);
     }
 
+    /**
+     * Marks an id as found, so the get all can retrieve it.
+     *
+     * @param string $resourceClass
+     * @param $id
+     */
     private function addId(string $resourceClass, $id)
     {
         $cacheKey = 'mock-server-all.' . $this->shortName($resourceClass);
@@ -112,6 +152,12 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
         $this->cacheItemPool->save($cacheItem->set($ids));
     }
 
+    /**
+     * Marks an id as not found, so the get all will no longer retrieve it.
+     *
+     * @param string $resourceClass
+     * @param $id
+     */
     private function removeId(string $resourceClass, $id)
     {
         $cacheKey = 'mock-server-all.' . $this->shortName($resourceClass);
@@ -126,6 +172,13 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
         $this->cacheItemPool->save($cacheItem->set($ids));
     }
 
+    /**
+     * Denormalize an existing resource with data from the cache.
+     *
+     * @param array $array
+     * @param $resource
+     * @return mixed
+     */
     private function denormalize(array $array, $resource)
     {
         ContextualNormalizer::enableDenormalizer(EvilReflectionPropertyNormalizer::class);
@@ -138,7 +191,13 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
         return $res;
     }
 
-    private function shortName($resourceOrResourceClass)
+    /**
+     * Returns a short name of a resource or a resource class.
+     *
+     * @param $resourceOrResourceClass
+     * @return string
+     */
+    private function shortName($resourceOrResourceClass): string
     {
         if (is_string($resourceOrResourceClass)) {
             $refl = new ReflectionClass($resourceOrResourceClass);
