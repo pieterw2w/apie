@@ -5,7 +5,6 @@ namespace W2w\Lib\Apie\Normalizers;
 use Exception;
 use ReflectionException;
 use ReflectionProperty;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 /**

@@ -1,9 +1,10 @@
 <?php
 namespace W2w\Lib\Apie;
 
-use W2w\Lib\Apie\Encodings\FormatRetriever;
 use Psr\Http\Message\RequestInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use W2w\Lib\Apie\Encodings\FormatRetriever;
+use W2w\Lib\Apie\Models\ApiResourceFacadeResponse;
 
 class ApiResourceFacade
 {

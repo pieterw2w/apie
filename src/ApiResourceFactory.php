@@ -2,12 +2,12 @@
 
 namespace W2w\Lib\Apie;
 
-use ReflectionClass;
-use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
-use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
 use Psr\Container\ContainerInterface;
+use ReflectionClass;
 use RuntimeException;
 use UnexpectedValueException;
+use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
+use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
 
 /**
  * Creates instances of ApiResourcePersisterInterface and ApiResourceRetrieverInterface.

@@ -32,12 +32,12 @@ class MockApiResourceFactory implements ApiResourceFactoryInterface
 
     /**
      * @param MockApiResourceRetriever $retriever
-     * @param ApiResourceFactory $factory
+     * @param ApiResourceFactoryInterface $factory
      * @param string[] $skippedResources resources that are not allowed to be mocked.
      */
     public function __construct(
         MockApiResourceRetriever $retriever,
-        ApiResourceFactory $factory,
+        ApiResourceFactoryInterface $factory,
         array $skippedResources
     ) {
         $this->retriever = $retriever;

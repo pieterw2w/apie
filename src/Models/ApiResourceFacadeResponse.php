@@ -2,9 +2,9 @@
 
 namespace W2w\Lib\Apie\Models;
 
-use App\Services\ApiResource\Encoding\FormatRetriever;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use W2w\Lib\Apie\Encodings\FormatRetriever;
 use Zend\Diactoros\Response\TextResponse;
 
 /**

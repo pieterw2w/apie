@@ -2,7 +2,6 @@
 
 namespace W2w\Lib\Apie\OpenApiSchema;
 
-use W2w\Lib\Apie\ClassResourceConverter;
 use erasys\OpenApi\Spec\v3\Schema;
 use PhpValueObjects\AbstractStringValueObject;
 use ReflectionClass;
@@ -11,6 +10,7 @@ use Symfony\Component\PropertyInfo\Type;
 use Symfony\Component\Serializer\Mapping\AttributeMetadataInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
+use W2w\Lib\Apie\ClassResourceConverter;
 
 /**
  * Class that uses symfony/property-info and reflection to create a Schema instance of a class.
