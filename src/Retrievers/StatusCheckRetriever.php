@@ -32,7 +32,7 @@ class StatusCheckRetriever implements ApiResourceRetrieverInterface
      *
      * @return Generator
      */
-    public function iterate(): Generator
+    private function iterate(): Generator
     {
         foreach ($this->statusChecks as $statusCheck) {
             $check = false;

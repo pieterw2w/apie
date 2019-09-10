@@ -38,7 +38,7 @@
         }
     },
     "require-dev": {
-        "bruli/php-value-objects": "^2.0",
+        "bruli/php-value-objects": "^1.0",
         "phpunit/phpunit": "^7.0.0|^8.0.0",
         "symfony/cache": "^4.3"
     }
