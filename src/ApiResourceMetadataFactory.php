@@ -5,6 +5,7 @@ namespace W2w\Lib\Apie;
 use Doctrine\Common\Annotations\Reader;
 use ReflectionClass;
 use W2w\Lib\Apie\Annotations\ApiResource;
+use W2w\Lib\Apie\Exceptions\ApiResourceAnnotationNotFoundException;
 use W2w\Lib\Apie\Models\ApiResourceClassMetadata;
 
 /**
