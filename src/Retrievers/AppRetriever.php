@@ -2,8 +2,8 @@
 
 namespace W2w\Lib\Apie\Retrievers;
 
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use W2w\Lib\Apie\ApiResources\App;
+use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 
 /**
  * Retrieves instances of api resource App. This is always one record with id 'name'.
@@ -53,7 +53,7 @@ class AppRetriever implements ApiResourceRetrieverInterface
     public function retrieve(string $resourceClass, $id, array $context)
     {
         if ($id !== 'name') {
-            throw new HttpException(404, 'Identifier should be "name"');
+            throw new ResourceNotFoundException($id);
         }
 
         return new App(

@@ -5,9 +5,9 @@ namespace W2w\Lib\Apie\Retrievers;
 use Generator;
 use LimitIterator;
 use RewindableGenerator;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use UnexpectedValueException;
 use W2w\Lib\Apie\ApiResources\Status;
+use W2w\Lib\Apie\Exceptions\InvalidClassTypeException;
+use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\StatusChecks\StatusCheckInterface;
 use W2w\Lib\Apie\StatusChecks\StatusCheckListInterface;
 
@@ -47,9 +47,7 @@ class StatusCheckRetriever implements ApiResourceRetrieverInterface
                 }
             }
             if (!$check) {
-                throw new UnexpectedValueException(
-                    'A status check should implement StatusCheckInterface or StatusCheckListInterface'
-                );
+                throw new InvalidClassTypeException(get_class($statusCheck), 'StatusCheckInterface or StatusCheckListInterface');
             }
         }
     }
@@ -69,7 +67,7 @@ class StatusCheckRetriever implements ApiResourceRetrieverInterface
                 return $statusCheck;
             }
         }
-        throw new HttpException(404, 'Status ' . $id . ' not found!');
+        throw new ResourceNotFoundException($id);
     }
 
     /**

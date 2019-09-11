@@ -2,8 +2,9 @@
 
 namespace W2w\Lib\Apie;
 
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
-use UnexpectedValueException;
+use W2w\Lib\Apie\Exceptions\InvalidClassTypeException;
+use W2w\Lib\Apie\Exceptions\InvalidReturnTypeOfApiResourceException;
+use W2w\Lib\Apie\Exceptions\MethodNotAllowedException;
 
 /**
  * Class that does the persist action by reading the metadata of an Api resource.
@@ -34,12 +35,12 @@ class ApiResourcePersister
         $resourceClass = get_class($resource);
         $metadata = $this->factory->getMetadata($resourceClass);
         if (!$metadata->allowPost()) {
-            throw new MethodNotAllowedHttpException([], '"Resource has no post support"');
+            throw new MethodNotAllowedException('post');
         }
         $result = $metadata->getResourcePersister()
             ->persistNew($resource, $metadata->getContext());
         if (!$result instanceof $resourceClass) {
-            throw new UnexpectedValueException('I expect the class ' . get_class($metadata->getResourcePersister()) . ' to return an instance of ' . $resourceClass . ' but got ' . $this->getType($result));
+            throw new InvalidReturnTypeOfApiResourceException($metadata->getResourcePersister(), $this->getType($result), $resourceClass);
         }
 
         return $result;
@@ -57,13 +58,13 @@ class ApiResourcePersister
         $resourceClass = get_class($resource);
         $metadata = $this->factory->getMetadata($resourceClass);
         if (!$metadata->allowPut()) {
-            throw new MethodNotAllowedHttpException([], '"Resource has no put support"');
+            throw new MethodNotAllowedException('put');
         }
 
         $result = $metadata->getResourcePersister()
             ->persistExisting($resource, $id, $metadata->getContext());
         if (!$result instanceof $resourceClass) {
-            throw new UnexpectedValueException('I expect the class ' . get_class($metadata->getResourcePersister()) . ' to return an instance of ' . $resourceClass . ' but got ' . $this->getType($result));
+            throw new InvalidReturnTypeOfApiResourceException($metadata->getResourcePersister(), $this->getType($result), $resourceClass);
         }
 
         return $result;
@@ -79,7 +80,7 @@ class ApiResourcePersister
     {
         $metadata = $this->factory->getMetadata($resourceClass);
         if (!$metadata->allowDelete()) {
-            throw new MethodNotAllowedHttpException([], '"Resource has no delete support"');
+            throw new MethodNotAllowedException('delete');
         }
 
         $metadata->getResourcePersister()->remove($resourceClass, $id, $metadata->getContext());

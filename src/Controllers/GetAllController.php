@@ -4,9 +4,10 @@ namespace W2w\Lib\Apie\Controllers;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use W2w\Lib\Apie\ApiResourceFacade;
 use W2w\Lib\Apie\ClassResourceConverter;
+use W2w\Lib\Apie\Exceptions\InvalidPageLimitException;
+use W2w\Lib\Apie\Exceptions\PageIndexShouldNotBeNegativeException;
 
 /**
  * Controller that handles the call to get all resources.
@@ -38,10 +39,10 @@ class GetAllController
         $limit = (int) ($params['limit'] ?? 20);
 
         if ($pageIndex < 0) {
-            throw new HttpException(422, 'Page index should not be negative!');
+            throw new PageIndexShouldNotBeNegativeException();
         }
         if ($limit < 1) {
-            throw new HttpException(422, 'Page limit should not be lower than 1!');
+            throw new InvalidPageLimitException();
         }
 
         return $this->apiResourceFacade->getAll(

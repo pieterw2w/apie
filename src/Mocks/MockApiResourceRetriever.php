@@ -2,12 +2,12 @@
 
 namespace W2w\Lib\Apie\Mocks;
 
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
-use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use ReflectionClass;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
+use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
+use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
 
 /**
  * If the implementation of a REST API is mocked this is the class that persists and retrieves all API resources.
@@ -35,10 +35,16 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
      */
     public function persistNew($resource, array $context = [])
     {
-        if (!$this->propertyAccessor->isReadable($resource, 'id')) {
+        $id = null;
+        if ($this->propertyAccessor->isReadable($resource, 'id')) {
+            $id = $this->propertyAccessor->getValue($resource, 'id');
+        } elseif ($this->propertyAccessor->isReadable($resource, 'uuid')) {
+            $id = $this->propertyAccessor->getValue($resource, 'uuid');
+        }
+        if (is_null($id)) {
             return;
         }
-        $id = $this->propertyAccessor->getValue($resource, 'id');
+
         $cacheKey = 'mock-server.' . $this->shortName($resource) . '.' . $id;
         $cacheItem = $this->cacheItemPool->getItem($cacheKey)->set(serialize($resource));
         $this->addId(get_class($resource), $id);
@@ -87,7 +93,7 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
         $cacheKey = 'mock-server.' . $this->shortName($resourceClass) . '.' . $id;
         $cacheItem = $this->cacheItemPool->getItem($cacheKey);
         if (!$cacheItem->isHit()) {
-            throw new HttpException(404, $id . ' not found!');
+            throw new ResourceNotFoundException($id);
         }
         return unserialize($cacheItem->get());
     }

@@ -92,7 +92,7 @@ class ContextualNormalizer implements NormalizerInterface, DenormalizerInterface
                 return $denormalizer->denormalize($data, $class, $format, $context);
             }
         }
-        throw new RuntimeException('I can not normalize this object');
+        throw new UnsupportedException('I can not normalize this object');
     }
 
     /**

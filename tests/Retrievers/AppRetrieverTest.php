@@ -2,8 +2,8 @@
 namespace W2w\Test\Apie\Retrievers;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use W2w\Lib\Apie\ApiResources\App;
+use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\Retrievers\AppRetriever;
 
 class AppRetrieverTest extends TestCase
@@ -33,7 +33,7 @@ class AppRetrieverTest extends TestCase
     public function testRetrieveWrongIdentifier()
     {
         $testItem = new AppRetriever('Unit test app', 'test', 'hash-123', true);
-        $this->expectException(HttpException::class);
+        $this->expectException(ResourceNotFoundException::class);
         $testItem->retrieve(App::class, 'not a name', []);
     }
 }

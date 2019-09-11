@@ -2,8 +2,8 @@
 
 namespace W2w\Lib\Apie;
 
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
-use UnexpectedValueException;
+use W2w\Lib\Apie\Exceptions\InvalidReturnTypeOfApiResourceException;
+use W2w\Lib\Apie\Exceptions\MethodNotAllowedException;
 
 /**
  * Class that does the action to retrieve an Api resource.
@@ -32,12 +32,12 @@ class ApiResourceRetriever
     {
         $metadata = $this->factory->getMetadata($resourceClass);
         if (!$metadata->allowGet()) {
-            throw new MethodNotAllowedHttpException([], '"Resource has no get $id"');
+            throw new MethodNotAllowedException('get $id');
         }
         $result = $metadata->getResourceRetriever()
             ->retrieve($resourceClass, $id, $metadata->getContext());
         if (!$result instanceof $resourceClass) {
-            throw new UnexpectedValueException('I expect the class ' . get_class($metadata->getResourceRetriever()) . ' to return an instance of ' . $resourceClass . ' but got ' . $this->getType($result));
+            throw new InvalidReturnTypeOfApiResourceException($metadata->getResourceRetriever(), $this->getType($result), $resourceClass);
         }
 
         return $result;
@@ -53,7 +53,7 @@ class ApiResourceRetriever
     {
         $metadata = $this->factory->getMetadata($resourceClass);
         if (!$metadata->allowGetAll()) {
-            throw new MethodNotAllowedHttpException([], '"Resource has no get all"');
+            throw new MethodNotAllowedException('get all');
         }
         if (!$metadata->hasResourceRetriever()) {
             // Many OpenAPI generators expect the get all call to be working at all times.
@@ -63,7 +63,7 @@ class ApiResourceRetriever
             ->retrieveAll($resourceClass, $metadata->getContext(), $pageIndex, $numberOfItems);
         foreach ($result as $instance) {
             if (!$instance instanceof $resourceClass) {
-                throw new UnexpectedValueException('I expect the class ' . get_class($metadata->getResourceRetriever()) . ' to return a list of instances of ' . $resourceClass . ' but got ' . $this->getType($instance));
+                throw new InvalidReturnTypeOfApiResourceException($metadata->getResourceRetriever(), $this->getType($instance), $resourceClass);
             }
         }
 

@@ -2,8 +2,8 @@
 namespace W2w\Test\Apie\Retrievers;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use W2w\Lib\Apie\ApiResources\Status;
+use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\Retrievers\StatusCheckRetriever;
 use W2w\Lib\Apie\StatusChecks\StaticStatusCheck;
 
@@ -37,7 +37,7 @@ class StatusCheckRetrieverTest extends TestCase
 
     public function testRetrieveNotFound()
     {
-        $this->expectException(HttpException::class);
+        $this->expectException(ResourceNotFoundException::class);
         $this->testItem->retrieve(Status::class, 'not found', []);
     }
 }

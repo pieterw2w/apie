@@ -1,10 +1,9 @@
 <?php
-
 namespace W2w\Lib\Apie;
 
-use InvalidArgumentException;
 use ReflectionClass;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
+use W2w\Lib\Apie\Exceptions\ResourceNameNotFoundException;
 
 /**
  * Converts between the api resource name in the url and the class name used in the code.
@@ -76,6 +75,6 @@ class ClassResourceConverter implements NameConverterInterface
         if ($this->showResources) {
             $availableMsg = 'Possible resources: ' . implode(', ', $available);
         }
-        throw new InvalidArgumentException('"' . $propertyName . '" resource not found!' . $availableMsg);
+        throw new ResourceNameNotFoundException($propertyName, $availableMsg);
     }
 }

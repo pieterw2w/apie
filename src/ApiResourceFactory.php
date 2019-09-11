@@ -4,8 +4,7 @@ namespace W2w\Lib\Apie;
 
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
-use RuntimeException;
-use UnexpectedValueException;
+use W2w\Lib\Apie\Exceptions\InvalidClassTypeException;
 use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
 
@@ -40,19 +39,13 @@ class ApiResourceFactory implements ApiResourceFactoryInterface
         } else {
             $reflClass = new ReflectionClass($identifier);
             if ($reflClass->getConstructor()->getNumberOfRequiredParameters() > 0) {
-                throw new UnexpectedValueException(
-                    'Class '
-                    . $identifier
-                    . ' has required constructor arguments and need to be registered as a service in a service provider.'
-                );
+                throw new CouldNotConstructApiResourceClassException($identifier);
             }
             $retriever = new $identifier();
         }
 
         if (!$retriever instanceof ApiResourceRetrieverInterface) {
-            throw new RuntimeException(
-                $identifier . ' does not implement ApiResourceRetrieverInterface'
-            );
+            throw new InvalidClassTypeException($identifier, 'ApiResourceRetrieverInterface');
         }
 
         return $retriever;
@@ -71,19 +64,13 @@ class ApiResourceFactory implements ApiResourceFactoryInterface
         } else {
             $reflClass = new ReflectionClass($identifier);
             if ($reflClass->getConstructor()->getNumberOfRequiredParameters() > 0) {
-                throw new UnexpectedValueException(
-                    'Class '
-                    . $identifier
-                    . ' has required constructor arguments and need to be registered as a service in a service provider.'
-                );
+                throw new CouldNotConstructApiResourceClassException($identifier);
             }
             $persister = new $identifier();
         }
 
         if (!$persister instanceof ApiResourcePersisterInterface) {
-            throw new RuntimeException(
-                $identifier . ' does not implement ApiResourceRetrieverInterface'
-            );
+            throw new InvalidClassTypeException($identifier, 'ApiResourcePersisterInterface');
         }
 
         return $persister;

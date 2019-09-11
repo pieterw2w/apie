@@ -4,7 +4,6 @@ namespace W2w\Lib\Apie;
 
 use Doctrine\Common\Annotations\Reader;
 use ReflectionClass;
-use RuntimeException;
 use W2w\Lib\Apie\Annotations\ApiResource;
 use W2w\Lib\Apie\Models\ApiResourceClassMetadata;
 
@@ -37,7 +36,7 @@ class ApiResourceMetadataFactory
             ApiResource::class
         );
         if (!$annotation) {
-            throw new RuntimeException('Class ' . $classNameOrInstance . ' has no ApiResource annotation.');
+            throw new ApiResourceAnnotationNotFoundException($classNameOrInstance);
         }
         /** @var $annotation ApiResource */
         $retriever = null;
