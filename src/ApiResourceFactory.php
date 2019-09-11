@@ -4,6 +4,7 @@ namespace W2w\Lib\Apie;
 
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
+use W2w\Lib\Apie\Exceptions\CouldNotConstructApiResourceClassException;
 use W2w\Lib\Apie\Exceptions\InvalidClassTypeException;
 use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
