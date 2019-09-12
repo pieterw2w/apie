@@ -130,7 +130,7 @@ class FileStorageRetriever implements ApiResourcePersisterInterface, ApiResource
 
     protected function getFilename(string $resourceClass, string $id): string
     {
-        if (!preg_match('/^[a-zA-Z0-9_.]+$/', $id)) {
+        if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $id)) {
             throw new InvalidIdException($id);
         }
         $folder = $this->getFolder($resourceClass);
