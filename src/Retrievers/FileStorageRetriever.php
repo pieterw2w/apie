@@ -38,6 +38,7 @@ class FileStorageRetriever implements ApiResourcePersisterInterface, ApiResource
         }
         $id = $this->propertyAccessor->getValue($resource, $identifier);
         $this->store($resource, $id);
+        return $resource;
 
     }
 
@@ -60,6 +61,7 @@ class FileStorageRetriever implements ApiResourcePersisterInterface, ApiResource
             }
         }
         $this->store($resource, $int);
+        return $resource;
     }
 
     /**
