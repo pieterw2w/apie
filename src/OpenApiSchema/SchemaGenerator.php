@@ -143,6 +143,9 @@ class SchemaGenerator
                 if (!$type->isNullable()) {
                     $propertySchema->nullable = false;
                 }
+                if ($propertySchema->type === 'number') {
+                    $propertySchema->format = $type->getBuiltinType();
+                }
                 if ($type->getBuiltinType() === 'array') {
                     $propertySchema->items = new Schema([
                         'oneOf' => [
@@ -245,6 +248,8 @@ class SchemaGenerator
         switch ($type) {
             case 'int': return 'integer';
             case 'bool': return 'boolean';
+            case 'float': return 'number';
+            case 'double': return 'number';
         }
 
         return $type;

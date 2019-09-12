@@ -23,7 +23,8 @@
         "zendframework/zend-diactoros": "^2.1",
         "jeroen/rewindable-generator": "^1.2",
         "psr/container": "^1.0",
-        "gbprod/uuid-normalizer": "^1.1"
+        "gbprod/uuid-normalizer": "^1.1",
+        "symfony/finder": "^4.3"
     },
     "suggest": {
         "bruli/php-value-objects": "For serializing/deserializing value objects"
