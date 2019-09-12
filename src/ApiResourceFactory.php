@@ -64,7 +64,7 @@ class ApiResourceFactory implements ApiResourceFactoryInterface
             $persister = $this->container->get($identifier);
         } else {
             $reflClass = new ReflectionClass($identifier);
-            if ($reflClass->getConstructor()->getNumberOfRequiredParameters() > 0) {
+            if ($reflClass->getConstructor() && $reflClass->getConstructor()->getNumberOfRequiredParameters() > 0) {
                 throw new CouldNotConstructApiResourceClassException($identifier);
             }
             $persister = new $identifier();
