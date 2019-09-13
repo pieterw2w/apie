@@ -14,6 +14,7 @@ class FileStorageRetrieverTest extends TestCase
 
     protected function setUp(): void
     {
+        srand(0);
         $this->folder = sys_get_temp_dir() . DIRECTORY_SEPARATOR . bin2hex(random_bytes(12));
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         $this->testItem = new FileStorageRetriever($this->folder, $propertyAccessor);

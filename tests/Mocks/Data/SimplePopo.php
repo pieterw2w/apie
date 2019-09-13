@@ -13,7 +13,12 @@ class SimplePopo
 
     public function __construct()
     {
-        $this->id = bin2hex(random_bytes(16));
+        // the use of rand is deliberate so it's easier to test...
+        $this->id = '';
+        for ($i = 0; $i < 16; $i++) {
+            $this->id .= chr(rand(ord('A'), ord('Z')));
+        }
+
         $this->createdAt = new DateTime();
     }
 
