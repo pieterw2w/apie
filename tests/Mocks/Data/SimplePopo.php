@@ -22,7 +22,7 @@ class SimplePopo
         $this->createdAt = new DateTime();
     }
 
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }

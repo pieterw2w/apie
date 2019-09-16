@@ -88,15 +88,11 @@ class SchemaGenerator
      * @param int $recursion
      * @return Schema
      */
-    private function createSchemaRecursive(string $resourceClass, string $operation, array $groups, int $recursion = 0)
+    private function createSchemaRecursive(string $resourceClass, string $operation, array $groups, int $recursion = 0): Schema
     {
         $metaData = $this->classMetadataFactory->getMetadataFor($resourceClass);
         $cacheKey = $this->getCacheKey($resourceClass, $operation, $groups) . ',' . $recursion;
         if (isset($this->alreadyDefined[$cacheKey])) {
-            if ($recursion > 1) {
-                return new Schema(['type' => 'string']);
-            }
-
             return $this->alreadyDefined[$cacheKey];
         }
 
@@ -130,41 +126,78 @@ class SchemaGenerator
             if (!$this->isPropertyApplicable($resourceClass, $attributeMetadata, $operation, $groups)) {
                 continue;
             }
-            $propertySchema = new Schema([
+            $properties[$name] = new Schema([
                 'type'        => 'string',
-                'description' => $this->propertyInfoExtractor->getShortDescription($resourceClass, $attributeMetadata->getName()),
                 'nullable'    => true,
             ]);
-            $properties[$name] = $propertySchema;
             $types = $this->propertyInfoExtractor->getTypes($resourceClass, $attributeMetadata->getName()) ?? [];
             $type = reset($types);
             if ($type instanceof Type) {
-                $propertySchema->type = $this->translateType($type->getBuiltinType());
-                if (!$type->isNullable()) {
-                    $propertySchema->nullable = false;
-                }
-                if ($propertySchema->type === 'number') {
-                    $propertySchema->format = $type->getBuiltinType();
-                }
-                if ($type->getBuiltinType() === 'array') {
-                    $propertySchema->items = new Schema([
-                        'oneOf' => [
-                            new Schema(['type' => 'string', 'nullable' => true]),
-                            new Schema(['type' => 'integer']),
-                            new Schema(['type' => 'boolean']),
-                        ],
-                    ]);
-                }
-                if ('object' === $type->getBuiltinType() && $recursion < 2) {
-                    $propertySchema = $this->createSchemaRecursive($type->getClassName(), $operation, $groups, $recursion + 1);
-                    $properties[$name] = $propertySchema;
-                }
+                $properties[$name] = $this->convertTypeToSchema($type, $operation, $groups, $recursion);
+            }
+            if (!$properties[$name]->description) {
+                $properties[$name]->description = $this->propertyInfoExtractor->getShortDescription(
+                    $resourceClass,
+                    $attributeMetadata->getName()
+                );
             }
         }
         $schema->properties = $properties;
         $this->alreadyDefined[$cacheKey] = $schema;
 
         return $schema;
+    }
+
+    /**
+     * Convert Type into Schema.
+     *
+     * @param Type $type
+     * @param string $operation
+     * @param string[] $groups
+     * @param int $recursion
+     * @return Schema
+     */
+    private function convertTypeToSchema(Type $type, string $operation, array $groups, int $recursion): Schema
+    {
+        $propertySchema = new Schema([
+            'type'        => 'string',
+            'nullable'    => true,
+        ]);
+        $propertySchema->type = $this->translateType($type->getBuiltinType());
+        if (!$type->isNullable()) {
+            $propertySchema->nullable = false;
+        }
+        if ($type->isCollection()) {
+            $propertySchema->type = 'array';
+            $propertySchema->items = new Schema([
+                'oneOf' => [
+                    new Schema(['type' => 'string', 'nullable' => true]),
+                    new Schema(['type' => 'integer']),
+                    new Schema(['type' => 'boolean']),
+                ],
+            ]);
+            $arrayType = $type->getCollectionValueType();
+            if ($arrayType) {
+                if ($arrayType->getClassName()) {
+                    $propertySchema->items = $this->createSchemaRecursive($arrayType->getClassName(), $operation, $groups, $recursion + 1);
+                }
+                if ($arrayType->getBuiltinType()) {
+                    $type = $this->translateType($arrayType->getBuiltinType());
+                    $propertySchema->items = new Schema([
+                        'type' => $type,
+                        'format' => ($type === 'number') ? $arrayType->getBuiltinType() : null,
+                    ]);
+                }
+            }
+            return $propertySchema;
+        }
+        if ($propertySchema->type === 'number') {
+            $propertySchema->format = $type->getBuiltinType();
+        }
+        if ('object' === $type->getBuiltinType() && $recursion < 2) {
+            return $this->createSchemaRecursive($type->getClassName(), $operation, $groups, $recursion + 1);
+        }
+        return $propertySchema;
     }
 
     /**
@@ -181,7 +214,6 @@ class SchemaGenerator
         if (!array_intersect($attributeMetadata->getGroups(), $groups)) {
             return false;
         }
-
         switch ($operation) {
             case 'put':
                 return $this->propertyInfoExtractor->isReadable($resourceClass, $attributeMetadata->getName())
@@ -204,7 +236,7 @@ class SchemaGenerator
      * @param string[] $groups
      * @return Schema
      */
-    public function createSchema(string $resourceClass, string $operation, array $groups)
+    public function createSchema(string $resourceClass, string $operation, array $groups): Schema
     {
         return $this->createSchemaRecursive($resourceClass, $operation, $groups);
     }
@@ -220,21 +252,6 @@ class SchemaGenerator
     private function getCacheKey(string $resourceClass, string $operation, array $groups)
     {
         return $resourceClass . ',' . $operation . ',' . implode(', ', $groups);
-    }
-
-    /**
-     * Returns 'read' or 'write' as serialization group for the chosen HTTP method.
-     *
-     * @param string $operation
-     * @return string
-     */
-    private function determineReadWrite(string $operation): string
-    {
-        if ($operation === 'post' || $operation === 'put') {
-            return 'write';
-        }
-
-        return 'read';
     }
 
     /**
