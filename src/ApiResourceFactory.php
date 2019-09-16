@@ -15,14 +15,14 @@ use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
 class ApiResourceFactory implements ApiResourceFactoryInterface
 {
     /**
-     * @var ContainerInterface
+     * @var ContainerInterface|null
      */
     private $container;
 
     /**
-     * @param ContainerInterface $container
+     * @param ContainerInterface|null $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(?ContainerInterface $container = null)
     {
         $this->container = $container;
     }
@@ -35,7 +35,7 @@ class ApiResourceFactory implements ApiResourceFactoryInterface
      */
     public function getApiResourceRetrieverInstance(string $identifier): ApiResourceRetrieverInterface
     {
-        if ($this->container->has($identifier)) {
+        if ($this->container && $this->container->has($identifier)) {
             $retriever = $this->container->get($identifier);
         } else {
             $reflClass = new ReflectionClass($identifier);
@@ -60,7 +60,7 @@ class ApiResourceFactory implements ApiResourceFactoryInterface
      */
     public function getApiResourcePersisterInstance(string $identifier): ApiResourcePersisterInterface
     {
-        if ($this->container->has($identifier)) {
+        if ($this->container && $this->container->has($identifier)) {
             $persister = $this->container->get($identifier);
         } else {
             $reflClass = new ReflectionClass($identifier);
