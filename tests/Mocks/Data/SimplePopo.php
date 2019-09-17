@@ -2,7 +2,12 @@
 namespace W2w\Test\Apie\Mocks\Data;
 
 use DateTime;
+use W2w\Lib\Apie\Annotations\ApiResource;
+use W2w\Lib\Apie\Persisters\NullPersister;
 
+/**
+ * @ApiResource(persistClass=NullPersister::class)
+ */
 class SimplePopo
 {
     private $id;

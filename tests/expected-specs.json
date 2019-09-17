@@ -1,0 +1,746 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Unit test title",
+        "version": "1.0"
+    },
+    "paths": {
+        "/app": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Retrieves all instances of app",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "title": "app",
+                                        "description": "app get for groups get, read",
+                                        "type": "object",
+                                        "properties": {
+                                            "app_name": {
+                                                "type": "string",
+                                                "nullable": false
+                                            },
+                                            "environment": {
+                                                "type": "string",
+                                                "nullable": false
+                                            },
+                                            "hash": {
+                                                "type": "string",
+                                                "nullable": false
+                                            },
+                                            "debug": {
+                                                "type": "boolean",
+                                                "nullable": false
+                                            },
+                                            "id": {
+                                                "description": "There is always only one resource, which is 'name'.",
+                                                "type": "string",
+                                                "nullable": false
+                                            }
+                                        },
+                                        "xml": {
+                                            "name": "item"
+                                        }
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "title": "app",
+                                        "description": "app get for groups get, read",
+                                        "type": "object",
+                                        "properties": {
+                                            "app_name": {
+                                                "type": "string",
+                                                "nullable": false
+                                            },
+                                            "environment": {
+                                                "type": "string",
+                                                "nullable": false
+                                            },
+                                            "hash": {
+                                                "type": "string",
+                                                "nullable": false
+                                            },
+                                            "debug": {
+                                                "type": "boolean",
+                                                "nullable": false
+                                            },
+                                            "id": {
+                                                "description": "There is always only one resource, which is 'name'.",
+                                                "type": "string",
+                                                "nullable": false
+                                            }
+                                        },
+                                        "xml": {
+                                            "name": "item"
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "response"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "app"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "pagination index counting from 0",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "number of results",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "/app/{id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Retrieves a single instance of app",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "title": "app",
+                                    "description": "app get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "app_name": {
+                                            "type": "string",
+                                            "nullable": false
+                                        },
+                                        "environment": {
+                                            "type": "string",
+                                            "nullable": false
+                                        },
+                                        "hash": {
+                                            "type": "string",
+                                            "nullable": false
+                                        },
+                                        "debug": {
+                                            "type": "boolean",
+                                            "nullable": false
+                                        },
+                                        "id": {
+                                            "description": "There is always only one resource, which is 'name'.",
+                                            "type": "string",
+                                            "nullable": false
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "title": "app",
+                                    "description": "app get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "app_name": {
+                                            "type": "string",
+                                            "nullable": false
+                                        },
+                                        "environment": {
+                                            "type": "string",
+                                            "nullable": false
+                                        },
+                                        "hash": {
+                                            "type": "string",
+                                            "nullable": false
+                                        },
+                                        "debug": {
+                                            "type": "boolean",
+                                            "nullable": false
+                                        },
+                                        "id": {
+                                            "description": "There is always only one resource, which is 'name'.",
+                                            "type": "string",
+                                            "nullable": false
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "app"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "description": "the id of the resource",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ]
+        },
+        "/simple_popo": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Retrieves all instances of simple_popo",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "title": "simple_popo",
+                                        "description": "simple_popo get for groups get, read",
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "nullable": false
+                                            },
+                                            "created_at": {
+                                                "title": "date_time",
+                                                "description": "date_time get for groups get, read",
+                                                "type": "object",
+                                                "properties": {
+                                                    "timezone": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "offset": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "timestamp": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    }
+                                                }
+                                            },
+                                            "arbitrary_field": {
+                                                "type": "string",
+                                                "nullable": true
+                                            }
+                                        },
+                                        "xml": {
+                                            "name": "item"
+                                        }
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "title": "simple_popo",
+                                        "description": "simple_popo get for groups get, read",
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "nullable": false
+                                            },
+                                            "created_at": {
+                                                "title": "date_time",
+                                                "description": "date_time get for groups get, read",
+                                                "type": "object",
+                                                "properties": {
+                                                    "timezone": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "offset": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "timestamp": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    }
+                                                }
+                                            },
+                                            "arbitrary_field": {
+                                                "type": "string",
+                                                "nullable": true
+                                            }
+                                        },
+                                        "xml": {
+                                            "name": "item"
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "response"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "simple_popo"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "pagination index counting from 0",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "number of results",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ]
+            },
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Creates a new instance of simple_popo",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "title": "simple_popo",
+                                    "description": "simple_popo get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "nullable": false
+                                        },
+                                        "created_at": {
+                                            "title": "date_time",
+                                            "description": "date_time get for groups get, read",
+                                            "type": "object",
+                                            "properties": {
+                                                "timezone": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "offset": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "timestamp": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                }
+                                            }
+                                        },
+                                        "arbitrary_field": {
+                                            "type": "string",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "title": "simple_popo",
+                                    "description": "simple_popo get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "nullable": false
+                                        },
+                                        "created_at": {
+                                            "title": "date_time",
+                                            "description": "date_time get for groups get, read",
+                                            "type": "object",
+                                            "properties": {
+                                                "timezone": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "offset": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "timestamp": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                }
+                                            }
+                                        },
+                                        "arbitrary_field": {
+                                            "type": "string",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "415": {
+                        "$ref": "#/components/responses/InvalidFormat"
+                    },
+                    "424": {
+                        "$ref": "#/components/responses/ValidationError"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "simple_popo"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "title": "simple_popo",
+                                "description": "simple_popo post for groups post, write",
+                                "type": "object",
+                                "properties": {
+                                    "arbitrary_field": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "xml": {
+                                    "name": "item"
+                                }
+                            }
+                        },
+                        "application/xml": {
+                            "schema": {
+                                "title": "simple_popo",
+                                "description": "simple_popo post for groups post, write",
+                                "type": "object",
+                                "properties": {
+                                    "arbitrary_field": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "xml": {
+                                    "name": "item"
+                                }
+                            }
+                        }
+                    },
+                    "description": "the resource as JSON to persist",
+                    "required": true
+                }
+            }
+        },
+        "/simple_popo/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "description": "the id of the resource",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ]
+        }
+    },
+    "servers": [
+        {
+            "url": "/test-url"
+        }
+    ],
+    "components": {
+        "schemas": {
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "code": {
+                        "oneOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "integer"
+                            }
+                        ]
+                    },
+                    "trace": {
+                        "type": "string"
+                    }
+                },
+                "xml": {
+                    "name": "response"
+                }
+            }
+        },
+        "responses": {
+            "InvalidFormat": {
+                "description": "The body input could not be parsed",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    },
+                    "application/xml": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            },
+            "ValidationError": {
+                "description": "The body input was in a proper format, but the input values were not valid",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    },
+                    "application/xml": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            },
+            "TooManyRequests": {
+                "description": "Too many requests per seconds were sent",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    },
+                    "application/xml": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            },
+            "MaintenanceMode": {
+                "description": "App is in maintenance mode",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    },
+                    "application/xml": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            },
+            "NotFound": {
+                "description": "Response when resource could not be found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    },
+                    "application/xml": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            },
+            "NotAuthorized": {
+                "description": "You have no permission to do this call",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    },
+                    "application/xml": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            },
+            "InternalError": {
+                "description": "An internal error occured",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    },
+                    "application/xml": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            },
+            "ServerDependencyError": {
+                "description": "The server required an external response which threw an error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    },
+                    "application/xml": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "headers": {
+            "x-ratelimit-limit": {
+                "description": "Request limit per hour",
+                "schema": {
+                    "type": "integer"
+                },
+                "example": 100
+            },
+            "x-ratelimit-remaining": {
+                "description": "Request limit per hour",
+                "schema": {
+                    "type": "integer"
+                },
+                "example": 94
+            }
+        }
+    }
+}

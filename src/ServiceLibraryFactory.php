@@ -7,6 +7,7 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Cache\PhpFileCache;
+use erasys\OpenApi\Spec\v3\Info;
 use PhpValueObjects\AbstractStringValueObject;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
@@ -44,9 +45,12 @@ use W2w\Lib\Apie\Normalizers\ContextualNormalizer;
 use W2w\Lib\Apie\Normalizers\EvilReflectionPropertyNormalizer;
 use W2w\Lib\Apie\Normalizers\ExceptionNormalizer;
 use W2w\Lib\Apie\Normalizers\StringValueObjectNormalizer;
+use W2w\Lib\Apie\OpenApiSchema\OpenApiSpecGenerator;
+use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
 
 /**
  * To avoid lots of boilerplate in using the library, this class helps in making sensible defaults.
+ * @codeCoverageIgnore
  */
 class ServiceLibraryFactory
 {
@@ -161,6 +165,26 @@ class ServiceLibraryFactory
     private $propertyTypeExtractor;
 
     /**
+     * @var Info
+     */
+    private $info;
+
+    /**
+     * @var SchemaGenerator
+     */
+    private $schemaGenerator;
+
+    /**
+     * @var OpenApiSpecGenerator
+     */
+    private $openApiSpecGenerator;
+
+    /**
+     * @var callable[]
+     */
+    private $callables = [];
+
+    /**
      * @param string[] $apiResourceClasses
      * @param bool $debug
      * @param string|null $cacheFolder
@@ -172,14 +196,44 @@ class ServiceLibraryFactory
         $this->cacheFolder = $cacheFolder;
     }
 
-    public function isDebug(): bool
+    private function isDebug(): bool
     {
         return $this->debug;
     }
 
-    public function getCacheFolder(): ?string
+    private function getCacheFolder(): ?string
     {
         return $this->cacheFolder;
+    }
+
+    /**
+     * Workaround to run a callable to set some values when the Serializer is being instantiated.
+     *
+     * @param callable $callable
+     * @return ServiceLibraryFactory
+     */
+    public function runBeforeInstantiation(callable $callable): self
+    {
+        $this->callables[] = $callable;
+        return $this;
+    }
+
+    public function setApiResourceFactory(ApiResourceFactoryInterface $apiResourceFactory): self
+    {
+        if ($this->apiResourceFactory) {
+            throw new RuntimeException('I have already instantiated ApiResourceFactory and can no longer set it!');
+        }
+        $this->apiResourceFactory = $apiResourceFactory;
+        return $this;
+    }
+
+    public function setInfo(Info $info): self
+    {
+        if ($this->info) {
+            throw new RuntimeException('I have already instantiated Info and can no longer set it!');
+        }
+        $this->info = $info;
+        return $this;
     }
 
     public function setSerializer(SerializerInterface $serializer): self
@@ -236,7 +290,7 @@ class ServiceLibraryFactory
         return $this;
     }
 
-    public function getEncoders(): array
+    private function getEncoders(): array
     {
         if (!is_array($this->encoders)) {
             $this->encoders = [
@@ -264,7 +318,7 @@ class ServiceLibraryFactory
         return $this->apiResourceFacade;
     }
 
-    public function getAdditionalNormalizers(): array
+    private function getAdditionalNormalizers(): array
     {
         if (!is_array($this->additionalNormalizers)) {
             $this->additionalNormalizers = [];
@@ -281,12 +335,12 @@ class ServiceLibraryFactory
         return $this;
     }
 
-    public function getContainer(): ContainerInterface
+    private function getContainer(): ?ContainerInterface
     {
         return $this->container;
     }
 
-    public function getFormatRetriever(): FormatRetriever
+    private function getFormatRetriever(): FormatRetriever
     {
         if (!$this->formatRetriever) {
             $this->formatRetriever = new FormatRetriever();
@@ -294,9 +348,12 @@ class ServiceLibraryFactory
         return $this->formatRetriever;
     }
 
-    public function getSerializer(): SerializerInterface
+    private function getSerializer(): SerializerInterface
     {
         if (!$this->serializer) {
+            foreach ($this->callables as $callable) {
+                $callable('serializer');
+            }
             $normalizers = $this->getNormalizers();
             $encoders = $this->getEncoders();
             $this->serializer = new Serializer($normalizers, $encoders);
@@ -307,14 +364,14 @@ class ServiceLibraryFactory
     /**
      * @return Reader
      */
-    public function getAnnotationReader(): Reader
+    private function getAnnotationReader(): Reader
     {
         if (!$this->annotationReader) {
             AnnotationRegistry::registerLoader('class_exists');
             if (class_exists(PhpFileCache::class) && $this->getCacheFolder()) {
                 $this->annotationReader = new CachedReader(
                     new AnnotationReader(),
-                    new PhpFileCache($this->getCacheFolder()),
+                    new PhpFileCache($this->getCacheFolder() . DIRECTORY_SEPARATOR . '/doctrine-cache'),
                     $this->isDebug()
                 );
             } else {
@@ -324,7 +381,7 @@ class ServiceLibraryFactory
         return $this->annotationReader;
     }
 
-    public function getApiResourceMetadataFactory(): ApiResourceMetadataFactory
+    private function getApiResourceMetadataFactory(): ApiResourceMetadataFactory
     {
         if (!$this->apiResourceMetadatafactory) {
             $this->apiResourceMetadatafactory = new ApiResourceMetadataFactory(
@@ -335,7 +392,7 @@ class ServiceLibraryFactory
         return $this->apiResourceMetadatafactory;
     }
 
-    public function getApiResourceFactory(): ApiResourceFactoryInterface
+    private function getApiResourceFactory(): ApiResourceFactoryInterface
     {
         if (!$this->apiResourceFactory) {
             $this->apiResourceFactory = new ApiResourceFactory(
@@ -345,7 +402,7 @@ class ServiceLibraryFactory
         return $this->apiResourceFactory;
     }
 
-    public function getApiResourceRetriever(): ApiResourceRetriever
+    private function getApiResourceRetriever(): ApiResourceRetriever
     {
         if (!$this->apiResourceRetriever) {
             $this->apiResourceRetriever = new ApiResourceRetriever(
@@ -355,7 +412,7 @@ class ServiceLibraryFactory
         return $this->apiResourceRetriever;
     }
 
-    public function getApiResourcePersister(): ApiResourcePersister
+    private function getApiResourcePersister(): ApiResourcePersister
     {
         if (!$this->apiResourcePersister) {
             $this->apiResourcePersister = new ApiResourcePersister(
@@ -365,7 +422,7 @@ class ServiceLibraryFactory
         return $this->apiResourcePersister;
     }
 
-    public function getApiResources(): ApiResources
+    private function getApiResources(): ApiResources
     {
         if (!$this->apiResources) {
             $this->apiResources = new ApiResources($this->apiResourceClasses);
@@ -373,7 +430,7 @@ class ServiceLibraryFactory
         return $this->apiResources;
     }
 
-    public function getClassResourceConverter(): ClassResourceConverter
+    private function getClassResourceConverter(): ClassResourceConverter
     {
         if (!$this->classResourceConverter) {
             $this->classResourceConverter = new ClassResourceConverter(
@@ -385,7 +442,7 @@ class ServiceLibraryFactory
         return $this->classResourceConverter;
     }
 
-    public function getPropertyConverter(): NameConverterInterface
+    private function getPropertyConverter(): NameConverterInterface
     {
         if (!$this->propertyConverter) {
             $this->propertyConverter = new CamelCaseToSnakeCaseNameConverter();
@@ -393,7 +450,7 @@ class ServiceLibraryFactory
         return $this->propertyConverter;
     }
 
-    public function getClassMetadataFactory(): ClassMetadataFactoryInterface
+    private function getClassMetadataFactory(): ClassMetadataFactoryInterface
     {
         if (!$this->classMetadataFactory) {
             $this->classMetadataFactory = new ClassMetadataFactory(
@@ -406,7 +463,7 @@ class ServiceLibraryFactory
         return $this->classMetadataFactory;
     }
 
-    public function getSerializerCache(): CacheItemPoolInterface
+    private function getSerializerCache(): CacheItemPoolInterface
     {
         if (!$this->serializerCache) {
             $this->serializerCache = new ArrayAdapter(0, true);
@@ -424,7 +481,7 @@ class ServiceLibraryFactory
         return $this->propertyAccessor;
     }
 
-    public function getPropertyTypeExtractor(): PropertyTypeExtractorInterface
+    private function getPropertyTypeExtractor(): PropertyTypeExtractorInterface
     {
         if (!$this->propertyTypeExtractor) {
             $factory = $this->getClassMetadataFactory();
@@ -454,7 +511,7 @@ class ServiceLibraryFactory
         return $this->propertyTypeExtractor;
     }
 
-    public function getNormalizers(): array
+    private function getNormalizers(): array
     {
         if (!is_array($this->normalizers)) {
             $classMetadataFactory = $this->getClassMetadataFactory();
@@ -491,8 +548,45 @@ class ServiceLibraryFactory
             );
             $this->normalizers[] = new ContextualNormalizer([$evilObjectNormalizer]);
             $this->normalizers[] = $objectNormalizer;
+            ContextualNormalizer::disableDenormalizer(EvilReflectionPropertyNormalizer::class);
+            ContextualNormalizer::disableNormalizer(EvilReflectionPropertyNormalizer::class);
         }
         return $this->normalizers;
     }
 
+    private function getInfo(): Info
+    {
+        if (!$this->info) {
+            $this->info = new Info('', '');
+        }
+        return $this->info;
+    }
+
+    public function getSchemaGenerator(): SchemaGenerator
+    {
+        if (!$this->schemaGenerator) {
+            $this->schemaGenerator = new SchemaGenerator(
+                $this->getClassMetadataFactory(),
+                $this->getPropertyTypeExtractor(),
+                $this->getClassResourceConverter(),
+                $this->getPropertyConverter()
+            );
+        }
+        return $this->schemaGenerator;
+    }
+
+    public function getOpenApiSpecGenerator(string $baseUrl): OpenApiSpecGenerator
+    {
+        if (!$this->openApiSpecGenerator) {
+            $this->openApiSpecGenerator = new OpenApiSpecGenerator(
+                $this->getApiResources(),
+                $this->getClassResourceConverter(),
+                $this->getInfo(),
+                $this->getSchemaGenerator(),
+                $this->getApiResourceMetadataFactory(),
+                $baseUrl
+            );
+        }
+        return $this->openApiSpecGenerator;
+    }
 }
