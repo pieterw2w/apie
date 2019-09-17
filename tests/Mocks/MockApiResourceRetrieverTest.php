@@ -4,6 +4,7 @@ namespace W2w\Test\Apie\Mocks;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\Mocks\MockApiResourceRetriever;
 use W2w\Test\Apie\Mocks\Data\SimplePopo;
 
@@ -41,5 +42,11 @@ class MockApiResourceRetrieverTest extends TestCase
 
         $this->testItem->remove(SimplePopo::class, $resource1->getId(), []);
         $this->assertEquals([$resource2], $this->testItem->retrieveAll(SimplePopo::class, [], 0, 100));
+    }
+
+    public function testRetrieveThrowsError()
+    {
+        $this->expectException(ResourceNotFoundException::class);
+        $this->testItem->retrieve(SimplePopo::class, 1, []);
     }
 }

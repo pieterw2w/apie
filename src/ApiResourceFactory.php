@@ -4,6 +4,7 @@ namespace W2w\Lib\Apie;
 
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
+use ReflectionException;
 use W2w\Lib\Apie\Exceptions\CouldNotConstructApiResourceClassException;
 use W2w\Lib\Apie\Exceptions\InvalidClassTypeException;
 use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
@@ -38,7 +39,11 @@ class ApiResourceFactory implements ApiResourceFactoryInterface
         if ($this->container && $this->container->has($identifier)) {
             $retriever = $this->container->get($identifier);
         } else {
-            $reflClass = new ReflectionClass($identifier);
+            try {
+                $reflClass = new ReflectionClass($identifier);
+            } catch (ReflectionException $reflectionException) {
+                throw new CouldNotConstructApiResourceClassException($identifier, $reflectionException);
+            }
             if ($reflClass->getConstructor() && $reflClass->getConstructor()->getNumberOfRequiredParameters() > 0) {
                 throw new CouldNotConstructApiResourceClassException($identifier);
             }
@@ -63,7 +68,11 @@ class ApiResourceFactory implements ApiResourceFactoryInterface
         if ($this->container && $this->container->has($identifier)) {
             $persister = $this->container->get($identifier);
         } else {
-            $reflClass = new ReflectionClass($identifier);
+            try {
+                $reflClass = new ReflectionClass($identifier);
+            } catch (ReflectionException $reflectionException) {
+                throw new CouldNotConstructApiResourceClassException($identifier, $reflectionException);
+            }
             if ($reflClass->getConstructor() && $reflClass->getConstructor()->getNumberOfRequiredParameters() > 0) {
                 throw new CouldNotConstructApiResourceClassException($identifier);
             }

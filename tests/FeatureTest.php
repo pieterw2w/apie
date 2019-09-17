@@ -26,6 +26,21 @@ class FeatureTest extends TestCase
         );
     }
 
+    /**public function test_service_github_issue_1()
+    {
+        $testItem = new ServiceLibraryFactory([SumExample::class], true, null);
+        $request = new Request('POST', '/sum_example/', [], '{"one":1,"two":2}');
+        $actual = $testItem->getApiResourceFacade()->post(SumExample::class, $request);
+        $this->assertEquals(
+            new SumExample(1, 2),
+            $actual->getResource()
+        );
+        $this->assertEquals(
+            '{"addition":3}',
+            (string) $actual->getResponse()->getBody()
+        );
+    }**/
+
     public function test_service_library_create_open_api_schema()
     {
         $testItem = new ServiceLibraryFactory([App::class, SimplePopo::class], true, null);

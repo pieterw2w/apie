@@ -159,7 +159,7 @@ class ApiResourceFacade
     {
         return new ApiResourceFacadeResponse(
             $this->serializer,
-            ['groups' => ['base', 'read']],
+            ['groups' => ['base', 'read', 'get']],
             $resource,
             $this->formatRetriever,
             ($request && $request->hasHeader('Accept')) ? $request->getHeader('Accept')[0] : 'application/json'

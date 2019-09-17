@@ -58,7 +58,6 @@ class ApiResourceFacadeResponse
     {
         $format = $this->formatRetriever->getFormat($this->acceptHeader);
         $contentType = $this->formatRetriever->getContentType($format);
-        var_dump($this->serializerContext);
         $response = $this->serializer->serialize($this->resource, $format, $this->serializerContext);
 
         return new TextResponse($response, is_null($this->resource) ? 204 : 200, ['content-type' => $contentType]);
