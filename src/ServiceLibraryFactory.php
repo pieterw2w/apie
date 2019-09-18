@@ -35,12 +35,12 @@ use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\JsonSerializableNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 use W2w\Lib\Apie\ApiResources\App;
 use W2w\Lib\Apie\ApiResources\Status;
 use W2w\Lib\Apie\Encodings\FormatRetriever;
+use W2w\Lib\Apie\Normalizers\ApieObjectNormalizer;
 use W2w\Lib\Apie\Normalizers\ContextualNormalizer;
 use W2w\Lib\Apie\Normalizers\EvilReflectionPropertyNormalizer;
 use W2w\Lib\Apie\Normalizers\ExceptionNormalizer;
@@ -528,7 +528,7 @@ class ServiceLibraryFactory
             $this->normalizers[] = new JsonSerializableNormalizer();
             $this->normalizers[] = new ArrayDenormalizer();
 
-            $objectNormalizer = new ObjectNormalizer(
+            $objectNormalizer = new ApieObjectNormalizer(
                 $classMetadataFactory,
                 $this->getPropertyConverter(),
                 $this->getPropertyAccessor(),

@@ -26,7 +26,7 @@ class FeatureTest extends TestCase
         );
     }
 
-    /**public function test_service_github_issue_1()
+    public function test_service_github_issue_1()
     {
         $testItem = new ServiceLibraryFactory([SumExample::class], true, null);
         $request = new Request('POST', '/sum_example/', [], '{"one":1,"two":2}');
@@ -39,7 +39,7 @@ class FeatureTest extends TestCase
             '{"addition":3}',
             (string) $actual->getResponse()->getBody()
         );
-    }**/
+    }
 
     public function test_service_library_create_open_api_schema()
     {
