@@ -348,7 +348,7 @@ class ServiceLibraryFactory
         return $this->formatRetriever;
     }
 
-    private function getSerializer(): SerializerInterface
+    public function getSerializer(): SerializerInterface
     {
         if (!$this->serializer) {
             foreach ($this->callables as $callable) {
