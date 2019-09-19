@@ -422,7 +422,7 @@ class ServiceLibraryFactory
         return $this->apiResourcePersister;
     }
 
-    private function getApiResources(): ApiResources
+    public function getApiResources(): ApiResources
     {
         if (!$this->apiResources) {
             $this->apiResources = new ApiResources($this->apiResourceClasses);
