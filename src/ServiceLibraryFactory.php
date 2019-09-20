@@ -47,6 +47,8 @@ use W2w\Lib\Apie\Normalizers\ExceptionNormalizer;
 use W2w\Lib\Apie\Normalizers\StringValueObjectNormalizer;
 use W2w\Lib\Apie\OpenApiSchema\OpenApiSpecGenerator;
 use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
+use W2w\Lib\Apie\Resources\ApiResources;
+use W2w\Lib\Apie\Resources\ApiResourcesInterface;
 
 /**
  * To avoid lots of boilerplate in using the library, this class helps in making sensible defaults.
@@ -60,11 +62,6 @@ class ServiceLibraryFactory
     private $debug;
 
     /**
-     * @var string[]
-     */
-    private $apiResourceClasses;
-
-    /**
      * @var ContainerInterface
      */
     private $container;
@@ -75,7 +72,7 @@ class ServiceLibraryFactory
     private $apiResourceFacade;
 
     /**
-     * @var ApiResources
+     * @var ApiResourcesInterface
      */
     private $apiResources;
 
@@ -185,13 +182,13 @@ class ServiceLibraryFactory
     private $callables = [];
 
     /**
-     * @param string[] $apiResourceClasses
+     * @param string[]|ApiResourcesInterface $apiResourceClasses
      * @param bool $debug
      * @param string|null $cacheFolder
      */
-    public function __construct(array $apiResourceClasses = [App::class, Status::class], bool $debug = false, ?string $cacheFolder = null)
+    public function __construct($apiResourceClasses = [App::class, Status::class], bool $debug = false, ?string $cacheFolder = null)
     {
-        $this->apiResourceClasses = $apiResourceClasses;
+        $this->apiResources = $apiResourceClasses instanceof ApiResourcesInterface ? $apiResourceClasses : new ApiResources($apiResourceClasses);
         $this->debug = $debug;
         $this->cacheFolder = $cacheFolder;
     }
@@ -422,11 +419,8 @@ class ServiceLibraryFactory
         return $this->apiResourcePersister;
     }
 
-    public function getApiResources(): ApiResources
+    public function getApiResources(): ApiResourcesInterface
     {
-        if (!$this->apiResources) {
-            $this->apiResources = new ApiResources($this->apiResourceClasses);
-        }
         return $this->apiResources;
     }
 

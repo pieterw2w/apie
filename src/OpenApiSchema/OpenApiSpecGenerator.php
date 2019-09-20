@@ -3,7 +3,7 @@
 namespace W2w\Lib\Apie\OpenApiSchema;
 
 use W2w\Lib\Apie\ApiResourceMetadataFactory;
-use W2w\Lib\Apie\ApiResources;
+use W2w\Lib\Apie\Resources\ApiResourcesInterface;
 use W2w\Lib\Apie\ClassResourceConverter;
 use erasys\OpenApi\Spec\v3 as OASv3;
 
@@ -25,7 +25,7 @@ class OpenApiSpecGenerator
     private $baseUrl;
 
     public function __construct(
-        ApiResources $apiResources,
+        ApiResourcesInterface $apiResources,
         ClassResourceConverter $converter,
         OASv3\Info $info,
         SchemaGenerator $schemaGenerator,

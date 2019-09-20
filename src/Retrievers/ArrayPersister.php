@@ -1,11 +1,11 @@
 <?php
-namespace W2w\Lib\Apie\Persisters;
+namespace W2w\Lib\Apie\Retrievers;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use W2w\Lib\Apie\Exceptions\CanNotDetermineIdException;
 use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
-use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
+use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
 
 /**
  * Persists and retrieves from an array in memory. Only useful for unit tests.

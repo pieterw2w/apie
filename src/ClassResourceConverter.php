@@ -4,6 +4,7 @@ namespace W2w\Lib\Apie;
 use ReflectionClass;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use W2w\Lib\Apie\Exceptions\ResourceNameNotFoundException;
+use W2w\Lib\Apie\Resources\ApiResourcesInterface;
 
 /**
  * Converts between the api resource name in the url and the class name used in the code.
@@ -16,7 +17,7 @@ class ClassResourceConverter implements NameConverterInterface
     private $nameConverter;
 
     /**
-     * @var ApiResources
+     * @var ApiResourcesInterface
      */
     private $resources;
 
@@ -27,10 +28,10 @@ class ClassResourceConverter implements NameConverterInterface
 
     /**
      * @param NameConverterInterface $nameConverter
-     * @param ApiResources $resources
+     * @param ApiResourcesInterface $resources
      * @param bool $showResources
      */
-    public function __construct(NameConverterInterface $nameConverter, ApiResources $resources, bool $showResources = true)
+    public function __construct(NameConverterInterface $nameConverter, ApiResourcesInterface $resources, bool $showResources = true)
     {
         $this->nameConverter = $nameConverter;
         $this->resources = $resources;

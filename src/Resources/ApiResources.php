@@ -1,11 +1,11 @@
 <?php
 
-namespace W2w\Lib\Apie;
+namespace W2w\Lib\Apie\Resources;
 
 /**
- * Container class that contains all the Api resource class names.
+ * Container class that contains all the Api resource class names statically.
  */
-class ApiResources
+class ApiResources implements ApiResourcesInterface
 {
     /**
      * @var string[]
@@ -23,7 +23,7 @@ class ApiResources
     /**
      * @return string[]
      */
-    public function getApiResources()
+    public function getApiResources(): array
     {
         return $this->apiResources;
     }

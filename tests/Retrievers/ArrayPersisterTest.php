@@ -1,8 +1,8 @@
 <?php
-namespace W2w\Test\Apie\Persisters;
+namespace W2w\Test\Apie\Retrievers;
 
 use PHPUnit\Framework\TestCase;
-use W2w\Lib\Apie\Persisters\ArrayPersister;
+use W2w\Lib\Apie\Retrievers\ArrayPersister;
 use W2w\Test\Apie\Mocks\Data\SimplePopo;
 
 class ArrayPersisterTest extends TestCase
