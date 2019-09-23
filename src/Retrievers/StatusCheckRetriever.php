@@ -43,7 +43,13 @@ class StatusCheckRetriever implements ApiResourceRetrieverInterface
             if ($statusCheck instanceof StatusCheckListInterface) {
                 $check = true;
                 foreach ($statusCheck as $check) {
-                    yield $check->getStatus();
+                    if ($check instanceof Status) {
+                        yield $check;
+                    } else if ($check instanceof StatusCheckInterface) {
+                        yield $check->getStatus();
+                    } else {
+                        throw new InvalidClassTypeException(get_class($check), 'StatusCheckInterface or Status');
+                    }
                 }
             }
             if (!$check) {

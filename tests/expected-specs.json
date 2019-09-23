@@ -567,6 +567,488 @@
                     }
                 }
             ]
+        },
+        "/full_rest_object": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Retrieves all instances of full_rest_object",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "title": "full_rest_object",
+                                        "description": "full_rest_object get for groups get, read",
+                                        "type": "object",
+                                        "properties": {
+                                            "uuid": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "string_value": {
+                                                "type": "string",
+                                                "nullable": false
+                                            }
+                                        },
+                                        "xml": {
+                                            "name": "item"
+                                        }
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "title": "full_rest_object",
+                                        "description": "full_rest_object get for groups get, read",
+                                        "type": "object",
+                                        "properties": {
+                                            "uuid": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "string_value": {
+                                                "type": "string",
+                                                "nullable": false
+                                            }
+                                        },
+                                        "xml": {
+                                            "name": "item"
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "response"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "full_rest_object"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "pagination index counting from 0",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "number of results",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ]
+            },
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Creates a new instance of full_rest_object",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "title": "full_rest_object",
+                                    "description": "full_rest_object get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "uuid": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "string_value": {
+                                            "type": "string",
+                                            "nullable": false
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "title": "full_rest_object",
+                                    "description": "full_rest_object get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "uuid": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "string_value": {
+                                            "type": "string",
+                                            "nullable": false
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "415": {
+                        "$ref": "#/components/responses/InvalidFormat"
+                    },
+                    "424": {
+                        "$ref": "#/components/responses/ValidationError"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "full_rest_object"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "title": "full_rest_object",
+                                "description": "full_rest_object post for groups post, write",
+                                "type": "object",
+                                "properties": {
+                                    "uuid": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    "string_value": {
+                                        "type": "string",
+                                        "nullable": false
+                                    }
+                                },
+                                "xml": {
+                                    "name": "item"
+                                }
+                            }
+                        },
+                        "application/xml": {
+                            "schema": {
+                                "title": "full_rest_object",
+                                "description": "full_rest_object post for groups post, write",
+                                "type": "object",
+                                "properties": {
+                                    "uuid": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    "string_value": {
+                                        "type": "string",
+                                        "nullable": false
+                                    }
+                                },
+                                "xml": {
+                                    "name": "item"
+                                }
+                            }
+                        }
+                    },
+                    "description": "the resource as JSON to persist",
+                    "required": true
+                }
+            }
+        },
+        "/full_rest_object/{id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Retrieves a single instance of full_rest_object",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "title": "full_rest_object",
+                                    "description": "full_rest_object get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "uuid": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "string_value": {
+                                            "type": "string",
+                                            "nullable": false
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "title": "full_rest_object",
+                                    "description": "full_rest_object get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "uuid": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "string_value": {
+                                            "type": "string",
+                                            "nullable": false
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "full_rest_object"
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "Retrieves and update a single instance of full_rest_object",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "title": "full_rest_object",
+                                    "description": "full_rest_object get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "uuid": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "string_value": {
+                                            "type": "string",
+                                            "nullable": false
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "title": "full_rest_object",
+                                    "description": "full_rest_object get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "uuid": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "string_value": {
+                                            "type": "string",
+                                            "nullable": false
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "415": {
+                        "$ref": "#/components/responses/InvalidFormat"
+                    },
+                    "424": {
+                        "$ref": "#/components/responses/ValidationError"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "full_rest_object"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "title": "full_rest_object",
+                                "description": "full_rest_object put for groups put, write",
+                                "type": "object",
+                                "properties": {
+                                    "string_value": {
+                                        "type": "string",
+                                        "nullable": false
+                                    }
+                                },
+                                "xml": {
+                                    "name": "item"
+                                }
+                            }
+                        },
+                        "application/xml": {
+                            "schema": {
+                                "title": "full_rest_object",
+                                "description": "full_rest_object put for groups put, write",
+                                "type": "object",
+                                "properties": {
+                                    "string_value": {
+                                        "type": "string",
+                                        "nullable": false
+                                    }
+                                },
+                                "xml": {
+                                    "name": "item"
+                                }
+                            }
+                        }
+                    },
+                    "description": "the resource as JSON to persist",
+                    "required": true
+                }
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "Deletes a single instance of full_rest_object",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "full_rest_object"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "description": "the id of the resource",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ]
         }
     },
     "servers": [

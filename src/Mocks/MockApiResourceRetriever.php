@@ -4,8 +4,8 @@ namespace W2w\Lib\Apie\Mocks;
 
 use Psr\Cache\CacheItemPoolInterface;
 use ReflectionClass;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
+use W2w\Lib\Apie\IdentifierExtractor;
 use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
 
@@ -18,14 +18,14 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
 {
     private $cacheItemPool;
 
-    private $propertyAccessor;
+    private $identifierExtractor;
 
     public function __construct(
         CacheItemPoolInterface $cacheItemPool,
-        PropertyAccessor $propertyAccessor
+        IdentifierExtractor $identifierExtractor
     ) {
         $this->cacheItemPool = $cacheItemPool;
-        $this->propertyAccessor = $propertyAccessor;
+        $this->identifierExtractor = $identifierExtractor;
     }
 
     /**
@@ -35,14 +35,9 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
      */
     public function persistNew($resource, array $context = [])
     {
-        $id = null;
-        if ($this->propertyAccessor->isReadable($resource, 'id')) {
-            $id = $this->propertyAccessor->getValue($resource, 'id');
-        } elseif ($this->propertyAccessor->isReadable($resource, 'uuid')) {
-            $id = $this->propertyAccessor->getValue($resource, 'uuid');
-        }
+        $id = $this->identifierExtractor->getIdentifierValue($resource, $context);
         if (is_null($id)) {
-            return;
+            return $resource;
         }
 
         $cacheKey = 'mock-server.' . $this->shortName($resource) . '.' . $id;

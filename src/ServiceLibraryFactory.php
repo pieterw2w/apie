@@ -8,6 +8,8 @@ use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Cache\PhpFileCache;
 use erasys\OpenApi\Spec\v3\Info;
+use GBProd\UuidNormalizer\UuidDenormalizer;
+use GBProd\UuidNormalizer\UuidNormalizer;
 use PhpValueObjects\AbstractStringValueObject;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
@@ -514,6 +516,9 @@ class ServiceLibraryFactory
             $this->normalizers = $this->getAdditionalNormalizers();
             $this->normalizers[] = new ExceptionNormalizer($this->isDebug());
             $this->normalizers[] = new DateTimeNormalizer([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s']);
+
+            $this->normalizers[] = new UuidNormalizer();
+            $this->normalizers[] = new UuidDenormalizer();
 
             if (class_exists(AbstractStringValueObject::class)) {
                 $this->normalizers[] = StringValueObjectNormalizer::class;

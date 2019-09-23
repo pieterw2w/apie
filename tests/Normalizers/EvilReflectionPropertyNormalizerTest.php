@@ -33,7 +33,7 @@ class EvilReflectionPropertyNormalizerTest extends TestCase
     public function testIgnoreUnknownProperty()
     {
         $createdAt = new DateTime();
-        $actual = $this->serializer->denormalize(['id' => '123', 'createdAt' => $createdAt], SimplePopo::class);
+        $actual = $this->serializer->denormalize(['id' => '123', 'createdAt' => $createdAt, 'ignored' => true], SimplePopo::class);
         $this->assertEquals('123', $actual->getId());
         $this->assertEquals($createdAt, $actual->getCreatedAt());
     }

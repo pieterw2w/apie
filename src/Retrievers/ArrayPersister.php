@@ -5,6 +5,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use W2w\Lib\Apie\Exceptions\CanNotDetermineIdException;
 use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
+use W2w\Lib\Apie\IdentifierExtractor;
 use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
 
 /**
@@ -14,11 +15,14 @@ class ArrayPersister implements ApiResourcePersisterInterface, ApiResourceRetrie
 {
     private $propertyAccessor;
 
+    private $identifierExtractor;
+
     private $persisted = [];
 
-    public function __construct(PropertyAccessor $propertyAccessor = null)
+    public function __construct(PropertyAccessor $propertyAccessor = null, IdentifierExtractor $identifierExtractor = null)
     {
         $this->propertyAccessor = $propertyAccessor ?? PropertyAccess::createPropertyAccessorBuilder()->getPropertyAccessor();
+        $this->identifierExtractor = $identifierExtractor ?? new IdentifierExtractor($this->propertyAccessor);
     }
     /**
      * Persist a new API resource. Should return the new API resource.
@@ -30,13 +34,12 @@ class ArrayPersister implements ApiResourcePersisterInterface, ApiResourceRetrie
     public function persistNew($resource, array $context = [])
     {
         $className = get_class($resource);
-        $identifier = $context['identifier'] ?? 'id';
+        $identifier = $this->identifierExtractor->getIdentifierKey($resource, $context);
         $keepReference = $context['keep_reference'] ?? false;
         if (!$this->propertyAccessor->isReadable($resource, $identifier)) {
             throw new CanNotDetermineIdException($resource, $identifier);
         }
-        $id = $this->propertyAccessor->getValue($resource, $identifier);
-
+        $id = (string) $this->propertyAccessor->getValue($resource, $identifier);
         if (empty($this->persisted[$className])) {
             $this->persisted[$className] = [];
         }
@@ -66,7 +69,7 @@ class ArrayPersister implements ApiResourcePersisterInterface, ApiResourceRetrie
         if (!$keepReference) {
             $resource = clone $resource;
         }
-        $this->persisted[$className][$int] = $resource;
+        $this->persisted[$className][(string) $int] = $resource;
         return $resource;
     }
 
@@ -95,6 +98,7 @@ class ArrayPersister implements ApiResourcePersisterInterface, ApiResourceRetrie
      */
     public function retrieve(string $resourceClass, $id, array $context)
     {
+        $id = (string) $id;
         if (empty($this->persisted[$resourceClass][$id])) {
             throw new ResourceNotFoundException($id);
         }
