@@ -501,7 +501,8 @@ class OpenApiSpecGenerator
             case 'delete':
                 return $metadata->allowDelete();
         }
-
+        // @codeCoverageIgnoreStart
         return false;
+        // @codeCoverageIgnoreEnd
     }
 }

@@ -225,7 +225,9 @@ class SchemaGenerator
                     || $this->propertyInfoExtractor->isInitializable($resourceClass, $attributeMetadata->getName());
         }
 
+        // @codeCoverageIgnoreStart
         return true;
+        // @codeCoverageIgnoreEnd
     }
 
     /**

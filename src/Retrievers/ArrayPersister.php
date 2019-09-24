@@ -34,7 +34,7 @@ class ArrayPersister implements ApiResourcePersisterInterface, ApiResourceRetrie
     public function persistNew($resource, array $context = [])
     {
         $className = get_class($resource);
-        $identifier = $this->identifierExtractor->getIdentifierKey($resource, $context);
+        $identifier = $this->identifierExtractor->getIdentifierKey($resource, $context) ?? 'id';
         $keepReference = $context['keep_reference'] ?? false;
         if (!$this->propertyAccessor->isReadable($resource, $identifier)) {
             throw new CanNotDetermineIdException($resource, $identifier);
@@ -63,9 +63,6 @@ class ArrayPersister implements ApiResourcePersisterInterface, ApiResourceRetrie
     {
         $className = get_class($resource);
         $keepReference = $context['keep_reference'] ?? false;
-        if (empty($this->persisted[$className])) {
-            $this->persisted[$className] = [];
-        }
         if (!$keepReference) {
             $resource = clone $resource;
         }

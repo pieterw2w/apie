@@ -2,6 +2,8 @@
 namespace W2w\Test\Apie\Retrievers;
 
 use PHPUnit\Framework\TestCase;
+use W2w\Lib\Apie\Exceptions\CanNotDetermineIdException;
+use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\Retrievers\ArrayPersister;
 use W2w\Test\Apie\Mocks\Data\SimplePopo;
 
@@ -36,5 +38,19 @@ class ArrayPersisterTest extends TestCase
 
         $this->testItem->remove(SimplePopo::class, $resource1->getId(), []);
         $this->assertEquals([$resource2], $this->testItem->retrieveAll(SimplePopo::class, [], 0, 100));
+    }
+
+    public function testPersistNew_can_not_determine_identifier()
+    {
+        $class = new class {
+        };
+        $this->expectException(CanNotDetermineIdException::class);
+        $this->testItem->persistNew($class, []);
+    }
+
+    public function testRetrieve_not_found()
+    {
+        $this->expectException(ResourceNotFoundException::class);
+        $this->testItem->retrieve(SimplePopo::class, 123, []);
     }
 }

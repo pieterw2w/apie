@@ -54,8 +54,9 @@ class ContextualNormalizer implements NormalizerInterface, DenormalizerInterface
                 return $normalizer->normalize($object, $format, $context);
             }
         }
+        // @codeCoverageIgnoreStart
     }
-
+    // @codeCoverageIgnoreEnd
     /**
      * @param mixed $data
      * @param string|null $format
@@ -90,7 +91,10 @@ class ContextualNormalizer implements NormalizerInterface, DenormalizerInterface
                 return $denormalizer->denormalize($data, $class, $format, $context);
             }
         }
+        // @codeCoverageIgnoreStart
     }
+
+    // @codeCoverageIgnoreEnd
 
     /**
      * @param mixed $data

@@ -7,6 +7,7 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\Reader;
 use erasys\OpenApi\Spec\v3\Schema;
 use PHPUnit\Framework\TestCase;
+use PhpValueObjects\Tests\Network\UrlValueObject;
 use Prophecy\Argument;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
@@ -190,6 +191,20 @@ class SchemaGeneratorTest extends TestCase
         $this->assertEquals(
             $expected,
             $this->testItem->createSchema(RecursiveObject::class, 'get', ['get', 'read']),
+            'asking again gives a cached result'
+        );
+    }
+
+    public function testCreateSchema_value_objects()
+    {
+        $expected = new Schema(['type' => 'string', 'format' => 'urlvalueobject']);
+        $this->assertEquals(
+            $expected,
+            $this->testItem->createSchema(UrlValueObject::class, 'get', ['get', 'read'])
+        );
+        $this->assertEquals(
+            $expected,
+            $this->testItem->createSchema(UrlValueObject::class, 'get', ['get', 'read']),
             'asking again gives a cached result'
         );
     }

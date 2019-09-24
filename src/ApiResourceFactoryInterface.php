@@ -10,7 +10,17 @@ use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
  */
 interface ApiResourceFactoryInterface
 {
+    /**
+     * Gets an instance of ApiResourceRetrieverInstance
+     * @param string $identifier
+     * @return ApiResourceRetrieverInterface
+     */
     public function getApiResourceRetrieverInstance(string $identifier): ApiResourceRetrieverInterface;
 
+    /**
+     * Gets an instance of ApiResourceRetrieverInstance
+     * @param string $identifier
+     * @return ApiResourceRetrieverInterface
+     */
     public function getApiResourcePersisterInstance(string $identifier): ApiResourcePersisterInterface;
 }
