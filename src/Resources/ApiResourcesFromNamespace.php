@@ -39,6 +39,11 @@ class ApiResourcesFromNamespace implements ApiResourcesInterface
 
     public static function createApiResources(string $namespace, bool $defaultResources = true): array
     {
+        // @codeCoverageIgnoreStart
+        if (!class_exists(ClassFinder::class)) {
+            throw new BadConfigurationException(__CLASS__ . ' can only be used if you require haydenpierce/class-finder in your project.');
+        }
+        // @codeCoverageIgnoreEnd
         $classes = ClassFinder::getClassesInNamespace($namespace);
         if ($defaultResources) {
             $classes[] = App::class;
