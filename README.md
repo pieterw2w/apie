@@ -1,4 +1,6 @@
 # apie
+[![CircleCI](https://circleci.com/gh/pjordaan/apie.svg?style=svg)](https://circleci.com/gh/pjordaan/apie)
+
 library to convert simple POPO's (Plain Old PHP Objects) to a REST API with OpenAPI spec. WIP
 
 ## setting up apie
