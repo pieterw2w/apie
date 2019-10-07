@@ -59,7 +59,9 @@ $library->get(Example::class, 1, null);
 As long the ServiceLibraryFactory has not instantiated a service you can inject dependencies to integrate it with
 custom files. For example sometimes you want to use a service to persist your class with a database which requires a
 dependency to a database connection service for example. Because most frameworks use a service container for this,
-you can inject a service container.
+you can inject a service container. The service container injected is only used to get classes
+to retrieve or persist domain objects. You need to call different setters if different dependencies
+are required to be injected.
 
 ```php
 <?php
