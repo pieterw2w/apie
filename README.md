@@ -261,7 +261,7 @@ class Example {
 }
 ```
 A better solution would be to use value objects. Apie is set up to work with value objects created with the composer library
-bruli/php-value-objects. They will also be mapped correctly in the OpenAPI schema as a string. The library has an e-mail value
+[bruli/php-value-objects](https://github.com/bruli/php-value-objects). They will also be mapped correctly in the OpenAPI schema as a string. The library has an e-mail value
 object, but let's assume we want to always lowercase e-mail addresses and only allow @apie.nl:
 ```php
 <?php
@@ -328,4 +328,11 @@ It contains the following controllers:
 - **W2w\Lib\Apie\Controllers\PostController**: handles ```POST /{resource class}/``` requests to create a new resource
 - **W2w\Lib\Apie\Controllers\PutController**: handles ```PUT /{resource class}/{id}``` requests to modify an existing resource
 
-
+## Apie vs. Api Platform
+This library is heavily inspired by the Symfony Api Platform, but there are some changes:
+- This library is framework agnostic and requires a wrapper library to make it work in a framework. Api Platform core is framework agnostic, but it is hard to setup outside the symfony framework.
+- In the Api Platform a resource provider or persister determines if it can persist or retrieve a specific resource with a supports() method. For Apie the resource class is explicitly linked to a service making it easier to select which HTTP methods are available.
+- Both libraries use the symfony serializer component with their own object normalizer, but Apie is closer to the default ObjectNormalizer.
+- API Platform has no default serialization group if no serialization group is selected.
+- So far APIE has less functionality for standards (JSON+LD, HAL) and no GraphQL support. Eventually we might add it.
+- APIE is better capable of having api resources without an id.
