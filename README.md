@@ -218,9 +218,6 @@ property persistClass to the ApiResource annotation.
    * )
    */
   class Example {
-      /**
-       * @var Uuid
-       */
       private $id;
 
       public function __construct(Uuid $id)
@@ -241,10 +238,87 @@ Id can also not be changed when it is constructed, so PUT no longer allows us to
 This serialization is done with [the symfony serializer](https://symfony.com/doc/current/components/serializer.html) and
 additional information can be found here.
 
+## Validating fields
+Apie assumes that the resource classes created are always in a robust state and they should take care of never
+getting in a inconsistent state. Because of that you require to validate and clean the input yourself in the resource class.
+
+```php
+<?php
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
+class Example {
+    private $email;
+    public function setEmail(string $email) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new HttpException(422, 'invalid e-mail "' . $email .'""');
+        }
+        $this->email = $email;
+    }
+    
+    public function getEmail(): string {
+        return $this->email;
+    }
+}
+```
+A better solution would be to use value objects. Apie is set up to work with value objects created with the composer library
+bruli/php-value-objects. They will also be mapped correctly in the OpenAPI schema as a string. The library has an e-mail value
+object, but let's assume we want to always lowercase e-mail addresses and only allow @apie.nl:
+```php
+<?php
+use PhpValueObjects\AbstractValueObject;
+
+class Email extends AbstractValueObject
+{
+    public function __construct(string $value)
+    {
+        parent::__construct(strtolower($value));
+    }
+    protected function guard($value): void
+    {
+        if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+            $this->throwException($value);
+        }
+        if (!preg_match('/@apie\.nl$/', $value)) {
+            $this->throwException($value);
+        }
+    }
+}
+```
+
+We will change the setter and getter accordingly:
+```php
+<?php
+class Example {
+    private $email;
+    public function setEmail(Email $email) {
+        $this->email = $email;
+    }
+    
+    public function getEmail(): Email {
+        return $this->email;
+    }
+}
+```
+
+In case you have a value object that does not extend PhpValueObjects\AbstractValueObject you might need to manually
+change the OpenAPI schema for this class to a string. You might also require to [create a (de)normalizer](https://symfony.com/doc/current/serializer/custom_normalizer.html#creating-a-new-normalizer) for the symfony serializer 
+to convert this object from/to a string.
+```php
+<?php
+use erasys\OpenApi\Spec\v3\Schema;
+use W2w\Lib\Apie\ServiceLibraryFactory;
+
+$factory = new ServiceLibraryFactory($listOfResourceClasses, $debug, $cacheFolder);
+// register the normalizer to normalize/denormalize strings for your value object.
+$factory->setAdditionalNormalizers([new ClassNameNormalizer()]);
+// make sure the OpenAPI spec is correct for your value object:
+$factory->getSchemaGenerator()->defineSchemaForResource(ClassName::class, new Schema(['type' => 'string']));
+```
+
 ## PSR Controllers and routing
 If your framework supports PSR7 request/responses, then the framework can use one of the predefined controllers
 in W2w\Lib\Apie\Controllers. Every controller has an __invoke() method. The library has no url match functionality,
-so you require to make your own route binding.
+so you require to make your own route binding. With a library like [nikic/fast-route](https://github.com/nikic/FastRoute) it is very easy to make a framework agnostic REST API.
  
 It contains the following controllers:
 - **W2w\Lib\Apie\Controllers\DeleteController**: handles ```DELETE /{resource class}/{id}``` requests to delete a single resource
@@ -254,4 +328,4 @@ It contains the following controllers:
 - **W2w\Lib\Apie\Controllers\PostController**: handles ```POST /{resource class}/``` requests to create a new resource
 - **W2w\Lib\Apie\Controllers\PutController**: handles ```PUT /{resource class}/{id}``` requests to modify an existing resource
 
-With a library like [nikic/fast-route](https://github.com/nikic/FastRoute) it is very easy to make a framework agnostic REST API.
+
