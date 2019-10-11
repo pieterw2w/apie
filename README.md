@@ -1,20 +1,37 @@
 # apie
 [![CircleCI](https://circleci.com/gh/pjordaan/apie.svg?style=svg)](https://circleci.com/gh/pjordaan/apie)
+[![CircleCI](https://codecov.io/gh/pjordaan/apie/branch/master/graph/badge.svg)](https://codecov.io/gh/pjordaan/apie/)
 
 library to convert simple POPO's (Plain Old PHP Objects) to a REST API with OpenAPI spec. It's still a work in progress,
 but there are tons of unit tests and a bridge to integrate the library in [Laravel](https://github.com/pjordaan/laravel-apie).
 
 ## setting up apie
-To set up Apie easily in your project the class ServiceLibraryFactory is created to ease setting it up.
-This special has setters in case you want to inject external dependencies. If none are set
-you get a simple Apie service.
+You should only follow these instructions in case you want to write it framework agnostic or when your framework has no binding to this library.
 
 Make sure you have [composer](https://getcomposer.org) installed and then in a terminal run:
 ```bash
 composer require w2w/apie 
 ```
 
-Make a PHP file like this to have a functional library instance.
+To ease setting up Apie the class ServiceLibraryFactory is created. This class creates a ApiResourceFacade and
+a OpenApiSpecGenerator instance with very little setup. In case you do want to add extra functionality, you need
+to call setters on ServiceLibraryFactory.
+
+Usage:
+```php
+<?php
+use W2w\Lib\Apie\ServiceLibraryFactory;
+$listOfResourceClasses = [ClassName::class, ClassName2::class];
+$debug = true;
+$cacheFolder = sys_get_temp_dir() . '/apie';
+
+$factory = new ServiceLibraryFactory($listOfResourceClasses, $debug, $cacheFolder);
+```
+The list of resource classes is a list of class names that will be used to map them to REST API calls.
+
+A more extensive example is written down here. It will store an OpenAPI spec by using the Example class
+as a resource and https://my-host-api.nl/ as base url of the API.
+
 ```php
 <?php
 require(__DIR__ . '/vendor/autoload.php');
@@ -59,9 +76,11 @@ $library->get(Example::class, 1, null);
 As long the ServiceLibraryFactory has not instantiated a service you can inject dependencies to integrate it with
 custom files. For example sometimes you want to use a service to persist your class with a database which requires a
 dependency to a database connection service for example. Because most frameworks use a service container for this,
-you can inject a service container. The service container injected is only used to get classes
-to retrieve or persist domain objects. You need to call different setters if different dependencies
-are required to be injected.
+you can inject a service container.
+
+The service container injected is only used to get classes
+to retrieve or persist domain objects. Overriding different parts (Annotation Reader, Serializer instance) is done
+with different setters in ServiceLibraryFactory.
 
 ```php
 <?php
@@ -94,14 +113,145 @@ $library = $factory->getApiResourceFacade();
 var_dump($library->get(App::class, 'name', null)->getResource());
 ```
 
-## PSR Controllers
-If your framework supports PSR7 request/responses, then the framework can use one of the predefined controllers
-in W2w\Lib\Apie\Controllers. Every controller has an __invoke() method.
+## How does the mapping work:
+Now that we know how the library can be instantiated we will look a bit closer how APIE maps a simple PHP object to
+a REST API.
+First of all we put a class annotation of type ApiResource on the class to configure the class for APIE.
+```php
+<?php
+use W2w\Lib\Apie\Annotations\ApiResource;
 
+/**
+* @ApiResource()
+ */
+class Example {
+}
+```
+The example above does not do anything. Apie does not know how to retrieve instances of Example and does not know how to persist them.
+It also has no fields.
+The only REST API call that would show up in an OpenAPI spec would be to retrieve all Example instances which will return
+an empty array. In the ApiResource we need to configure a class to persist or a class to retrieve. We also need to provide
+an identifier in our object.
+
+So let's add a retrieveClass option and an id property.
+```php
+<?php
+use Ramsey\Uuid\Uuid;
+use W2w\Lib\Apie\Annotations\ApiResource;
+use W2w\Lib\Apie\Retrievers\FileStorageRetriever;
+
+/**
+ * @ApiResource(retrieveClass=FileStorageRetriever::class)
+ */
+class Example {
+    /**
+     * @var Uuid
+     */
+    public $id;
+}
+```
+If we would check the OpenAPI spec we would get a get single resource and a get all resources route and the response
+will only contain an id. FileStorageRetriever requires a folder where to store a resource, so we require the step at [injecting dependencies](#injecting-dependencies)
+to set up a folder:
+```php
+<?php
+require(__DIR__ . '/vendor/autoload.php');
+
+use Psr\Container\ContainerInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use W2w\Lib\Apie\Retrievers\FileStorageRetriever;
+use W2w\Lib\Apie\ServiceLibraryFactory;
+$factory = new ServiceLibraryFactory([Example::class], true, sys_get_temp_dir());
+$factory->setContainer(new class implements ContainerInterface {
+    public function get($id)
+    {
+        if ($id === FileStorageRetriever::class) {
+            return new FileStorageRetriever(
+                sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'apie-resource',
+                PropertyAccess::createPropertyAccessor()
+            );
+        }
+        throw new RuntimeException('Service ' . $id . ' not found!');
+    }
+    
+    public function has($id)
+    {
+        return $id === FileStorageRetriever::class;       
+    }
+});
+```
+Right now we need to setup the class that will be used to persist this Example resource. This can be done by adding the
+property persistClass to the ApiResource annotation.
+ ```php
+ <?php
+ use Ramsey\Uuid\Uuid;
+ use W2w\Lib\Apie\Annotations\ApiResource;
+ use W2w\Lib\Apie\Retrievers\FileStorageRetriever;
+ 
+ /**
+  * @ApiResource(
+  *     retrieveClass=FileStorageRetriever::class,
+  *     persistClass=FileStorageRetriever::class
+  * )
+  */
+ class Example {
+     /**
+      * @var Uuid
+      */
+     public $id;
+ }
+ ```
+ The OpenAPI spec will add routes for DELETE, PUT and POST. There are still two problems. We want to make POST
+ indempotent and want to make the id required on POST (even though a lack of id will already fail because
+ FileStorageRetriever has trouble creating a filename). We also do not want DELETE and do not want to be able to change the
+ id on PUT. This is possible with little effort.
+ ```php
+ <?php
+  use Ramsey\Uuid\Uuid;
+  use W2w\Lib\Apie\Annotations\ApiResource;
+  use W2w\Lib\Apie\Retrievers\FileStorageRetriever;
+ /**
+   * @ApiResource(
+   *     retrieveClass=FileStorageRetriever::class,
+   *     persistClass=FileStorageRetriever::class,
+   *     disabledMethods={"delete"}
+   * )
+   */
+  class Example {
+      /**
+       * @var Uuid
+       */
+      private $id;
+
+      public function __construct(Uuid $id)
+      {
+          $this->id = $id;
+      }      
+      
+      public function getId(): Uuid
+      {
+          return $this->id;
+      }
+  }
+```
+With disabledMethods we disable the DELETE route.
+Id is now a required constructor argument and is required for POST to create an instance of Example. It will also throw a
+normalization error if id is not in a uuid format.
+Id can also not be changed when it is constructed, so PUT no longer allows us to change the id with PUT.
+This serialization is done with [the symfony serializer](https://symfony.com/doc/current/components/serializer.html) and
+additional information can be found here.
+
+## PSR Controllers and routing
+If your framework supports PSR7 request/responses, then the framework can use one of the predefined controllers
+in W2w\Lib\Apie\Controllers. Every controller has an __invoke() method. The library has no url match functionality,
+so you require to make your own route binding.
+ 
 It contains the following controllers:
-- **W2w\Lib\Apie\Controllers\DeleteController**: handles ```DELETE /resource/{id}``` requests to delete a singel resource
+- **W2w\Lib\Apie\Controllers\DeleteController**: handles ```DELETE /{resource class}/{id}``` requests to delete a single resource
 - **W2w\Lib\Apie\Controllers\DocsController**: returns the OpenAPI spec as a response.
-- **W2w\Lib\Apie\Controllers\GetAllController**: handles ```GET /resource/``` requests to get all resources
-- **W2w\Lib\Apie\Controllers\GetController**: handles ```GET /resource/{id}``` requests to get a single resource
-- **W2w\Lib\Apie\Controllers\PostController**: handles ```POST /resource/``` requests to create a new resource
-- **W2w\Lib\Apie\Controllers\PutController**: handles ```PUT /resource/{id}``` requests to modify an existing resource
+- **W2w\Lib\Apie\Controllers\GetAllController**: handles ```GET /{resource class}/``` requests to get all resources
+- **W2w\Lib\Apie\Controllers\GetController**: handles ```GET /{resource class}/{id}``` requests to get a single resource
+- **W2w\Lib\Apie\Controllers\PostController**: handles ```POST /{resource class}/``` requests to create a new resource
+- **W2w\Lib\Apie\Controllers\PutController**: handles ```PUT /{resource class}/{id}``` requests to modify an existing resource
+
+With a library like [nikic/fast-route](https://github.com/nikic/FastRoute) it is very easy to make a framework agnostic REST API.
