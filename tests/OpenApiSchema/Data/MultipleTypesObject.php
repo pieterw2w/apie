@@ -4,6 +4,7 @@ namespace W2w\Test\Apie\OpenApiSchema\Data;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use W2w\Test\Apie\Mocks\Data\SimplePopo;
+use W2w\Test\Apie\OpenApiSchema\ValueObject;
 
 class MultipleTypesObject
 {
@@ -41,6 +42,11 @@ class MultipleTypesObject
      * @var SimplePopo[]
      */
     public $objectArray;
+
+    /**
+     * @var ValueObject
+     */
+    public $valueObject;
 
     /**
      * @SerializedName("name")

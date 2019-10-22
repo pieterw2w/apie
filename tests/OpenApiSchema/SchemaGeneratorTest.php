@@ -243,6 +243,7 @@ class SchemaGeneratorTest extends TestCase
                         ])
                     ]),
                     'name' => new Schema(['type' => 'string']),
+                    'value_object' => new Schema(['type' => 'string', 'format' => 'value_object']),
                 ]
             ]
         );

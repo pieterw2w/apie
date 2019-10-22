@@ -11,6 +11,7 @@ use Symfony\Component\Serializer\Mapping\AttributeMetadataInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use W2w\Lib\Apie\ClassResourceConverter;
+use W2w\Lib\Apie\ValueObjects\ValueObjectInterface;
 
 /**
  * Class that uses symfony/property-info and reflection to create a Schema instance of a class.
@@ -104,7 +105,16 @@ class SchemaGenerator
             }
         }
 
+        if (is_a($resourceClass, ValueObjectInterface::class, true)) {
+            return $this->alreadyDefined[$cacheKey] = $resourceClass::toSchema();
+        }
+
         if (is_a($resourceClass, AbstractStringValueObject::class, true)) {
+            @trigger_error(
+                sprintf('The use of bruli/php-value-objects is deprecated, use %s instead', ValueObjectInterface::class),
+                E_USER_DEPRECATED
+            );
+
             return $this->alreadyDefined[$cacheKey] = new Schema([
                 'type'   => 'string',
                 'format' => strtolower((new ReflectionClass($resourceClass))->getShortName()),
