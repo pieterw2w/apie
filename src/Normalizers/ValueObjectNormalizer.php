@@ -5,30 +5,23 @@ namespace W2w\Lib\Apie\Normalizers;
 use PhpValueObjects\AbstractStringValueObject;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use W2w\Lib\Apie\ValueObjects\ValueObjectInterface;
 
 /**
- * Normalizer that normalizes value objects created with library bruli/php-value-objects
+ * Normalizer that normalizes value objects implementing ValueObjectInterface
  */
-class StringValueObjectNormalizer implements NormalizerInterface, DenormalizerInterface
+class ValueObjectNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    private function deprecationWarning()
-    {
-        @trigger_error(
-            sprintf('The use of %s is deprecated, use %s instead', __CLASS__, ValueObjectNormalizer::class),
-            E_USER_DEPRECATED
-        );
-    }
     /**
      * @param mixed $data
      * @param string $class
      * @param string|null $format
      * @param array $context
-     * @return AbstractStringValueObject
+     * @return ValueObjectInterface
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        $this->deprecationWarning();
-        return new $class($data);
+        return $class::fromNative($data);
     }
 
     /**
@@ -39,19 +32,18 @@ class StringValueObjectNormalizer implements NormalizerInterface, DenormalizerIn
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return is_a($type, AbstractStringValueObject::class, true);
+        return is_a($type, ValueObjectInterface::class, true);
     }
 
     /**
      * @param AbstractStringValueObject $object
      * @param string|null $format
      * @param array $context
-     * @return string
+     * @return mixed
      */
     public function normalize($object, $format = null, array $context = [])
     {
-        $this->deprecationWarning();
-        return (string) $object;
+        return $object->toNative();
     }
 
     /**
@@ -61,6 +53,6 @@ class StringValueObjectNormalizer implements NormalizerInterface, DenormalizerIn
      */
     public function supportsNormalization($data, $format = null)
     {
-        return $data instanceof AbstractStringValueObject;
+        return $data instanceof ValueObjectInterface;
     }
 }

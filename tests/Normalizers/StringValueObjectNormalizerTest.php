@@ -3,7 +3,6 @@
 
 namespace W2w\Test\Apie\Normalizers;
 
-use PhpValueObjects\AbstractStringValueObject;
 use PhpValueObjects\Tests\Geography\LocaleValueObject;
 use PHPUnit\Framework\TestCase;
 use W2w\Lib\Apie\Normalizers\StringValueObjectNormalizer;
