@@ -28,11 +28,11 @@ class GetAllController
 
     /**
      * @param ServerRequestInterface $psrRequest
-     * @param string $resource
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $psrRequest, string $resource): ResponseInterface
+    public function __invoke(ServerRequestInterface $psrRequest): ResponseInterface
     {
+        $resource = $psrRequest->getAttribute('resource') ?? '';
         $resourceClass = $this->converter->denormalize($resource);
         $params = $psrRequest->getQueryParams();
         $pageIndex = (int) ($params['page'] ?? 0);

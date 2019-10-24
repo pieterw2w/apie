@@ -36,11 +36,11 @@ class PostController
 
     /**
      * @param ServerRequestInterface $request
-     * @param string $resource
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, string $resource): ResponseInterface
+    public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
+        $resource = $request->getAttribute('resource') ?? '';
         $resourceClass = $this->converter->denormalize($resource);
 
         return $this->apiResourceFacade->post($resourceClass, $request)->getResponse();

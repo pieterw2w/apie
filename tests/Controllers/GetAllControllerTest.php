@@ -17,7 +17,8 @@ class GetAllControllerTest extends TestCase
     public function testInvoke()
     {
         $psrRequest = (new ServerRequest())
-            ->withQueryParams(['page' => 1, 'limit' => 10]);
+            ->withQueryParams(['page' => 1, 'limit' => 10])
+            ->withAttribute('resource', 'my-resource');
 
         $response = new TextResponse('[]', 200);
 
@@ -36,7 +37,7 @@ class GetAllControllerTest extends TestCase
             ->shouldBeCalled()
             ->willReturn(__CLASS__);
         $testItem = new GetAllController($apiResourceFacade->reveal(), $classResourceConverter->reveal());
-        $actual = $testItem($psrRequest, 'my-resource');
+        $actual = $testItem($psrRequest);
         $this->assertEquals($response, $actual);
     }
 
@@ -46,7 +47,8 @@ class GetAllControllerTest extends TestCase
     public function testInvoke_invalid_query_params(string $expectedExceptionClass, array $queryParams)
     {
         $psrRequest = (new ServerRequest())
-            ->withQueryParams($queryParams);
+            ->withQueryParams($queryParams)
+            ->withAttribute('resource', 'my-resource');;
 
         $apiResourceFacade = $this->prophesize(ApiResourceFacade::class);
         $apiResourceFacade->getAll(Argument::cetera())
@@ -58,7 +60,7 @@ class GetAllControllerTest extends TestCase
                                ->willReturn(__CLASS__);
         $testItem = new GetAllController($apiResourceFacade->reveal(), $classResourceConverter->reveal());
         $this->expectException($expectedExceptionClass);
-        $testItem($psrRequest, 'my-resource');
+        $testItem($psrRequest);
     }
 
     public function invalidQueryParamsProvider()

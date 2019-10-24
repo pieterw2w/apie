@@ -36,12 +36,12 @@ class GetController
 
     /**
      * @param ServerRequestInterface $request
-     * @param string $resource
-     * @param string $id
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, string $resource, string $id): ResponseInterface
+    public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
+        $resource = $request->getAttribute('resource') ?? '';
+        $id = $request->getAttribute('id') ?? '';
         $resourceClass = $this->converter->denormalize($resource);
 
         return $this->apiResourceFacade->get($resourceClass, $id, $request)->getResponse();

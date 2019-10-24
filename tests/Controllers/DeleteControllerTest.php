@@ -9,6 +9,7 @@ use W2w\Lib\Apie\ClassResourceConverter;
 use W2w\Lib\Apie\Controllers\DeleteController;
 use W2w\Lib\Apie\Models\ApiResourceFacadeResponse;
 use Zend\Diactoros\Response\TextResponse;
+use Zend\Diactoros\ServerRequest;
 
 class DeleteControllerTest extends TestCase
 {
@@ -31,7 +32,12 @@ class DeleteControllerTest extends TestCase
             ->shouldBeCalled()
             ->willReturn(__CLASS__);
         $testItem = new DeleteController($apiResourceFacade->reveal(), $classResourceConverter->reveal());
-        $actual = $testItem('my-resource', 42);
+
+        $psrRequest = (new ServerRequest())
+            ->withAttribute('resource', 'my-resource')
+            ->withAttribute('id', 42);
+
+        $actual = $testItem($psrRequest);
         $this->assertEquals($response, $actual);
     }
 }

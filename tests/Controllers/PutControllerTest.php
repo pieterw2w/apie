@@ -14,7 +14,9 @@ class PutControllerTest extends TestCase
 {
     public function testInvoke()
     {
-        $request = new ServerRequest();
+        $request = (new ServerRequest())
+            ->withAttribute('resource', 'my-resource')
+            ->withAttribute('id', 42);
         $response = new TextResponse('{"id":42}', 200);
 
         $facadeResponse = $this->prophesize(ApiResourceFacadeResponse::class);
@@ -32,7 +34,7 @@ class PutControllerTest extends TestCase
             ->shouldBeCalled()
             ->willReturn(__CLASS__);
         $testItem = new PutController($classResourceConverter->reveal(), $apiResourceFacade->reveal());
-        $actual = $testItem($request, 'my-resource', 42);
+        $actual = $testItem($request);
         $this->assertEquals($response, $actual);
     }
 }

@@ -13,7 +13,8 @@ class PostControllerTest extends TestCase
 {
     public function testInvoke()
     {
-        $request = new ServerRequest();
+        $request = (new ServerRequest())
+            ->withAttribute('resource', 'my-resource');
         $response = new TextResponse('{"id":42}', 200);
 
         $facadeResponse = $this->prophesize(ApiResourceFacadeResponse::class);
@@ -31,7 +32,7 @@ class PostControllerTest extends TestCase
             ->shouldBeCalled()
             ->willReturn(__CLASS__);
         $testItem = new PostController($apiResourceFacade->reveal(), $classResourceConverter->reveal());
-        $actual = $testItem($request, 'my-resource');
+        $actual = $testItem($request);
         $this->assertEquals($response, $actual);
     }
 }

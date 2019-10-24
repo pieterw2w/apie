@@ -2,9 +2,10 @@
 
 namespace W2w\Lib\Apie\Controllers;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use W2w\Lib\Apie\ApiResourceFacade;
 use W2w\Lib\Apie\ClassResourceConverter;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * Controller that handles the DELETE method.
@@ -30,12 +31,13 @@ class DeleteController
     }
 
     /**
-     * @param string $resource
-     * @param string $id
+     * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function __invoke(string $resource, string $id): ResponseInterface
+    public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
+        $id = $request->getAttribute('id') ?? '';
+        $resource = $request->getAttribute('resource') ?? '';
         $resourceClass = $this->converter->denormalize($resource);
 
         return $this->apiResourceFacade->delete($resourceClass, $id)->getResponse();
