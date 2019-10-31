@@ -6,6 +6,3 @@ php:
   - "nightly"
 install:
   - "composer install --ignore-platform-reqs"
-jobs: 
-  allow_failures:
-    - php: nightly
