@@ -281,23 +281,8 @@
                                                 "nullable": false
                                             },
                                             "created_at": {
-                                                "title": "date_time",
-                                                "description": "date_time get for groups get, read",
-                                                "type": "object",
-                                                "properties": {
-                                                    "timezone": {
-                                                        "type": "string",
-                                                        "nullable": true
-                                                    },
-                                                    "offset": {
-                                                        "type": "string",
-                                                        "nullable": true
-                                                    },
-                                                    "timestamp": {
-                                                        "type": "string",
-                                                        "nullable": true
-                                                    }
-                                                }
+                                                "type": "string",
+                                                "format": "date-time"
                                             },
                                             "arbitrary_field": {
                                                 "type": "string",
@@ -323,23 +308,8 @@
                                                 "nullable": false
                                             },
                                             "created_at": {
-                                                "title": "date_time",
-                                                "description": "date_time get for groups get, read",
-                                                "type": "object",
-                                                "properties": {
-                                                    "timezone": {
-                                                        "type": "string",
-                                                        "nullable": true
-                                                    },
-                                                    "offset": {
-                                                        "type": "string",
-                                                        "nullable": true
-                                                    },
-                                                    "timestamp": {
-                                                        "type": "string",
-                                                        "nullable": true
-                                                    }
-                                                }
+                                                "type": "string",
+                                                "format": "date-time"
                                             },
                                             "arbitrary_field": {
                                                 "type": "string",
@@ -421,23 +391,8 @@
                                             "nullable": false
                                         },
                                         "created_at": {
-                                            "title": "date_time",
-                                            "description": "date_time get for groups get, read",
-                                            "type": "object",
-                                            "properties": {
-                                                "timezone": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "offset": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "timestamp": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                }
-                                            }
+                                            "type": "string",
+                                            "format": "date-time"
                                         },
                                         "arbitrary_field": {
                                             "type": "string",
@@ -460,23 +415,8 @@
                                             "nullable": false
                                         },
                                         "created_at": {
-                                            "title": "date_time",
-                                            "description": "date_time get for groups get, read",
-                                            "type": "object",
-                                            "properties": {
-                                                "timezone": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "offset": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "timestamp": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                }
-                                            }
+                                            "type": "string",
+                                            "format": "date-time"
                                         },
                                         "arbitrary_field": {
                                             "type": "string",

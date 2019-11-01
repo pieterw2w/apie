@@ -1,6 +1,7 @@
 <?php
 namespace W2w\Test\Apie;
 
+use DateTimeInterface;
 use erasys\OpenApi\Spec\v3\Info;
 use erasys\OpenApi\Spec\v3\Schema;
 use GuzzleHttp\Psr7\Request;
@@ -118,6 +119,7 @@ class FeatureTest extends TestCase
             }
         };
         $testItem->setContainer($container);
+        $testItem->getSchemaGenerator()->defineSchemaForResource(DateTimeInterface::class, new Schema(['type' => 'string', 'format' => 'date-time']));
         $testItem->getSchemaGenerator()->defineSchemaForResource(Uuid::class, new Schema(['format' => 'uuid', 'type' => 'string']));
         $testItem->setInfo(new Info('Unit test title', '1.0'));
         //file_put_contents(__DIR__ . '/expected-specs.json', json_encode($testItem->getOpenApiSpecGenerator('/test-url')->getOpenApiSpec()->toArray(), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
