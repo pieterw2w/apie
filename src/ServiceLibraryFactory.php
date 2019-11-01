@@ -521,7 +521,7 @@ class ServiceLibraryFactory
             $this->normalizers[] = new UuidDenormalizer();
 
             if (class_exists(AbstractStringValueObject::class)) {
-                $this->normalizers[] = StringValueObjectNormalizer::class;
+                $this->normalizers[] = new StringValueObjectNormalizer();
             }
 
             $this->normalizers[] = new JsonSerializableNormalizer();
