@@ -28,9 +28,6 @@
         "symfony/finder": "^4.3",
         "phpdocumentor/reflection-docblock": "^4.3"
     },
-    "suggest": {
-        "bruli/php-value-objects": "For serializing/deserializing value objects"
-    },
     "autoload": {
         "psr-4": {
             "W2w\\Lib\\Apie\\": "src/"
@@ -43,6 +40,7 @@
     },
     "require-dev": {
         "bruli/php-value-objects": "^1.0",
+        "nesbot/carbon": "*",
         "phpunit/phpunit": "^7.0.0|^8.0.0",
         "guzzlehttp/guzzle": "^6.3",
         "haydenpierce/class-finder": "^0.4.0",

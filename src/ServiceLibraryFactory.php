@@ -1,6 +1,7 @@
 <?php
 namespace W2w\Lib\Apie;
 
+use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
@@ -43,6 +44,7 @@ use W2w\Lib\Apie\ApiResources\App;
 use W2w\Lib\Apie\ApiResources\Status;
 use W2w\Lib\Apie\Encodings\FormatRetriever;
 use W2w\Lib\Apie\Normalizers\ApieObjectNormalizer;
+use W2w\Lib\Apie\Normalizers\CarbonNormalizer;
 use W2w\Lib\Apie\Normalizers\ContextualNormalizer;
 use W2w\Lib\Apie\Normalizers\EvilReflectionPropertyNormalizer;
 use W2w\Lib\Apie\Normalizers\ExceptionNormalizer;
@@ -515,7 +517,12 @@ class ServiceLibraryFactory
 
             $this->normalizers = $this->getAdditionalNormalizers();
             $this->normalizers[] = new ExceptionNormalizer($this->isDebug());
-            $this->normalizers[] = new DateTimeNormalizer([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s']);
+
+            if (class_exists(Carbon::class)) {
+                $this->normalizers[] = new CarbonNormalizer([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s']);
+            } else {
+                $this->normalizers[] = new DateTimeNormalizer([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s']);
+            }
 
             $this->normalizers[] = new UuidNormalizer();
             $this->normalizers[] = new UuidDenormalizer();
