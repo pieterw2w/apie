@@ -49,6 +49,7 @@ use W2w\Lib\Apie\Normalizers\ContextualNormalizer;
 use W2w\Lib\Apie\Normalizers\EvilReflectionPropertyNormalizer;
 use W2w\Lib\Apie\Normalizers\ExceptionNormalizer;
 use W2w\Lib\Apie\Normalizers\StringValueObjectNormalizer;
+use W2w\Lib\Apie\Normalizers\ValueObjectNormalizer;
 use W2w\Lib\Apie\OpenApiSchema\OpenApiSpecGenerator;
 use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
 use W2w\Lib\Apie\Resources\ApiResources;
@@ -523,7 +524,7 @@ class ServiceLibraryFactory
             } else {
                 $this->normalizers[] = new DateTimeNormalizer([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s']);
             }
-
+            $this->normalizers[] = new ValueObjectNormalizer();
             $this->normalizers[] = new UuidNormalizer();
             $this->normalizers[] = new UuidDenormalizer();
 
