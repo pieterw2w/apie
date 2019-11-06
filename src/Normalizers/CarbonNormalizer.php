@@ -32,10 +32,17 @@ class CarbonNormalizer extends DateTimeNormalizer
             case Carbon::class:
             case DateTime::class:
                 return Carbon::make($result);
+            case DateTimeInterface::class:
+                if (class_exists(CarbonImmutable::class)) {
+                    return CarbonImmutable::make($result);
+                }
+                return Carbon::make($result);
             case CarbonImmutable::class:
             case DateTimeImmutable::class:
-            case DateTimeInterface::class:
+            if (class_exists(CarbonImmutable::class)) {
                 return CarbonImmutable::make($result);
+            }
+            return $result;
         }
         return $result;
     }
