@@ -2,7 +2,6 @@
 
 namespace W2w\Lib\Apie\Normalizers;
 
-use PhpValueObjects\AbstractStringValueObject;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use W2w\Lib\Apie\ValueObjects\ValueObjectInterface;
@@ -36,7 +35,7 @@ class ValueObjectNormalizer implements NormalizerInterface, DenormalizerInterfac
     }
 
     /**
-     * @param AbstractStringValueObject $object
+     * @param ValueObjectInterface $object
      * @param string|null $format
      * @param array $context
      * @return mixed
@@ -48,7 +47,7 @@ class ValueObjectNormalizer implements NormalizerInterface, DenormalizerInterfac
 
     /**
      * @param mixed $data
-     * @param null $format
+     * @param string|null $format
      * @return bool
      */
     public function supportsNormalization($data, $format = null)

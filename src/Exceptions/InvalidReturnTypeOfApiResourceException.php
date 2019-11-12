@@ -12,14 +12,14 @@ use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
 class InvalidReturnTypeOfApiResourceException extends ApieException
 {
     /**
-     * @param ApiResourceRetrieverInterface|ApiResourcePersisterInterface $retrieverOrPersister
+     * @param ApiResourceRetrieverInterface|ApiResourcePersisterInterface|null $retrieverOrPersister
      * @param string $identifier
      * @param string $expectedResource
      */
     public function __construct($retrieverOrPersister, string $identifier, string $expectedResource)
     {
         $message = 'I expect the class '
-            . get_class($retrieverOrPersister)
+            . (is_null($retrieverOrPersister) ? '(null)' : get_class($retrieverOrPersister))
             . ' to return an instance of '
             . $expectedResource
             . ' but got '

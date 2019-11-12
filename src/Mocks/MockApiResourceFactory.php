@@ -2,7 +2,6 @@
 
 namespace W2w\Lib\Apie\Mocks;
 
-use W2w\Lib\Apie\ApiResourceFactory;
 use W2w\Lib\Apie\ApiResourceFactoryInterface;
 use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
@@ -21,7 +20,7 @@ class MockApiResourceFactory implements ApiResourceFactoryInterface
     private $retriever;
 
     /**
-     * @var ApiResourceFactory
+     * @var ApiResourceFactoryInterface
      */
     private $factory;
 

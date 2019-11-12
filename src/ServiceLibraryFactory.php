@@ -2,7 +2,6 @@
 namespace W2w\Lib\Apie;
 
 use Carbon\Carbon;
-use Carbon\CarbonInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\CachedReader;
@@ -137,17 +136,17 @@ class ServiceLibraryFactory
     private $cacheFolder;
 
     /**
-     * @var (NormalizerInterface|DenormalizerInterface)[]
+     * @var (NormalizerInterface|DenormalizerInterface)[]|null
      */
     private $normalizers;
 
     /**
-     * @var (NormalizerInterface|DenormalizerInterface)[]
+     * @var (NormalizerInterface|DenormalizerInterface)[]|null
      */
     private $additionalNormalizers;
 
     /**
-     * @var EncoderInterface[]
+     * @var EncoderInterface[]|null
      */
     private $encoders;
 
@@ -369,7 +368,7 @@ class ServiceLibraryFactory
     private function getAnnotationReader(): Reader
     {
         if (!$this->annotationReader) {
-            AnnotationRegistry::registerLoader('class_exists');
+            /** @scrutinizer ignore-deprecated */AnnotationRegistry::registerLoader('class_exists');
             if (class_exists(PhpFileCache::class) && $this->getCacheFolder()) {
                 $this->annotationReader = new CachedReader(
                     new AnnotationReader(),

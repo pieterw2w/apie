@@ -7,6 +7,9 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use W2w\Lib\Apie\Exceptions\CanNotDetermineIdException;
+use W2w\Lib\Apie\Exceptions\CouldNotMakeDirectoryException;
+use W2w\Lib\Apie\Exceptions\CouldNotRemoveFileException;
+use W2w\Lib\Apie\Exceptions\CouldNotWriteFileException;
 use W2w\Lib\Apie\Exceptions\InvalidIdException;
 use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
@@ -75,7 +78,9 @@ class FileStorageRetriever implements ApiResourcePersisterInterface, ApiResource
     public function remove(string $resourceClass, $id, array $context)
     {
         $file = $this->getFilename($resourceClass, $id);
-        @unlink($file);
+        if (!@unlink($file)) {
+            throw new CouldNotRemoveFileException($file);
+        }
     }
 
     /**
@@ -125,7 +130,9 @@ class FileStorageRetriever implements ApiResourcePersisterInterface, ApiResource
         $refl = new ReflectionClass($resourceClass);
         $folder = $this->folder . DIRECTORY_SEPARATOR . $refl->getShortName();
         if (!is_dir($folder)) {
-            @mkdir($folder, 0777, true);
+            if (!@mkdir($folder, 0777, true)) {
+                throw new CouldNotMakeDirectoryException($folder);
+            };
         }
         return $folder;
     }
@@ -143,6 +150,8 @@ class FileStorageRetriever implements ApiResourcePersisterInterface, ApiResource
 
     private function store($resource, string $id) {
         $filename = $this->getFilename(get_class($resource), $id);
-        file_put_contents($filename, serialize($resource));
+        if (false === file_put_contents($filename, serialize($resource))) {
+            throw new CouldNotWriteFileException($filename);
+        };
     }
 }

@@ -5,6 +5,7 @@ namespace W2w\Lib\Apie\Normalizers;
 
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -21,6 +22,9 @@ class CarbonNormalizer extends DateTimeNormalizer
     public function denormalize($data, $type, $format = null, array $context = [])
     {
         $internalType = $type;
+        if ($type === CarbonInterface::class) {
+            $internalType = DateTimeInterface::class;
+        }
         if ($type === Carbon::class) {
             $internalType = DateTime::class;
         }
@@ -33,16 +37,17 @@ class CarbonNormalizer extends DateTimeNormalizer
             case DateTime::class:
                 return Carbon::make($result);
             case DateTimeInterface::class:
+            case CarbonInterface::class:
                 if (class_exists(CarbonImmutable::class)) {
                     return CarbonImmutable::make($result);
                 }
                 return Carbon::make($result);
             case CarbonImmutable::class:
             case DateTimeImmutable::class:
-            if (class_exists(CarbonImmutable::class)) {
-                return CarbonImmutable::make($result);
-            }
-            return $result;
+                if (class_exists(CarbonImmutable::class)) {
+                    return CarbonImmutable::make($result);
+                }
+                return $result;
         }
         return $result;
     }

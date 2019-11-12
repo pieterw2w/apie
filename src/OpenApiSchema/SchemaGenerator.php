@@ -204,8 +204,9 @@ class SchemaGenerator
         if ($propertySchema->type === 'number') {
             $propertySchema->format = $type->getBuiltinType();
         }
-        if ('object' === $type->getBuiltinType() && $recursion < 2) {
-            return $this->createSchemaRecursive($type->getClassName(), $operation, $groups, $recursion + 1);
+        $className = $type->getClassName();
+        if ('object' === $type->getBuiltinType() && $recursion < 2 && !is_null($className)) {
+            return $this->createSchemaRecursive($className, $operation, $groups, $recursion + 1);
         }
         return $propertySchema;
     }
@@ -229,7 +230,7 @@ class SchemaGenerator
                 return $this->propertyInfoExtractor->isReadable($resourceClass, $attributeMetadata->getName())
                     && $this->propertyInfoExtractor->isWritable($resourceClass, $attributeMetadata->getName());
             case 'get':
-                return $this->propertyInfoExtractor->isReadable($resourceClass, $attributeMetadata->getName());
+                return (bool) $this->propertyInfoExtractor->isReadable($resourceClass, $attributeMetadata->getName());
             case 'post':
                 return $this->propertyInfoExtractor->isWritable($resourceClass, $attributeMetadata->getName())
                     || $this->propertyInfoExtractor->isInitializable($resourceClass, $attributeMetadata->getName());

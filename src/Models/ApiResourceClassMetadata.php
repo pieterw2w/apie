@@ -3,6 +3,7 @@
 namespace W2w\Lib\Apie\Models;
 
 use W2w\Lib\Apie\Annotations\ApiResource;
+use W2w\Lib\Apie\Exceptions\InvalidReturnTypeOfApiResourceException;
 use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
 
@@ -70,6 +71,13 @@ class ApiResourceClassMetadata
      */
     public function getResourceRetriever(): ApiResourceRetrieverInterface
     {
+        if (empty($this->resourceRetriever)) {
+            throw new InvalidReturnTypeOfApiResourceException(
+                null,
+                '(null)',
+                ApiResourceRetrieverInterface::class
+            );
+        }
         return $this->resourceRetriever;
     }
 
@@ -90,6 +98,13 @@ class ApiResourceClassMetadata
      */
     public function getResourcePersister(): ApiResourcePersisterInterface
     {
+        if (empty($this->resourcePersister)) {
+            throw new InvalidReturnTypeOfApiResourceException(
+                null,
+                '(null)',
+                ApiResourcePersisterInterface::class
+            );
+        }
         return $this->resourcePersister;
     }
 

@@ -27,12 +27,12 @@ class ContextualNormalizer implements NormalizerInterface, DenormalizerInterface
     private static $globalDisabledDenormalizers = [];
 
     /**
-     * @var (NormalizerInterface|DenormalizerInterface)[]
+     * @var iterable<NormalizerInterface|DenormalizerInterface>
      */
     private $normalizers;
 
     /**
-     * @param iterable $normalizers
+     * @param iterable<NormalizerInterface|DenormalizerInterface> $normalizers
      */
     public function __construct(iterable $normalizers)
     {
@@ -49,7 +49,7 @@ class ContextualNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         foreach ($this->normalizers as $normalizer) {
             if ($normalizer instanceof NormalizerInterface
-                && $this->isNormalizerEnabled($normalizer, $context)
+                && $this->isNormalizerEnabled($normalizer)
                 && $normalizer->supportsNormalization($object, $format)) {
                 return $normalizer->normalize($object, $format, $context);
             }
@@ -66,7 +66,7 @@ class ContextualNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         foreach ($this->normalizers as $normalizer) {
             if ($normalizer instanceof NormalizerInterface
-                && $this->isNormalizerEnabled($normalizer, [])
+                && $this->isNormalizerEnabled($normalizer)
                 && $normalizer->supportsNormalization($data, $format)) {
                 return true;
             }
@@ -86,7 +86,7 @@ class ContextualNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         foreach ($this->normalizers as $denormalizer) {
             if ($denormalizer instanceof DenormalizerInterface
-                && $this->isDenormalizerEnabled($denormalizer, $context)
+                && $this->isDenormalizerEnabled($denormalizer)
                 && $denormalizer->supportsDenormalization($data, $class, $format)) {
                 return $denormalizer->denormalize($data, $class, $format, $context);
             }
@@ -106,7 +106,7 @@ class ContextualNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         foreach ($this->normalizers as $denormalizer) {
             if ($denormalizer instanceof DenormalizerInterface
-                && $this->isDenormalizerEnabled($denormalizer, [])
+                && $this->isDenormalizerEnabled($denormalizer)
                 && $denormalizer->supportsDenormalization($data, $type, $format)) {
                 return true;
             }

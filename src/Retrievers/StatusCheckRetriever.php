@@ -83,7 +83,7 @@ class StatusCheckRetriever implements ApiResourceRetrieverInterface
      * @param array $context
      * @param int $pageIndex
      * @param int $numberOfItems
-     * @return Status[]
+     * @return iterable<Status>
      */
     public function retrieveAll(string $resourceClass, array $context, int $pageIndex, int $numberOfItems): iterable
     {

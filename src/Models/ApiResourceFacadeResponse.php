@@ -56,7 +56,7 @@ class ApiResourceFacadeResponse
      */
     public function getResponse(): ResponseInterface
     {
-        $format = $this->formatRetriever->getFormat($this->acceptHeader);
+        $format = $this->formatRetriever->getFormat($this->acceptHeader ?? 'application/json');
         $contentType = $this->formatRetriever->getContentType($format);
         $response = $this->serializer->serialize($this->resource, $format, $this->serializerContext);
 

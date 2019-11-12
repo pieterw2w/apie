@@ -56,7 +56,7 @@ class StringValueObjectNormalizer implements NormalizerInterface, DenormalizerIn
 
     /**
      * @param mixed $data
-     * @param null $format
+     * @param string|null $format
      * @return bool
      */
     public function supportsNormalization($data, $format = null)
