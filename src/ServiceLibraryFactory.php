@@ -33,6 +33,7 @@ use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Serializer\Mapping\Loader\LoaderChain;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
+use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -442,8 +443,12 @@ class ServiceLibraryFactory
 
     private function getPropertyConverter(): NameConverterInterface
     {
+        $classMetadataFactory = $this->getClassMetadataFactory();
         if (!$this->propertyConverter) {
-            $this->propertyConverter = new CamelCaseToSnakeCaseNameConverter();
+            $this->propertyConverter = new MetadataAwareNameConverter(
+                $classMetadataFactory,
+                new CamelCaseToSnakeCaseNameConverter()
+            );
         }
         return $this->propertyConverter;
     }

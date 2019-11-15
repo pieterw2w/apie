@@ -3,9 +3,14 @@ namespace W2w\Test\Apie\OpenApiSchema\Data;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use W2w\Lib\Apie\Annotations\ApiResource;
+use W2w\Lib\Apie\Persisters\NullPersister;
 use W2w\Test\Apie\Mocks\Data\SimplePopo;
 use W2w\Test\Apie\OpenApiSchema\ValueObject;
 
+/**
+ * @ApiResource(persistClass=NullPersister::class)
+ */
 class MultipleTypesObject
 {
     /**

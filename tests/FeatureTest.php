@@ -15,6 +15,7 @@ use W2w\Lib\Apie\ServiceLibraryFactory;
 use W2w\Test\Apie\Mocks\Data\FullRestObject;
 use W2w\Test\Apie\Mocks\Data\SimplePopo;
 use W2w\Test\Apie\Mocks\Data\SumExample;
+use W2w\Test\Apie\OpenApiSchema\Data\MultipleTypesObject;
 
 class FeatureTest extends TestCase
 {
@@ -85,6 +86,33 @@ class FeatureTest extends TestCase
         $this->assertEquals(
             [],
             $testItem->getApiResourceFacade()->getAll(FullRestObject::class, 0, 10, $request)->getResource()
+        );
+    }
+
+    public function test_serialized_name_works_as_intended()
+    {
+        $testItem = new ServiceLibraryFactory([MultipleTypesObject::class], true, null);
+        $request = new Request('POST', '/sum_example/', [], '{"name":"test"}');
+        $actual = $testItem->getApiResourceFacade()->post(MultipleTypesObject::class, $request);
+        $expected = new MultipleTypesObject();
+        $expected->myMetadataIsADifferentName = "test";
+        $this->assertEquals(
+            $expected,
+            $actual->getResource()
+        );
+        $this->assertEquals(
+            json_encode([
+                "floating_point" => null,
+                "double" => null,
+                "integer" => null,
+                "boolean" => null,
+                "array" => null,
+                "string_array" => null,
+                "object_array" => null,
+                "value_object" => null,
+                "name" => "test"
+            ]),
+            (string) $actual->getResponse()->getBody()
         );
     }
 

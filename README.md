@@ -2,6 +2,7 @@
 [![CircleCI](https://circleci.com/gh/pjordaan/apie.svg?style=svg)](https://circleci.com/gh/pjordaan/apie)
 [![codecov](https://codecov.io/gh/pjordaan/apie/branch/master/graph/badge.svg)](https://codecov.io/gh/pjordaan/apie/)
 [![Travis](https://api.travis-ci.org/pjordaan/apie.svg?branch=master)](https://travis-ci.org/pjordaan/apie)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pjordaan/apie/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/pjordaan/apie/?branch=master)
 
 library to convert simple POPO's (Plain Old PHP Objects) to a REST API with OpenAPI spec. It's still a work in progress,
 but there are tons of unit tests and a bridge to integrate the library in [Laravel](https://github.com/pjordaan/laravel-apie).
