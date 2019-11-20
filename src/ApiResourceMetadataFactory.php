@@ -39,7 +39,7 @@ class ApiResourceMetadataFactory
         if (!$annotation) {
             throw new ApiResourceAnnotationNotFoundException($classNameOrInstance);
         }
-        /** @var $annotation ApiResource */
+        /** @var ApiResource $annotation */
         $retriever = null;
         $persister = null;
         if ($annotation->retrieveClass) {

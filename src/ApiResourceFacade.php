@@ -2,9 +2,12 @@
 namespace W2w\Lib\Apie;
 
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use W2w\Lib\Apie\Encodings\FormatRetriever;
 use W2w\Lib\Apie\Models\ApiResourceFacadeResponse;
+use W2w\Lib\Apie\SearchFilters\SearchFilter;
+use W2w\Lib\Apie\SearchFilters\SearchFilterRequest;
 
 class ApiResourceFacade
 {
@@ -86,14 +89,16 @@ class ApiResourceFacade
      * Does a GET all call.
      *
      * @param string $resourceClass
-     * @param int $pageIndex
-     * @param int $numberOfItems
-     * @param RequestInterface|null $request
+     * @param ServerRequestInterface|null $request
      * @return ApiResourceFacadeResponse
      */
-    public function getAll(string $resourceClass, int $pageIndex, int $numberOfItems, ?RequestInterface $request): ApiResourceFacadeResponse
+    public function getAll(string $resourceClass, ?ServerRequestInterface $request): ApiResourceFacadeResponse
     {
-        $resource = $this->retriever->retrieveAll($resourceClass, $pageIndex, $numberOfItems);
+        $searchFilterRequest = new SearchFilterRequest();
+        if ($request) {
+            $searchFilterRequest = SearchFilterRequest::createFromPsrRequest($request);
+        }
+        $resource = $this->retriever->retrieveAll($resourceClass, $searchFilterRequest);
 
         return $this->createResponse($resource, $request);
     }
@@ -151,7 +156,7 @@ class ApiResourceFacade
     /**
      * Creates a ApiResourceFacadeResponse instance.
      *
-     * @param $resource
+     * @param mixed $resource
      * @param RequestInterface|null $request
      * @return ApiResourceFacadeResponse
      */

@@ -13,9 +13,12 @@ use W2w\Lib\Apie\Exceptions\CouldNotWriteFileException;
 use W2w\Lib\Apie\Exceptions\InvalidIdException;
 use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
+use W2w\Lib\Apie\SearchFilters\SearchFilterRequest;
 
-class FileStorageRetriever implements ApiResourcePersisterInterface, ApiResourceRetrieverInterface
+class FileStorageDataLayer implements ApiResourcePersisterInterface, ApiResourceRetrieverInterface, SearchFilterProviderInterface
 {
+    use SearchFilterFromMetadataTrait;
+
     private $folder;
 
     private $propertyAccessor;
@@ -105,17 +108,18 @@ class FileStorageRetriever implements ApiResourcePersisterInterface, ApiResource
      *
      * @param string $resourceClass
      * @param array $context
-     * @param int $pageIndex
-     * @param int $numberOfItems
+     * @param SearchFilterRequest $searchFilterRequest
      * @return iterable
      */
-    public function retrieveAll(string $resourceClass, array $context, int $pageIndex, int $numberOfItems): iterable
+    public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest): iterable
     {
+        $offset = $searchFilterRequest->getOffset();
+        $numberOfItems = $searchFilterRequest->getNumberOfItems();
         $folder = $this->getFolder($resourceClass);
         $result = [];
         $list = new LimitIterator(
             Finder::create()->files()->sortByName()->depth(0)->in($folder)->getIterator(),
-            $pageIndex * $numberOfItems,
+            $offset,
             $numberOfItems
         );
         foreach ($list as $file) {

@@ -25,7 +25,7 @@ class ApiResourceFacadeResponse
     /**
      * @param SerializerInterface $serializer
      * @param array $serializerContext
-     * @param $resource
+     * @param mixed $resource
      * @param FormatRetriever $formatRetriever
      * @param string|null $acceptHeader
      */

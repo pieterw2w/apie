@@ -10,7 +10,6 @@ use Doctrine\Common\Cache\PhpFileCache;
 use erasys\OpenApi\Spec\v3\Info;
 use GBProd\UuidNormalizer\UuidDenormalizer;
 use GBProd\UuidNormalizer\UuidNormalizer;
-use PhpValueObjects\AbstractStringValueObject;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -40,7 +39,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\JsonSerializableNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
-use W2w\Lib\Apie\ApiResources\App;
+use W2w\Lib\Apie\ApiResources\ApplicationInfo;
 use W2w\Lib\Apie\ApiResources\Status;
 use W2w\Lib\Apie\Encodings\FormatRetriever;
 use W2w\Lib\Apie\Normalizers\ApieObjectNormalizer;
@@ -48,7 +47,6 @@ use W2w\Lib\Apie\Normalizers\CarbonNormalizer;
 use W2w\Lib\Apie\Normalizers\ContextualNormalizer;
 use W2w\Lib\Apie\Normalizers\EvilReflectionPropertyNormalizer;
 use W2w\Lib\Apie\Normalizers\ExceptionNormalizer;
-use W2w\Lib\Apie\Normalizers\StringValueObjectNormalizer;
 use W2w\Lib\Apie\Normalizers\ValueObjectNormalizer;
 use W2w\Lib\Apie\OpenApiSchema\OpenApiSpecGenerator;
 use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
@@ -191,7 +189,7 @@ class ServiceLibraryFactory
      * @param bool $debug
      * @param string|null $cacheFolder
      */
-    public function __construct($apiResourceClasses = [App::class, Status::class], bool $debug = false, ?string $cacheFolder = null)
+    public function __construct($apiResourceClasses = [ApplicationInfo::class, Status::class], bool $debug = false, ?string $cacheFolder = null)
     {
         $this->apiResources = $apiResourceClasses instanceof ApiResourcesInterface ? $apiResourceClasses : new ApiResources($apiResourceClasses);
         $this->debug = $debug;
@@ -298,8 +296,8 @@ class ServiceLibraryFactory
             $this->encoders = [
                 new XmlEncoder([XmlEncoder::ROOT_NODE_NAME => 'item']),
                 new JsonEncoder(
-                   new JsonEncode([JsonEncode::OPTIONS => JSON_UNESCAPED_SLASHES]),
-                   new JsonDecode([JsonDecode::ASSOCIATIVE => false])
+                    new JsonEncode([JsonEncode::OPTIONS => JSON_UNESCAPED_SLASHES]),
+                    new JsonDecode([JsonDecode::ASSOCIATIVE => false])
                 )
             ];
         }
@@ -531,10 +529,6 @@ class ServiceLibraryFactory
             $this->normalizers[] = new ValueObjectNormalizer();
             $this->normalizers[] = new UuidNormalizer();
             $this->normalizers[] = new UuidDenormalizer();
-
-            if (class_exists(AbstractStringValueObject::class)) {
-                $this->normalizers[] = new StringValueObjectNormalizer();
-            }
 
             $this->normalizers[] = new JsonSerializableNormalizer();
             $this->normalizers[] = new ArrayDenormalizer();

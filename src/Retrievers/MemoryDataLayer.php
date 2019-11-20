@@ -3,25 +3,39 @@ namespace W2w\Lib\Apie\Retrievers;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use W2w\Lib\Apie\Exceptions\CanNotDetermineIdException;
 use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\IdentifierExtractor;
 use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
+use W2w\Lib\Apie\SearchFilters\SearchFilterHelper;
+use W2w\Lib\Apie\SearchFilters\SearchFilterRequest;
 
 /**
  * Persists and retrieves from an array in memory. Only useful for unit tests.
  */
-class ArrayPersister implements ApiResourcePersisterInterface, ApiResourceRetrieverInterface
+class MemoryDataLayer implements ApiResourcePersisterInterface, ApiResourceRetrieverInterface, SearchFilterProviderInterface
 {
+    use SearchFilterFromMetadataTrait;
+
+    /**
+     * @var PropertyAccessorInterface
+     */
     private $propertyAccessor;
 
+    /**
+     * @var IdentifierExtractor
+     */
     private $identifierExtractor;
 
+    /**
+     * @var mixed[]
+     */
     private $persisted = [];
 
     public function __construct(PropertyAccessor $propertyAccessor = null, IdentifierExtractor $identifierExtractor = null)
     {
-        $this->propertyAccessor = $propertyAccessor ?? PropertyAccess::createPropertyAccessorBuilder()->getPropertyAccessor();
+        $this->propertyAccessor = $propertyAccessor ?? PropertyAccess::createPropertyAccessor();
         $this->identifierExtractor = $identifierExtractor ?? new IdentifierExtractor($this->propertyAccessor);
     }
     /**
@@ -54,8 +68,8 @@ class ArrayPersister implements ApiResourcePersisterInterface, ApiResourceRetrie
      * Persist an existing API resource. The input resource is the modified API resource. Should return the new API
      * resource.
      *
-     * @param $resource
-     * @param $int
+     * @param mixed $resource
+     * @param string|int $int
      * @param array $context
      * @return mixed
      */
@@ -89,7 +103,7 @@ class ArrayPersister implements ApiResourcePersisterInterface, ApiResourceRetrie
      * Retrieves a single resource by some identifier.
      *
      * @param string $resourceClass
-     * @param mixed $id
+     * @param string|int $id
      * @param array $context
      * @return mixed
      */
@@ -107,15 +121,18 @@ class ArrayPersister implements ApiResourcePersisterInterface, ApiResourceRetrie
      *
      * @param string $resourceClass
      * @param array $context
-     * @param int $pageIndex
-     * @param int $numberOfItems
+     * @param SearchFilterRequest $searchFilterRequest
      * @return iterable
      */
-    public function retrieveAll(string $resourceClass, array $context, int $pageIndex, int $numberOfItems): iterable
+    public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest): iterable
     {
         if (empty($this->persisted[$resourceClass])) {
             return [];
         }
-        return array_slice(array_values($this->persisted[$resourceClass]), $pageIndex * $numberOfItems, $numberOfItems);
+        return SearchFilterHelper::applySearchFilter(
+            $this->persisted[$resourceClass],
+            $searchFilterRequest,
+            $this->propertyAccessor
+        );
     }
 }

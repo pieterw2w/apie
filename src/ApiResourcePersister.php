@@ -27,7 +27,7 @@ class ApiResourcePersister
     /**
      * Persist a new resource.
      *
-     * @param $resource
+     * @param mixed $resource
      * @return mixed
      */
     public function persistNew($resource)
@@ -49,8 +49,8 @@ class ApiResourcePersister
     /**
      * Persist an existing resource.
      *
-     * @param $resource
-     * @param $id
+     * @param mixed $resource
+     * @param string|int $id
      * @return mixed
      */
     public function persistExisting($resource, $id)
@@ -74,7 +74,7 @@ class ApiResourcePersister
      * Removes an existing resource.
      *
      * @param string $resourceClass
-     * @param $id
+     * @param string|int $id
      */
     public function delete(string $resourceClass, $id)
     {
@@ -89,7 +89,7 @@ class ApiResourcePersister
     /**
      * Returns a type display of an object instance.
      *
-     * @param $object
+     * @param mixed $object
      * @return string
      */
     private function getType($object)

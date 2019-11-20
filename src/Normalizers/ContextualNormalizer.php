@@ -17,12 +17,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 class ContextualNormalizer implements NormalizerInterface, DenormalizerInterface, SerializerAwareInterface, NormalizerAwareInterface, DenormalizerAwareInterface
 {
     /**
-     * @var string[]
+     * @var boolean[]
      */
     private static $globalDisabledNormalizers = [];
 
     /**
-     * @var string[]
+     * @var boolean[]
      */
     private static $globalDisabledDenormalizers = [];
 

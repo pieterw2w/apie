@@ -4,32 +4,52 @@ namespace W2w\Lib\Apie\Mocks;
 
 use Psr\Cache\CacheItemPoolInterface;
 use ReflectionClass;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\IdentifierExtractor;
 use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
+use W2w\Lib\Apie\Retrievers\SearchFilterFromMetadataTrait;
+use W2w\Lib\Apie\Retrievers\SearchFilterProviderInterface;
+use W2w\Lib\Apie\SearchFilters\SearchFilterHelper;
+use W2w\Lib\Apie\SearchFilters\SearchFilterRequest;
 
 /**
  * If the implementation of a REST API is mocked this is the class that persists and retrieves all API resources.
  *
  * It does this by persisting it with a cache pool.
  */
-class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiResourceRetrieverInterface
+class MockApiResourceDataLayer implements ApiResourcePersisterInterface, ApiResourceRetrieverInterface, SearchFilterProviderInterface
 {
+    use SearchFilterFromMetadataTrait;
+
+    /**
+     * @var CacheItemPoolInterface
+     */
     private $cacheItemPool;
 
+    /**
+     * @var IdentifierExtractor
+     */
     private $identifierExtractor;
+
+    /**
+     * @var PropertyAccessorInterface
+     */
+    private $propertyAccessor;
 
     public function __construct(
         CacheItemPoolInterface $cacheItemPool,
-        IdentifierExtractor $identifierExtractor
+        IdentifierExtractor $identifierExtractor,
+        PropertyAccessorInterface $propertyAccessor
     ) {
         $this->cacheItemPool = $cacheItemPool;
         $this->identifierExtractor = $identifierExtractor;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     /**
-     * @param $resource
+     * @param mixed $resource
      * @param array $context
      * @return mixed
      */
@@ -49,8 +69,8 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
     }
 
     /**
-     * @param $resource
-     * @param $int
+     * @param mixed $resource
+     * @param string|int $int
      * @param array $context
      * @return mixed
      */
@@ -66,7 +86,7 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
 
     /**
      * @param string $resourceClass
-     * @param $id
+     * @param string|int $id
      * @param array $context
      */
     public function remove(string $resourceClass, $id, array $context)
@@ -79,7 +99,7 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
 
     /**
      * @param string $resourceClass
-     * @param $id
+     * @param string|int $id
      * @param array $context
      * @return mixed
      */
@@ -88,7 +108,7 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
         $cacheKey = 'mock-server.' . $this->shortName($resourceClass) . '.' . $id;
         $cacheItem = $this->cacheItemPool->getItem($cacheKey);
         if (!$cacheItem->isHit()) {
-            throw new ResourceNotFoundException($id);
+            throw new ResourceNotFoundException((string) $id);
         }
         return unserialize($cacheItem->get());
     }
@@ -96,29 +116,29 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
     /**
      * @param string $resourceClass
      * @param array $context
-     * @param int $pageIndex
-     * @param int $numberOfItems
+     * @param SearchFilterRequest $searchFilterRequest
      * @return iterable
      */
-    public function retrieveAll(string $resourceClass, array $context, int $pageIndex, int $numberOfItems): iterable
+    public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest): iterable
     {
         $cacheKey = 'mock-server-all.' . $this->shortName($resourceClass);
         $cacheItem = $this->cacheItemPool->getItem($cacheKey);
         if (!$cacheItem->isHit()) {
             return [];
         }
-        $ids = array_slice($cacheItem->get(), $pageIndex * $numberOfItems, $numberOfItems);
-
-        return array_values(array_map(function ($id) use ($resourceClass, &$context) {
-            return $this->retrieve($resourceClass, $id, $context);
-        }, $ids));
+        return array_map(
+            function ($id) use (&$resourceClass, &$context) {
+                return $this->retrieve($resourceClass, $id, $context);
+            },
+            SearchFilterHelper::applySearchFilter($cacheItem->get(), $searchFilterRequest, $this->propertyAccessor)
+        );
     }
 
     /**
      * Marks an id as found, so the get all can retrieve it.
      *
      * @param string $resourceClass
-     * @param $id
+     * @param string|int $id
      */
     private function addId(string $resourceClass, $id)
     {
@@ -136,7 +156,7 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
      * Marks an id as not found, so the get all will no longer retrieve it.
      *
      * @param string $resourceClass
-     * @param $id
+     * @param string|int $id
      */
     private function removeId(string $resourceClass, $id)
     {
@@ -153,7 +173,7 @@ class MockApiResourceRetriever implements ApiResourcePersisterInterface, ApiReso
     /**
      * Returns a short name of a resource or a resource class.
      *
-     * @param $resourceOrResourceClass
+     * @param mixed $resourceOrResourceClass
      * @return string
      */
     private function shortName($resourceOrResourceClass): string

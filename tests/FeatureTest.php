@@ -4,18 +4,24 @@ namespace W2w\Test\Apie;
 use DateTimeInterface;
 use erasys\OpenApi\Spec\v3\Info;
 use erasys\OpenApi\Spec\v3\Schema;
-use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Ramsey\Uuid\Uuid;
-use W2w\Lib\Apie\ApiResources\App;
-use W2w\Lib\Apie\Retrievers\AppRetriever;
-use W2w\Lib\Apie\Retrievers\ArrayPersister;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+use W2w\Lib\Apie\ApiResources\ApplicationInfo;
+use W2w\Lib\Apie\IdentifierExtractor;
+use W2w\Lib\Apie\Retrievers\ApplicationInfoRetriever;
+use W2w\Lib\Apie\Retrievers\MemoryDataLayer;
 use W2w\Lib\Apie\ServiceLibraryFactory;
 use W2w\Test\Apie\Mocks\Data\FullRestObject;
 use W2w\Test\Apie\Mocks\Data\SimplePopo;
 use W2w\Test\Apie\Mocks\Data\SumExample;
 use W2w\Test\Apie\OpenApiSchema\Data\MultipleTypesObject;
+use W2w\Test\Apie\OpenApiSchema\ValueObject;
 
 class FeatureTest extends TestCase
 {
@@ -25,7 +31,7 @@ class FeatureTest extends TestCase
         $expected = new SimplePopo();
         srand(0);
         $testItem = new ServiceLibraryFactory([SimplePopo::class], true, null);
-        $request = new Request('POST', '/simple_popo/', [], '{}');
+        $request = new ServerRequest('POST', '/simple_popo/', [], '{}');
         $this->assertEquals(
             $expected->getId(),
             $testItem->getApiResourceFacade()->post(SimplePopo::class, $request)->getResource()->getId()
@@ -38,7 +44,7 @@ class FeatureTest extends TestCase
         $expected = new FullRestObject(Uuid::fromString('986e12c4-3011-4ed8-aead-c62b76bb7f69'));
         srand(0);
         $testItem = new ServiceLibraryFactory([FullRestObject::class], true, null);
-        // we need to always have the same instance of ArrayPersister.
+        // we need to always have the same instance of MemoryDataLayer.
         $container = new class implements ContainerInterface
         {
             private $persister;
@@ -46,26 +52,26 @@ class FeatureTest extends TestCase
             public function get($id)
             {
                 if (!$this->persister) {
-                    $this->persister = new ArrayPersister();
+                    $this->persister = new MemoryDataLayer();
                 }
                 return $this->persister;
             }
 
             public function has($id)
             {
-                return $id === ArrayPersister::class;
+                return $id === MemoryDataLayer::class;
             }
         };
         $testItem->setContainer($container);
 
         // first create resource
-        $request = new Request('POST', '/full_rest_object/', [], '{"uuid":"986e12c4-3011-4ed8-aead-c62b76bb7f69"}');
+        $request = new ServerRequest('POST', '/full_rest_object/', [], '{"uuid":"986e12c4-3011-4ed8-aead-c62b76bb7f69"}');
         $this->assertEquals(
             $expected->getUuid(),
             $testItem->getApiResourceFacade()->post(FullRestObject::class, $request)->getResource()->getUuid()
         );
         // now put the resource
-        $request = new Request('PUT', '/full_rest_object/986e12c4-3011-4ed8-aead-c62b76bb7f69', [], '{"string_value":"strings"}');
+        $request = new ServerRequest('PUT', '/full_rest_object/986e12c4-3011-4ed8-aead-c62b76bb7f69', [], '{"string_value":"strings"}');
         $actual = $testItem->getApiResourceFacade()->put(FullRestObject::class, '986e12c4-3011-4ed8-aead-c62b76bb7f69', $request);
         $expected->stringValue = "strings";
         $this->assertEquals(
@@ -73,10 +79,10 @@ class FeatureTest extends TestCase
             $actual->getResource()
         );
 
-        $request = new Request('GET', '/full_rest_object/', []);
+        $request = new ServerRequest('GET', '/full_rest_object/', []);
         $this->assertEquals(
             [$expected],
-            $testItem->getApiResourceFacade()->getAll(FullRestObject::class, 0, 10, $request)->getResource()
+            $testItem->getApiResourceFacade()->getAll(FullRestObject::class, $request)->getResource()
         );
 
         $this->assertEquals(
@@ -85,14 +91,14 @@ class FeatureTest extends TestCase
         );
         $this->assertEquals(
             [],
-            $testItem->getApiResourceFacade()->getAll(FullRestObject::class, 0, 10, $request)->getResource()
+            $testItem->getApiResourceFacade()->getAll(FullRestObject::class, $request)->getResource()
         );
     }
 
     public function test_serialized_name_works_as_intended()
     {
         $testItem = new ServiceLibraryFactory([MultipleTypesObject::class], true, null);
-        $request = new Request('POST', '/sum_example/', [], '{"name":"test"}');
+        $request = new ServerRequest('POST', '/sum_example/', [], '{"name":"test"}');
         $actual = $testItem->getApiResourceFacade()->post(MultipleTypesObject::class, $request);
         $expected = new MultipleTypesObject();
         $expected->myMetadataIsADifferentName = "test";
@@ -116,10 +122,56 @@ class FeatureTest extends TestCase
         );
     }
 
+    public function test_search_filter_works_as_intended()
+    {
+        $testItem = new ServiceLibraryFactory([FullRestObject::class], true, null);
+        $testItem->setContainer(
+            new class implements ContainerInterface {
+                private $arrayRetriever;
+                public function get($id)
+                {
+                    if (!$this->arrayRetriever) {
+                        $access = PropertyAccess::createPropertyAccessor();
+                        $this->arrayRetriever = new MemoryDataLayer($access, new IdentifierExtractor($access));
+                        for ($i = 0; $i < 1000; $i++) {
+                            $object = new FullRestObject();
+                            $object->stringValue = 'value' . ($i % 20);
+                            $object->valueObject = new ValueObject('pizza');
+                            $this->arrayRetriever->persistNew($object);
+                        }
+                    }
+                    return $this->arrayRetriever;
+                }
+
+                public function has($id)
+                {
+                    return $id === MemoryDataLayer::class;
+                }
+            }
+        );
+        $request = (new ServerRequest('GET', '/full_rest_object/'))
+            ->withQueryParams(['stringValue' => 'value1', 'page' => 1, 'limit' => 500]);
+        $actual = $testItem->getApiResourceFacade()->getAll(FullRestObject::class, $request);
+        $this->assertEquals(
+            [],
+            $actual->getResource()
+        );
+        $request = (new ServerRequest('GET', '/full_rest_object/'))
+            ->withQueryParams(['stringValue' => 'value1', 'valueObject' => 'pizza', 'page' => 0, 'limit' => 500]);
+        $actual = $testItem->getApiResourceFacade()->getAll(FullRestObject::class, $request);
+        $this->assertCount(
+            50,
+            $actual->getResource()
+        );
+        foreach ($actual->getResource() as $item) {
+            $this->assertEquals('value1', $item->stringValue);
+        }
+    }
+
     public function test_service_github_issue_1()
     {
         $testItem = new ServiceLibraryFactory([SumExample::class], true, null);
-        $request = new Request('POST', '/sum_example/', [], '{"one":1,"two":2}');
+        $request = new ServerRequest('POST', '/sum_example/', [], '{"one":1,"two":2}');
         $actual = $testItem->getApiResourceFacade()->post(SumExample::class, $request);
         $this->assertEquals(
             new SumExample(1, 2),
@@ -133,17 +185,17 @@ class FeatureTest extends TestCase
 
     public function test_service_library_create_open_api_schema()
     {
-        $testItem = new ServiceLibraryFactory([App::class, SimplePopo::class, FullRestObject::class], true, null);
+        $testItem = new ServiceLibraryFactory([ApplicationInfo::class, SimplePopo::class, FullRestObject::class], true, null);
         $container = new class implements ContainerInterface
         {
             public function get($id)
             {
-                return new AppRetriever('unit test', 'development', 'haas525', true);
+                return new ApplicationInfoRetriever('unit test', 'development', 'haas525', true);
             }
 
             public function has($id)
             {
-                return $id === AppRetriever::class;
+                return $id === ApplicationInfoRetriever::class;
             }
         };
         $testItem->setContainer($container);

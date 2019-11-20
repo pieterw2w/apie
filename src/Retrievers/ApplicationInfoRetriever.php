@@ -2,13 +2,14 @@
 
 namespace W2w\Lib\Apie\Retrievers;
 
-use W2w\Lib\Apie\ApiResources\App;
+use W2w\Lib\Apie\ApiResources\ApplicationInfo;
 use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
+use W2w\Lib\Apie\SearchFilters\SearchFilterRequest;
 
 /**
- * Retrieves instances of api resource App. This is always one record with id 'name'.
+ * Retrieves instances of api resource ApplicationInfo. This is always one record with id 'name'.
  */
-class AppRetriever implements ApiResourceRetrieverInterface
+class ApplicationInfoRetriever implements ApiResourceRetrieverInterface
 {
     /**
      * @var string
@@ -48,7 +49,7 @@ class AppRetriever implements ApiResourceRetrieverInterface
      * @param string $resourceClass
      * @param string $id
      * @param array $context
-     * @return App
+     * @return ApplicationInfo
      */
     public function retrieve(string $resourceClass, $id, array $context)
     {
@@ -56,7 +57,7 @@ class AppRetriever implements ApiResourceRetrieverInterface
             throw new ResourceNotFoundException($id);
         }
 
-        return new App(
+        return new ApplicationInfo(
             $this->appName,
             $this->environment,
             $this->hash,
@@ -67,13 +68,15 @@ class AppRetriever implements ApiResourceRetrieverInterface
     /**
      * @param string $resourceClass
      * @param array $context
-     * @param int $pageIndex
-     * @param int $numberOfItems
-     * @return App[]
+     * @param SearchFilterRequest $searchFilterRequest
+     * @return ApplicationInfo[]
      */
-    public function retrieveAll(string $resourceClass, array $context, int $pageIndex, int $numberOfItems): iterable
-    {
-        if ($pageIndex > 0) {
+    public function retrieveAll(
+        string $resourceClass,
+        array $context,
+        SearchFilterRequest $searchFilterRequest
+    ): iterable {
+        if ($searchFilterRequest->getPageIndex() > 0) {
             return [];
         }
 

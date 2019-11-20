@@ -140,10 +140,10 @@ So let's add a retrieveClass option and an id property.
 <?php
 use Ramsey\Uuid\Uuid;
 use W2w\Lib\Apie\Annotations\ApiResource;
-use W2w\Lib\Apie\Retrievers\FileStorageRetriever;
+use W2w\Lib\Apie\Retrievers\FileStorageDataLayer;
 
 /**
- * @ApiResource(retrieveClass=FileStorageRetriever::class)
+ * @ApiResource(retrieveClass=FileStorageDataLayer::class)
  */
 class Example {
     /**
@@ -153,7 +153,7 @@ class Example {
 }
 ```
 If we would check the OpenAPI spec we would get a get single resource and a get all resources route and the response
-will only contain an id. FileStorageRetriever requires a folder where to store a resource, so we require the step at [injecting dependencies](#injecting-dependencies)
+will only contain an id. FileStorageDataLayer requires a folder where to store a resource, so we require the step at [injecting dependencies](#injecting-dependencies)
 to set up a folder:
 ```php
 <?php
@@ -161,14 +161,14 @@ require(__DIR__ . '/vendor/autoload.php');
 
 use Psr\Container\ContainerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use W2w\Lib\Apie\Retrievers\FileStorageRetriever;
+use W2w\Lib\Apie\Retrievers\FileStorageDataLayer;
 use W2w\Lib\Apie\ServiceLibraryFactory;
 $factory = new ServiceLibraryFactory([Example::class], true, sys_get_temp_dir());
 $factory->setContainer(new class implements ContainerInterface {
     public function get($id)
     {
-        if ($id === FileStorageRetriever::class) {
-            return new FileStorageRetriever(
+        if ($id === FileStorageDataLayer::class) {
+            return new FileStorageDataLayer(
                 sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'apie-resource',
                 PropertyAccess::createPropertyAccessor()
             );
@@ -178,7 +178,7 @@ $factory->setContainer(new class implements ContainerInterface {
     
     public function has($id)
     {
-        return $id === FileStorageRetriever::class;       
+        return $id === FileStorageDataLayer::class;       
     }
 });
 ```
@@ -188,12 +188,12 @@ property persistClass to the ApiResource annotation.
  <?php
  use Ramsey\Uuid\Uuid;
  use W2w\Lib\Apie\Annotations\ApiResource;
- use W2w\Lib\Apie\Retrievers\FileStorageRetriever;
+ use W2w\Lib\Apie\Retrievers\FileStorageDataLayer;
  
  /**
   * @ApiResource(
-  *     retrieveClass=FileStorageRetriever::class,
-  *     persistClass=FileStorageRetriever::class
+  *     retrieveClass=FileStorageDataLayer::class,
+  *     persistClass=FileStorageDataLayer::class
   * )
   */
  class Example {
@@ -205,17 +205,17 @@ property persistClass to the ApiResource annotation.
  ```
  The OpenAPI spec will add routes for DELETE, PUT and POST. There are still two problems. We want to make POST
  indempotent and want to make the id required on POST (even though a lack of id will already fail because
- FileStorageRetriever has trouble creating a filename). We also do not want DELETE and do not want to be able to change the
+ FileStorageDataLayer has trouble creating a filename). We also do not want DELETE and do not want to be able to change the
  id on PUT. This is possible with little effort.
  ```php
  <?php
   use Ramsey\Uuid\Uuid;
   use W2w\Lib\Apie\Annotations\ApiResource;
-  use W2w\Lib\Apie\Retrievers\FileStorageRetriever;
+  use W2w\Lib\Apie\Retrievers\FileStorageDataLayer;
  /**
    * @ApiResource(
-   *     retrieveClass=FileStorageRetriever::class,
-   *     persistClass=FileStorageRetriever::class,
+   *     retrieveClass=FileStorageDataLayer::class,
+   *     persistClass=FileStorageDataLayer::class,
    *     disabledMethods={"delete"}
    * )
    */

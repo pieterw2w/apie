@@ -14,7 +14,7 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 class ApieObjectNormalizer extends ObjectNormalizer
 {
     /**
-     * @var PropertyInfoExtractor
+     * @var PropertyInfoExtractor|null
      */
     private $propertyInfoExtractor;
 
@@ -89,13 +89,13 @@ class ApieObjectNormalizer extends ObjectNormalizer
             $className = is_object($classOrObject) ? get_class($classOrObject) : $classOrObject;
             switch ($context['apie_direction']) {
                 case 'read':
-                    return $this->propertyInfoExtractor->isReadable($className, $attribute);
+                    return (bool) $this->propertyInfoExtractor->isReadable($className, $attribute);
                 case 'write':
                     if (empty($context['object_to_populate'])) {
                         return $this->propertyInfoExtractor->isWritable($className, $attribute)
                             || $this->propertyInfoExtractor->isInitializable($className, $attribute);
                     }
-                    return $this->propertyInfoExtractor->isWritable($className, $attribute);
+                    return (bool) $this->propertyInfoExtractor->isWritable($className, $attribute);
             }
         }
         return $isAllowed;

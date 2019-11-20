@@ -5,11 +5,11 @@
         "version": "1.0"
     },
     "paths": {
-        "/app": {
+        "/application_info": {
             "get": {
                 "responses": {
                     "200": {
-                        "description": "Retrieves all instances of app",
+                        "description": "Retrieves all instances of application_info",
                         "headers": {
                             "x-ratelimit-limit": {
                                 "$ref": "#/components/headers/x-ratelimit-limit"
@@ -23,8 +23,8 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "title": "app",
-                                        "description": "app get for groups get, read",
+                                        "title": "application_info",
+                                        "description": "application_info get for groups get, read",
                                         "type": "object",
                                         "properties": {
                                             "app_name": {
@@ -59,8 +59,8 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "title": "app",
-                                        "description": "app get for groups get, read",
+                                        "title": "application_info",
+                                        "description": "application_info get for groups get, read",
                                         "type": "object",
                                         "properties": {
                                             "app_name": {
@@ -113,7 +113,7 @@
                     }
                 },
                 "tags": [
-                    "app"
+                    "application_info"
                 ],
                 "parameters": [
                     {
@@ -137,11 +137,11 @@
                 ]
             }
         },
-        "/app/{id}": {
+        "/application_info/{id}": {
             "get": {
                 "responses": {
                     "200": {
-                        "description": "Retrieves a single instance of app",
+                        "description": "Retrieves a single instance of application_info",
                         "headers": {
                             "x-ratelimit-limit": {
                                 "$ref": "#/components/headers/x-ratelimit-limit"
@@ -153,8 +153,8 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "title": "app",
-                                    "description": "app get for groups get, read",
+                                    "title": "application_info",
+                                    "description": "application_info get for groups get, read",
                                     "type": "object",
                                     "properties": {
                                         "app_name": {
@@ -186,8 +186,8 @@
                             },
                             "application/xml": {
                                 "schema": {
-                                    "title": "app",
-                                    "description": "app get for groups get, read",
+                                    "title": "application_info",
+                                    "description": "application_info get for groups get, read",
                                     "type": "object",
                                     "properties": {
                                         "app_name": {
@@ -239,7 +239,7 @@
                     }
                 },
                 "tags": [
-                    "app"
+                    "application_info"
                 ]
             },
             "parameters": [
@@ -537,6 +537,10 @@
                                             "string_value": {
                                                 "type": "string",
                                                 "nullable": false
+                                            },
+                                            "value_object": {
+                                                "type": "string",
+                                                "format": "value_object"
                                             }
                                         },
                                         "xml": {
@@ -560,6 +564,10 @@
                                             "string_value": {
                                                 "type": "string",
                                                 "nullable": false
+                                            },
+                                            "value_object": {
+                                                "type": "string",
+                                                "format": "value_object"
                                             }
                                         },
                                         "xml": {
@@ -610,6 +618,33 @@
                             "type": "integer",
                             "minimum": 1
                         }
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "query",
+                        "description": "search filter uuid",
+                        "schema": {
+                            "type": "string",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "stringValue",
+                        "in": "query",
+                        "description": "search filter stringValue",
+                        "schema": {
+                            "type": "string",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "valueObject",
+                        "in": "query",
+                        "description": "search filter valueObject",
+                        "schema": {
+                            "type": "string",
+                            "minimum": 1
+                        }
                     }
                 ]
             },
@@ -639,6 +674,10 @@
                                         "string_value": {
                                             "type": "string",
                                             "nullable": false
+                                        },
+                                        "value_object": {
+                                            "type": "string",
+                                            "format": "value_object"
                                         }
                                     },
                                     "xml": {
@@ -659,6 +698,10 @@
                                         "string_value": {
                                             "type": "string",
                                             "nullable": false
+                                        },
+                                        "value_object": {
+                                            "type": "string",
+                                            "format": "value_object"
                                         }
                                     },
                                     "xml": {
@@ -708,6 +751,10 @@
                                     "string_value": {
                                         "type": "string",
                                         "nullable": false
+                                    },
+                                    "value_object": {
+                                        "type": "string",
+                                        "format": "value_object"
                                     }
                                 },
                                 "xml": {
@@ -728,6 +775,10 @@
                                     "string_value": {
                                         "type": "string",
                                         "nullable": false
+                                    },
+                                    "value_object": {
+                                        "type": "string",
+                                        "format": "value_object"
                                     }
                                 },
                                 "xml": {
@@ -768,6 +819,10 @@
                                         "string_value": {
                                             "type": "string",
                                             "nullable": false
+                                        },
+                                        "value_object": {
+                                            "type": "string",
+                                            "format": "value_object"
                                         }
                                     },
                                     "xml": {
@@ -788,6 +843,10 @@
                                         "string_value": {
                                             "type": "string",
                                             "nullable": false
+                                        },
+                                        "value_object": {
+                                            "type": "string",
+                                            "format": "value_object"
                                         }
                                     },
                                     "xml": {
@@ -846,6 +905,10 @@
                                         "string_value": {
                                             "type": "string",
                                             "nullable": false
+                                        },
+                                        "value_object": {
+                                            "type": "string",
+                                            "format": "value_object"
                                         }
                                     },
                                     "xml": {
@@ -866,6 +929,10 @@
                                         "string_value": {
                                             "type": "string",
                                             "nullable": false
+                                        },
+                                        "value_object": {
+                                            "type": "string",
+                                            "format": "value_object"
                                         }
                                     },
                                     "xml": {
@@ -914,6 +981,10 @@
                                     "string_value": {
                                         "type": "string",
                                         "nullable": false
+                                    },
+                                    "value_object": {
+                                        "type": "string",
+                                        "format": "value_object"
                                     }
                                 },
                                 "xml": {
@@ -930,6 +1001,10 @@
                                     "string_value": {
                                         "type": "string",
                                         "nullable": false
+                                    },
+                                    "value_object": {
+                                        "type": "string",
+                                        "format": "value_object"
                                     }
                                 },
                                 "xml": {

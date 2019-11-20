@@ -4,7 +4,7 @@ namespace W2w\Test\Apie\Mocks;
 use PHPUnit\Framework\TestCase;
 use W2w\Lib\Apie\ApiResourceFactoryInterface;
 use W2w\Lib\Apie\Mocks\MockApiResourceFactory;
-use W2w\Lib\Apie\Mocks\MockApiResourceRetriever;
+use W2w\Lib\Apie\Mocks\MockApiResourceDataLayer;
 use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
 
@@ -25,7 +25,7 @@ class MockApiResourceFactoryTest extends TestCase
         $this->skippedRetriever = $this->prophesize(ApiResourceRetrieverInterface::class)->reveal();
         $this->skippedPersister = $this->prophesize(ApiResourcePersisterInterface::class)->reveal();
 
-        $this->retriever = $this->prophesize(MockApiResourceRetriever::class);
+        $this->retriever = $this->prophesize(MockApiResourceDataLayer::class);
         $this->factory = $this->prophesize(ApiResourceFactoryInterface::class);
         $this->testItem = new MockApiResourceFactory(
             $this->retriever->reveal(),

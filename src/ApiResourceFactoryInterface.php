@@ -20,7 +20,7 @@ interface ApiResourceFactoryInterface
     /**
      * Gets an instance of ApiResourceRetrieverInstance
      * @param string $identifier
-     * @return ApiResourceRetrieverInterface
+     * @return ApiResourcePersisterInterface
      */
     public function getApiResourcePersisterInstance(string $identifier): ApiResourcePersisterInterface;
 }

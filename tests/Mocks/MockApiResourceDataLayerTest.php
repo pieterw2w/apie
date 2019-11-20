@@ -6,11 +6,12 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\IdentifierExtractor;
-use W2w\Lib\Apie\Mocks\MockApiResourceRetriever;
+use W2w\Lib\Apie\Mocks\MockApiResourceDataLayer;
+use W2w\Lib\Apie\SearchFilters\SearchFilterRequest;
 use W2w\Test\Apie\Mocks\Data\SimplePopo;
 use W2w\Test\Apie\Mocks\Data\SumExample;
 
-class MockApiResourceRetrieverTest extends TestCase
+class MockApiResourceDataLayerTest extends TestCase
 {
     private $cache;
 
@@ -20,7 +21,11 @@ class MockApiResourceRetrieverTest extends TestCase
     {
         $this->cache = new ArrayAdapter();
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        $this->testItem = new MockApiResourceRetriever($this->cache, new IdentifierExtractor($propertyAccessor));
+        $this->testItem = new MockApiResourceDataLayer(
+            $this->cache,
+            new IdentifierExtractor($propertyAccessor),
+            $propertyAccessor
+        );
     }
 
     public function testPersistNew_no_id_ignore_persist()
@@ -33,16 +38,17 @@ class MockApiResourceRetrieverTest extends TestCase
 
     public function testPersistNew()
     {
+        $request = new SearchFilterRequest(0, 100);
         $resource1 = new SimplePopo();
         $resource2 = new SimplePopo();
-        $this->assertEquals([], $this->testItem->retrieveAll(SimplePopo::class, [], 0, 100));
+        $this->assertEquals([], $this->testItem->retrieveAll(SimplePopo::class, [], $request));
 
         $this->testItem->persistNew($resource1, []);
 
-        $this->assertEquals([$resource1], $this->testItem->retrieveAll(SimplePopo::class, [], 0, 100));
+        $this->assertEquals([$resource1], $this->testItem->retrieveAll(SimplePopo::class, [], $request));
 
         $this->testItem->persistNew($resource2, []);
-        $this->assertEquals([$resource1, $resource2], $this->testItem->retrieveAll(SimplePopo::class, [], 0, 100));
+        $this->assertEquals([$resource1, $resource2], $this->testItem->retrieveAll(SimplePopo::class, [], $request));
 
         $resource1->arbitraryField = 'test';
         $this->assertNotEquals($resource1, $this->testItem->retrieve(SimplePopo::class, $resource1->getId(), []));
@@ -51,7 +57,7 @@ class MockApiResourceRetrieverTest extends TestCase
         $this->assertEquals($resource1, $this->testItem->retrieve(SimplePopo::class, $resource1->getId(), []));
 
         $this->testItem->remove(SimplePopo::class, $resource1->getId(), []);
-        $this->assertEquals([$resource2], $this->testItem->retrieveAll(SimplePopo::class, [], 0, 100));
+        $this->assertEquals([$resource2], $this->testItem->retrieveAll(SimplePopo::class, [], $request));
     }
 
     public function testRetrieveThrowsError()
