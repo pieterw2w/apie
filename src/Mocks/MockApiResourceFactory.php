@@ -15,7 +15,7 @@ use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
 class MockApiResourceFactory implements ApiResourceFactoryInterface
 {
     /**
-     * @var MockApiResourceRetriever
+     * @var MockApiResourceDataLayer
      */
     private $retriever;
 
@@ -30,12 +30,12 @@ class MockApiResourceFactory implements ApiResourceFactoryInterface
     private $skippedResources;
 
     /**
-     * @param MockApiResourceRetriever $retriever
+     * @param MockApiResourceDataLayer $retriever
      * @param ApiResourceFactoryInterface $factory
      * @param string[] $skippedResources resources that are not allowed to be mocked.
      */
     public function __construct(
-        MockApiResourceRetriever $retriever,
+        MockApiResourceDataLayer $retriever,
         ApiResourceFactoryInterface $factory,
         array $skippedResources
     ) {

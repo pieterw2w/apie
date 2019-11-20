@@ -2,6 +2,7 @@
 namespace W2w\Test\Apie\Models;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use W2w\Lib\Apie\Encodings\FormatRetriever;
 use W2w\Lib\Apie\Models\ApiResourceFacadeResponse;
@@ -11,7 +12,8 @@ class ApiResourceFacadeResponseTest extends TestCase
 {
     public function testGetters()
     {
-        $serializer = $this->prophesize(SerializerInterface::class);
+        $serializer = $this->prophesize(SerializerInterface::class)
+            ->willImplement(NormalizerInterface::class);
 
         $resource = new SimplePopo();
 
@@ -25,13 +27,19 @@ class ApiResourceFacadeResponseTest extends TestCase
             'application/xhtml+xml'
         );
 
-        $xml = '<response><id>123</id><created-at>today</created-at></response>';
-
         $this->assertEquals($resource, $testItem->getResource());
 
+        $data = ['id' => 123, 'created-at' => 'today'];
+        $serializer->normalize($resource, 'xml', [])
+                   ->shouldBeCalled()
+                   ->willReturn($data);
+
+        $this->assertEquals($data, $testItem->getNormalizedData());
+
+        $xml = '<response><id>123</id><created-at>today</created-at></response>';
         $serializer->serialize($resource, 'xml', [])
-            ->shouldBeCalled()
-            ->willReturn($xml);
+                   ->shouldBeCalled()
+                   ->willReturn($xml);
 
         $actual = $testItem->getResponse();
         $this->assertEquals(200, $actual->getStatusCode());

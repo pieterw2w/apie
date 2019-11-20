@@ -4,6 +4,8 @@ namespace W2w\Lib\Apie;
 
 use W2w\Lib\Apie\Exceptions\InvalidReturnTypeOfApiResourceException;
 use W2w\Lib\Apie\Exceptions\MethodNotAllowedException;
+use W2w\Lib\Apie\Retrievers\SearchFilterProviderInterface;
+use W2w\Lib\Apie\SearchFilters\SearchFilterRequest;
 
 /**
  * Class that does the action to retrieve an Api resource.
@@ -25,7 +27,7 @@ class ApiResourceRetriever
 
     /**
      * @param string $resourceClass
-     * @param $id
+     * @param string|int $id
      * @return mixed
      */
     public function retrieve(string $resourceClass, $id)
@@ -45,12 +47,14 @@ class ApiResourceRetriever
 
     /**
      * @param string $resourceClass
-     * @param int $pageIndex
-     * @param int $numberOfItems
+     * @param SearchFilterRequest|null $searchFilterRequest
      * @return iterable
      */
-    public function retrieveAll(string $resourceClass, int $pageIndex, int $numberOfItems)
+    public function retrieveAll(string $resourceClass, ?SearchFilterRequest $searchFilterRequest = null)
     {
+        if (!$searchFilterRequest) {
+            $searchFilterRequest = new SearchFilterRequest();
+        }
         $metadata = $this->factory->getMetadata($resourceClass);
         if (!$metadata->allowGetAll()) {
             throw new MethodNotAllowedException('get all');
@@ -59,8 +63,12 @@ class ApiResourceRetriever
             // Many OpenAPI generators expect the get all call to be working at all times.
             return [];
         }
-        $result = $metadata->getResourceRetriever()
-            ->retrieveAll($resourceClass, $metadata->getContext(), $pageIndex, $numberOfItems);
+        $retriever = $metadata->getResourceRetriever();
+        if ($retriever instanceof SearchFilterProviderInterface) {
+            $searchFilterRequest = $searchFilterRequest->applySearchFilter($retriever->getSearchFilter($metadata));
+        }
+
+        $result = $retriever->retrieveAll($resourceClass, $metadata->getContext(), $searchFilterRequest);
         foreach ($result as $instance) {
             if (!$instance instanceof $resourceClass) {
                 throw new InvalidReturnTypeOfApiResourceException($metadata->getResourceRetriever(), $this->getType($instance), $resourceClass);
@@ -73,7 +81,7 @@ class ApiResourceRetriever
     /**
      * Returns a type display of an object instance.
      *
-     * @param $object
+     * @param mixed $object
      * @return string
      */
     private function getType($object)

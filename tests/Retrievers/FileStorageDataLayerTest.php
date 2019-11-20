@@ -3,10 +3,11 @@ namespace W2w\Test\Apie\Retrievers;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use W2w\Lib\Apie\Retrievers\FileStorageRetriever;
+use W2w\Lib\Apie\Retrievers\FileStorageDataLayer;
+use W2w\Lib\Apie\SearchFilters\SearchFilterRequest;
 use W2w\Test\Apie\Mocks\Data\SimplePopo;
 
-class FileStorageRetrieverTest extends TestCase
+class FileStorageDataLayerTest extends TestCase
 {
     private $folder;
 
@@ -17,7 +18,7 @@ class FileStorageRetrieverTest extends TestCase
         srand(0);
         $this->folder = sys_get_temp_dir() . DIRECTORY_SEPARATOR . bin2hex(random_bytes(12));
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        $this->testItem = new FileStorageRetriever($this->folder, $propertyAccessor);
+        $this->testItem = new FileStorageDataLayer($this->folder, $propertyAccessor);
     }
 
     protected function tearDown(): void
@@ -29,16 +30,17 @@ class FileStorageRetrieverTest extends TestCase
 
     public function testPersistNew()
     {
+        $request = new SearchFilterRequest(0, 100);
         $resource1 = new SimplePopo();
         $resource2 = new SimplePopo();
-        $this->assertEquals([], $this->testItem->retrieveAll(SimplePopo::class, [], 0, 100));
+        $this->assertEquals([], $this->testItem->retrieveAll(SimplePopo::class, [], $request));
 
         $this->testItem->persistNew($resource1, []);
 
-        $this->assertEquals([$resource1], $this->testItem->retrieveAll(SimplePopo::class, [], 0, 100));
+        $this->assertEquals([$resource1], $this->testItem->retrieveAll(SimplePopo::class, [], $request));
 
         $this->testItem->persistNew($resource2, []);
-        $this->assertEquals([$resource1, $resource2], $this->testItem->retrieveAll(SimplePopo::class, [], 0, 100));
+        $this->assertEquals([$resource1, $resource2], $this->testItem->retrieveAll(SimplePopo::class, [], $request));
 
         $resource1->arbitraryField = 'test';
         $this->assertNotEquals($resource1, $this->testItem->retrieve(SimplePopo::class, $resource1->getId(), []));
@@ -47,6 +49,6 @@ class FileStorageRetrieverTest extends TestCase
         $this->assertEquals($resource1, $this->testItem->retrieve(SimplePopo::class, $resource1->getId(), []));
 
         $this->testItem->remove(SimplePopo::class, $resource1->getId(), []);
-        $this->assertEquals([$resource2], $this->testItem->retrieveAll(SimplePopo::class, [], 0, 100));
+        $this->assertEquals([$resource2], $this->testItem->retrieveAll(SimplePopo::class, [], $request));
     }
 }

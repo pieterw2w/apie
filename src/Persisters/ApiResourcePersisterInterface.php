@@ -20,8 +20,8 @@ interface ApiResourcePersisterInterface
      * Persist an existing API resource. The input resource is the modified API resource. Should return the new API
      * resource.
      *
-     * @param $resource
-     * @param $int
+     * @param mixed $resource
+     * @param string|int $int
      * @param array $context
      * @return mixed
      */
@@ -31,7 +31,7 @@ interface ApiResourcePersisterInterface
      * Removes an existing API resource.
      *
      * @param string $resourceClass
-     * @param $id
+     * @param string|int $id
      * @param array $context
      * @return mixed
      */

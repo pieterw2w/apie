@@ -2,7 +2,7 @@
 namespace W2w\Test\Apie\Resources;
 
 use PHPUnit\Framework\TestCase;
-use W2w\Lib\Apie\ApiResources\App;
+use W2w\Lib\Apie\ApiResources\ApplicationInfo;
 use W2w\Lib\Apie\ApiResources\Status;
 use W2w\Lib\Apie\Resources\ApiResourcesFromNamespace;
 use W2w\Test\Apie\OpenApiSchema\Data\MultipleTypesObject;
@@ -13,13 +13,13 @@ class ApiResourcesFromNamespaceTest extends TestCase
     public function testGetters()
     {
         $testItem = new ApiResourcesFromNamespace('W2w\Lib\Apie\ApiResources');
-        $this->assertEquals([App::class, Status::class], $testItem->getApiResources());
+        $this->assertEquals([ApplicationInfo::class, Status::class], $testItem->getApiResources());
     }
 
     public function testCreateApiResources()
     {
         $this->assertEquals(
-            [MultipleTypesObject::class, RecursiveObject::class, App::class, Status::class],
+            [MultipleTypesObject::class, RecursiveObject::class, ApplicationInfo::class, Status::class],
             ApiResourcesFromNamespace::createApiResources('W2w\Test\Apie\OpenApiSchema\Data')
         );
         $this->assertEquals(

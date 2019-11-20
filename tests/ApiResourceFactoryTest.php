@@ -9,8 +9,9 @@ use W2w\Lib\Apie\Exceptions\InvalidClassTypeException;
 use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Persisters\NullPersister;
 use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
-use W2w\Lib\Apie\Retrievers\FileStorageRetriever;
+use W2w\Lib\Apie\Retrievers\FileStorageDataLayer;
 use W2w\Lib\Apie\Retrievers\StatusCheckRetriever;
+use W2w\Lib\Apie\SearchFilters\SearchFilterRequest;
 
 class ApiResourceFactoryTest extends TestCase
 {
@@ -54,8 +55,8 @@ class ApiResourceFactoryTest extends TestCase
             {
             }
 
-            public function retrieveAll(string $resourceClass, array $context, int $pageIndex, int $numberOfItems
-            ): iterable {
+            public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest): iterable
+            {
                 return [];
             }
         };
@@ -100,7 +101,7 @@ class ApiResourceFactoryTest extends TestCase
     public function testGetApiResourceRetrieverInstance_class_has_constructor()
     {
         $this->expectException(CouldNotConstructApiResourceClassException::class);
-        $this->testItem->getApiResourceRetrieverInstance(FileStorageRetriever::class);
+        $this->testItem->getApiResourceRetrieverInstance(FileStorageDataLayer::class);
     }
 
     public function testGetApiResourceRetrieverInstance_class_invalid_type()
@@ -118,7 +119,7 @@ class ApiResourceFactoryTest extends TestCase
     public function testGetApiResourcePersisterInstance_class_has_constructor()
     {
         $this->expectException(CouldNotConstructApiResourceClassException::class);
-        $this->testItem->getApiResourcePersisterInstance(FileStorageRetriever::class);
+        $this->testItem->getApiResourcePersisterInstance(FileStorageDataLayer::class);
     }
 
     public function testGetApiResourcePersisterInstance_class_invalid_type()

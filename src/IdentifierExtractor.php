@@ -19,7 +19,7 @@ class IdentifierExtractor
      * Returns the name of the identifier of a resource. If it could not be determined,
      * it returns null.
      *
-     * @param $resource
+     * @param mixed $resource
      * @param array $context
      * @return string|null
      */
@@ -39,7 +39,7 @@ class IdentifierExtractor
     /**
      * Return the value of the identifer of a resource.
      *
-     * @param $resource
+     * @param mixed $resource
      * @param array $context
      * @return mixed|null
      */

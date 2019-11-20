@@ -3,17 +3,17 @@
 namespace W2w\Lib\Apie\ApiResources;
 
 use W2w\Lib\Apie\Annotations\ApiResource;
-use W2w\Lib\Apie\Retrievers\AppRetriever;
+use W2w\Lib\Apie\Retrievers\ApplicationInfoRetriever;
 
 /**
- * Creates an app api resource. It's best practice to have an end point to tell what application this REST API is.
- * Other usecases are to see if multiple REST API's work in the same environment, etc.
+ * Creates an application_info api resource. It's best practice to have an end point to tell what application this REST API is.
+ * Other use cases are to see if multiple REST API's work in the same environment, etc.
  *
  * @ApiResource(
- *     retrieveClass=AppRetriever::class
+ *     retrieveClass=ApplicationInfoRetriever::class
  * )
  */
-class App
+class ApplicationInfo
 {
     /**
      * @var string

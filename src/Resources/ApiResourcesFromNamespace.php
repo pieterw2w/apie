@@ -2,7 +2,7 @@
 namespace W2w\Lib\Apie\Resources;
 
 use HaydenPierce\ClassFinder\ClassFinder;
-use W2w\Lib\Apie\ApiResources\App;
+use W2w\Lib\Apie\ApiResources\ApplicationInfo;
 use W2w\Lib\Apie\ApiResources\Status;
 use W2w\Lib\Apie\Exceptions\BadConfigurationException;
 
@@ -46,7 +46,7 @@ class ApiResourcesFromNamespace implements ApiResourcesInterface
         // @codeCoverageIgnoreEnd
         $classes = ClassFinder::getClassesInNamespace($namespace);
         if ($defaultResources) {
-            $classes[] = App::class;
+            $classes[] = ApplicationInfo::class;
             $classes[] = Status::class;
         }
         return $classes;

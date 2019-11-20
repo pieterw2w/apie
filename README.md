@@ -4,7 +4,7 @@
 [![Travis](https://api.travis-ci.org/pjordaan/apie.svg?branch=master)](https://travis-ci.org/pjordaan/apie)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pjordaan/apie/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/pjordaan/apie/?branch=master)
 
-library to convert simple POPO's (Plain Old PHP Objects) to a REST API with OpenAPI spec. It's still a work in progress,
+library to convert simple POPO's (Plain Old PHP Objects), DTO (Data Transfer Objects) and Entities to a REST API with OpenAPI spec. It's still a work in progress,
 but there are tons of unit tests and a bridge to integrate the library in [Laravel](https://github.com/pjordaan/laravel-apie).
 
 ## setting up apie
@@ -16,7 +16,7 @@ composer require w2w/apie
 ```
 
 To ease setting up Apie the class ServiceLibraryFactory is created. This class creates a ApiResourceFacade and
-a OpenApiSpecGenerator instance with very little setup. In case you do want to add extra functionality, you need
+an OpenApiSpecGenerator instance with very little setup. In case you do want to add extra functionality, you need
 to call setters on ServiceLibraryFactory.
 
 Usage:
@@ -89,30 +89,30 @@ with different setters in ServiceLibraryFactory.
 require(__DIR__ . '/vendor/autoload.php');
 
 use Psr\Container\ContainerInterface;
-use W2w\Lib\Apie\ApiResources\App;
-use W2w\Lib\Apie\Retrievers\AppRetriever;
+use W2w\Lib\Apie\ApiResources\ApplicationInfo;
+use W2w\Lib\Apie\Retrievers\ApplicationInfoRetriever;
 use W2w\Lib\Apie\ServiceLibraryFactory;
 $factory = new ServiceLibraryFactory([App::class], true, sys_get_temp_dir());
 $factory->setContainer(new class implements ContainerInterface {
     public function get($id)
     {
-        if ($id === AppRetriever::class) {
-            return new AppRetriever('application name', 'prod', '1.0', false);
+        if ($id === ApplicationInfoRetriever::class) {
+            return new ApplicationInfoRetriever('application name', 'prod', '1.0', false);
         }
         throw new RuntimeException('Service ' . $id . ' not found!');
     }
     
     public function has($id)
     {
-        return $id === AppRetriever::class;       
+        return $id === ApplicationInfoRetriever::class;       
     }
 });
 
 // get the facade to handle REST API calls...
 $library = $factory->getApiResourceFacade();
-// if we would not have called setContainer we would get an error AppRetriever
+// if we would not have called setContainer we would get an error ApplicationInfoRetriever
 // could not be instantiated.
-var_dump($library->get(App::class, 'name', null)->getResource());
+var_dump($library->get(ApplicationInfo::class, 'name', null)->getResource());
 ```
 
 ## How does the mapping work:
@@ -140,10 +140,10 @@ So let's add a retrieveClass option and an id property.
 <?php
 use Ramsey\Uuid\Uuid;
 use W2w\Lib\Apie\Annotations\ApiResource;
-use W2w\Lib\Apie\Retrievers\FileStorageRetriever;
+use W2w\Lib\Apie\Retrievers\FileStorageDataLayer;
 
 /**
- * @ApiResource(retrieveClass=FileStorageRetriever::class)
+ * @ApiResource(retrieveClass=FileStorageDataLayer::class)
  */
 class Example {
     /**
@@ -153,7 +153,7 @@ class Example {
 }
 ```
 If we would check the OpenAPI spec we would get a get single resource and a get all resources route and the response
-will only contain an id. FileStorageRetriever requires a folder where to store a resource, so we require the step at [injecting dependencies](#injecting-dependencies)
+will only contain an id. FileStorageDataLayer requires a folder where to store a resource, so we require the step at [injecting dependencies](#injecting-dependencies)
 to set up a folder:
 ```php
 <?php
@@ -161,14 +161,14 @@ require(__DIR__ . '/vendor/autoload.php');
 
 use Psr\Container\ContainerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use W2w\Lib\Apie\Retrievers\FileStorageRetriever;
+use W2w\Lib\Apie\Retrievers\FileStorageDataLayer;
 use W2w\Lib\Apie\ServiceLibraryFactory;
 $factory = new ServiceLibraryFactory([Example::class], true, sys_get_temp_dir());
 $factory->setContainer(new class implements ContainerInterface {
     public function get($id)
     {
-        if ($id === FileStorageRetriever::class) {
-            return new FileStorageRetriever(
+        if ($id === FileStorageDataLayer::class) {
+            return new FileStorageDataLayer(
                 sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'apie-resource',
                 PropertyAccess::createPropertyAccessor()
             );
@@ -178,7 +178,7 @@ $factory->setContainer(new class implements ContainerInterface {
     
     public function has($id)
     {
-        return $id === FileStorageRetriever::class;       
+        return $id === FileStorageDataLayer::class;       
     }
 });
 ```
@@ -188,12 +188,12 @@ property persistClass to the ApiResource annotation.
  <?php
  use Ramsey\Uuid\Uuid;
  use W2w\Lib\Apie\Annotations\ApiResource;
- use W2w\Lib\Apie\Retrievers\FileStorageRetriever;
+ use W2w\Lib\Apie\Retrievers\FileStorageDataLayer;
  
  /**
   * @ApiResource(
-  *     retrieveClass=FileStorageRetriever::class,
-  *     persistClass=FileStorageRetriever::class
+  *     retrieveClass=FileStorageDataLayer::class,
+  *     persistClass=FileStorageDataLayer::class
   * )
   */
  class Example {
@@ -205,17 +205,17 @@ property persistClass to the ApiResource annotation.
  ```
  The OpenAPI spec will add routes for DELETE, PUT and POST. There are still two problems. We want to make POST
  indempotent and want to make the id required on POST (even though a lack of id will already fail because
- FileStorageRetriever has trouble creating a filename). We also do not want DELETE and do not want to be able to change the
+ FileStorageDataLayer has trouble creating a filename). We also do not want DELETE and do not want to be able to change the
  id on PUT. This is possible with little effort.
  ```php
  <?php
   use Ramsey\Uuid\Uuid;
   use W2w\Lib\Apie\Annotations\ApiResource;
-  use W2w\Lib\Apie\Retrievers\FileStorageRetriever;
+  use W2w\Lib\Apie\Retrievers\FileStorageDataLayer;
  /**
    * @ApiResource(
-   *     retrieveClass=FileStorageRetriever::class,
-   *     persistClass=FileStorageRetriever::class,
+   *     retrieveClass=FileStorageDataLayer::class,
+   *     persistClass=FileStorageDataLayer::class,
    *     disabledMethods={"delete"}
    * )
    */
@@ -238,11 +238,12 @@ Id is now a required constructor argument and is required for POST to create an 
 normalization error if id is not in a uuid format.
 Id can also not be changed when it is constructed, so PUT no longer allows us to change the id with PUT.
 This serialization is done with [the symfony serializer](https://symfony.com/doc/current/components/serializer.html) and
-additional information can be found here.
+additional information can be found there.
 
 ## Validating fields
-Apie assumes that the resource classes created are always in a robust state and they should take care of never
-getting in a inconsistent state. Because of that you require to validate and clean the input yourself in the resource class.
+Apie assumes that the resource classes created are never in an invalid state and they should take care of never
+getting in a inconsistent state, which is a guideline of Domain Driven Design entities.
+Because of that you require to validate and clean the input yourself in the resource class.
 
 ```php
 <?php
@@ -262,27 +263,33 @@ class Example {
     }
 }
 ```
-A better solution would be to use value objects. Apie is set up to work with value objects created with the composer library
-[bruli/php-value-objects](https://github.com/bruli/php-value-objects). They will also be mapped correctly in the OpenAPI schema as a string. The library has an e-mail value
-object, but let's assume we want to always lowercase e-mail addresses and only allow @apie.nl:
+A better solution would be to use value objects. Apie is set up to work with value objects. You require to implement
+the interface W2w\Lib\Apie\ValueObjects\ValueObjectInterface.
+They will also be mapped correctly in the OpenAPI schema. A value object for e-mail would be written like this.
+To assist programmers a W2w\Lib\Apie\ValueObjects\StringEnumTrait and a W2w\Lib\Apie\ValueObjects\StringTrait were
+created to make easy value objects.
+
+A simple e-mail address value object would look like this:
 ```php
 <?php
-use PhpValueObjects\AbstractValueObject;
+use W2w\Lib\Apie\ValueObjects\StringTrait;
+use W2w\Lib\Apie\ValueObjects\ValueObjectInterface;
 
-class Email extends AbstractValueObject
+class Email implements ValueObjectInterface
 {
-    public function __construct(string $value)
+    use StringTrait;
+    
+    protected function sanitizeValue(string $value): string
     {
-        parent::__construct(strtolower($value));
+        return trim($value);
     }
-    protected function guard($value): void
+    
+    protected function validValue(string $value): bool
     {
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $this->throwException($value);
+            return false;
         }
-        if (!preg_match('/@apie\.nl$/', $value)) {
-            $this->throwException($value);
-        }
+        return (bool) preg_match('/@apie\.nl$/', $value);
     }
 }
 ```
@@ -302,7 +309,7 @@ class Example {
 }
 ```
 
-In case you have a value object that does not extend PhpValueObjects\AbstractValueObject you might need to manually
+In case you have a value object created with an other library, you might need to manually
 change the OpenAPI schema for this class to a string. You might also require to [create a (de)normalizer](https://symfony.com/doc/current/serializer/custom_normalizer.html#creating-a-new-normalizer) for the symfony serializer 
 to convert this object from/to a string.
 ```php
@@ -320,7 +327,8 @@ $factory->getSchemaGenerator()->defineSchemaForResource(ClassName::class, new Sc
 ## PSR Controllers and routing
 If your framework supports PSR7 request/responses, then the framework can use one of the predefined controllers
 in W2w\Lib\Apie\Controllers. Every controller has an __invoke() method. The library has no url match functionality,
-so you require to make your own route binding. With a library like [nikic/fast-route](https://github.com/nikic/FastRoute) it is very easy to make a framework agnostic REST API.
+so you require to make your own route binding.
+With a library like [nikic/fast-route](https://github.com/nikic/FastRoute) it is very easy to make a framework agnostic REST API.
  
 It contains the following controllers:
 - **W2w\Lib\Apie\Controllers\DeleteController**: handles ```DELETE /{resource class}/{id}``` requests to delete a single resource
@@ -330,11 +338,96 @@ It contains the following controllers:
 - **W2w\Lib\Apie\Controllers\PostController**: handles ```POST /{resource class}/``` requests to create a new resource
 - **W2w\Lib\Apie\Controllers\PutController**: handles ```PUT /{resource class}/{id}``` requests to modify an existing resource
 
+## Adding search filters
+Normally if you do the REST API call to get all resources you will only get pagination and no filtering.
+
+It is possible to add filtering that will also be added in the OpenAPI specs. If you use one of the default classes in this
+library, you get them for free. You only need to manually set up which fields can be filtered.
+
+ ```php
+ <?php
+  use Ramsey\Uuid\Uuid;
+  use W2w\Lib\Apie\Annotations\ApiResource;
+  use W2w\Lib\Apie\Retrievers\FileStorageDataLayer;
+ /**
+   * @ApiResource(
+   *     retrieveClass=FileStorageDataLayer::class,
+   *     persistClass=FileStorageDataLayer::class,
+   *     context={
+   *         "search": {
+   *             "email": "string"       
+   *         }
+   *     }
+   * )
+   */
+  class Example {
+      private $id;
+
+      /**
+       * @var string 
+       */
+      public $email;
+
+      public function __construct(Uuid $id)
+      {
+          $this->id = $id;
+      }      
+      
+      public function getId(): Uuid
+      {
+          return $this->id;
+      }
+  }
+```
+
+Now if you check the OpenAPI spec an 'email' search filter is added and marked as a string. It is possible to compare value
+objects with strings/integers.
+
+If you have your own retriever class, you require to add the filtering manually by implementing the interface W2w\Lib\Apie\Retrievers\SearchFilterProviderInterface
+and do something with the SearchFilterRequest you get in retrieveAll. An implementation that gets the search filters
+from the class configuration is in the trait W2w\Lib\Apie\Retrievers\SearchFilterFromMetadataTrait.
+
+If your retriever always returns all records
+the filtering can be easily programmed with W2w\Lib\Apie\Searchilters\SearchFilterHelper::applySearchFilter():
+
+```php
+<?php
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
+use W2w\Lib\Apie\Retrievers\SearchFilterFromMetadataTrait;
+use W2w\Lib\Apie\Retrievers\SearchFilterProviderInterface;
+use W2w\Lib\Apie\SearchFilters\SearchFilterHelper;
+use W2w\Lib\Apie\SearchFilters\SearchFilterRequest;
+
+class ExampleRetriever implements ApiResourceRetrieverInterface, SearchFilterProviderInterface
+{
+    use SearchFilterFromMetadataTrait;
+    
+    private $propertyAccess;
+    
+    public function __construct(PropertyAccessorInterface $propertyAccess)
+    {
+        $this->propertyAccess = $propertyAccess;
+    }
+    
+    public function retrieve(string $resourceClass, $id, array $context)
+    {
+        // implementation..
+    }
+    
+    public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest): iterable
+    {
+        $allRecords  = $this->methodThatRetrievesAll();
+        return SearchFilterHelper::applySearchFilter($allRecords, $searchFilterRequest, $this->propertyAccess);
+    }
+}
+```
+
 ## Apie vs. Api Platform
 This library is heavily inspired by the Symfony Api Platform, but there are some changes:
 - This library is framework agnostic and requires a wrapper library to make it work in a framework. Api Platform core is framework agnostic, but it is hard to setup outside the symfony framework.
 - In the Api Platform a resource provider or persister determines if it can persist or retrieve a specific resource with a supports() method. For Apie the resource class is explicitly linked to a service making it easier to select which HTTP methods are available.
-- Both libraries use the symfony serializer component with their own object normalizer, but Apie is closer to the default ObjectNormalizer.
+- Both libraries use the symfony serializer component with their own object normalizer, but Apie is closer to the default ObjectNormalizer. This could change in the future since a ValidationException with proper RFC standard would require a change here.
 - API Platform has no default serialization group if no serialization group is selected.
 - So far APIE has less functionality for standards (JSON+LD, HAL) and no GraphQL support. Eventually we might add it.
 - APIE is better capable of having api resources without an id.

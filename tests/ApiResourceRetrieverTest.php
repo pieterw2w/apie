@@ -2,7 +2,6 @@
 namespace W2w\Test\Apie;
 
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 use Ramsey\Uuid\Uuid;
 use W2w\Lib\Apie\Annotations\ApiResource;
 use W2w\Lib\Apie\ApiResourceMetadataFactory;
@@ -10,11 +9,9 @@ use W2w\Lib\Apie\ApiResourceRetriever;
 use W2w\Lib\Apie\Exceptions\InvalidReturnTypeOfApiResourceException;
 use W2w\Lib\Apie\Exceptions\MethodNotAllowedException;
 use W2w\Lib\Apie\Models\ApiResourceClassMetadata;
-use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
+use W2w\Lib\Apie\SearchFilters\SearchFilterRequest;
 use W2w\Test\Apie\Mocks\Data\FullRestObject;
-use W2w\Test\Apie\Mocks\Data\SimplePopo;
-use W2w\Test\Apie\OpenApiSchema\Data\RecursiveObject;
 
 class ApiResourceRetrieverTest extends TestCase
 {
@@ -102,9 +99,10 @@ class ApiResourceRetrieverTest extends TestCase
 
     public function testRetrieveAll()
     {
+        $request = new SearchFilterRequest(0, 10);
         $retriever = $this->prophesize(ApiResourceRetrieverInterface::class);
         $apiResource = new ApiResource();
-        $retriever->retrieveAll(FullRestObject::class, [], 0, 10)
+        $retriever->retrieveAll(FullRestObject::class, [], $request)
             ->shouldBeCalled()
             ->willReturn(
                 [new FullRestObject(Uuid::fromString('986e12c4-3011-4ed8-aead-c62b76bb7f69'))]
@@ -120,7 +118,7 @@ class ApiResourceRetrieverTest extends TestCase
             );
         $this->assertEquals(
             [new FullRestObject(Uuid::fromString('986e12c4-3011-4ed8-aead-c62b76bb7f69'))],
-            $this->testItem->retrieveAll(FullRestObject::class, 0, 10)
+            $this->testItem->retrieveAll(FullRestObject::class, $request)
         );
     }
 
@@ -138,7 +136,7 @@ class ApiResourceRetrieverTest extends TestCase
             )
         );
         $this->expectException(MethodNotAllowedException::class);
-        $this->testItem->retrieveAll(FullRestObject::class, 0, 10);
+        $this->testItem->retrieveAll(FullRestObject::class);
     }
 
     public function testRetrieveAll_empty_array_fallback()
@@ -155,7 +153,7 @@ class ApiResourceRetrieverTest extends TestCase
         );
         $this->assertEquals(
             [],
-            $this->testItem->retrieveAll(FullRestObject::class, 0, 10)
+            $this->testItem->retrieveAll(FullRestObject::class)
         );
     }
 
@@ -164,9 +162,10 @@ class ApiResourceRetrieverTest extends TestCase
      */
     public function testRetrieveAll_retriever_returns_wrong_object($wrongOutput)
     {
+        $request = new SearchFilterRequest(0, 10);
         $retriever = $this->prophesize(ApiResourceRetrieverInterface::class);
         $apiResource = new ApiResource();
-        $retriever->retrieveAll(FullRestObject::class, [], 0, 10)
+        $retriever->retrieveAll(FullRestObject::class, [], $request)
             ->shouldBeCalled()
             ->willReturn($wrongOutput);
         $this->factory->getMetadata(FullRestObject::class)
@@ -179,7 +178,7 @@ class ApiResourceRetrieverTest extends TestCase
                 )
             );
         $this->expectException(InvalidReturnTypeOfApiResourceException::class);
-        $this->testItem->retrieveAll(FullRestObject::class, 0, 10);
+        $this->testItem->retrieveAll(FullRestObject::class, $request);
     }
 
     public function retrieveWrongObjectsProvider()

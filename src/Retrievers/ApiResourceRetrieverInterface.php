@@ -2,11 +2,10 @@
 
 namespace W2w\Lib\Apie\Retrievers;
 
+use W2w\Lib\Apie\SearchFilters\SearchFilterRequest;
+
 /**
  * Interface for a service to retrieve an api resource by an id.
- *
- * @TODO: add search filters for retrieveAll
- * @TODO: add a total amount for retrieveAll so we can send metadata how many records there are..
  */
 interface ApiResourceRetrieverInterface
 {
@@ -25,9 +24,8 @@ interface ApiResourceRetrieverInterface
      *
      * @param string $resourceClass
      * @param array $context
-     * @param int $pageIndex
-     * @param int $numberOfItems
+     * @param SearchFilterRequest $searchFilterRequest
      * @return iterable
      */
-    public function retrieveAll(string $resourceClass, array $context, int $pageIndex, int $numberOfItems): iterable;
+    public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest): iterable;
 }

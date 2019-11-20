@@ -2,20 +2,25 @@
 
 namespace W2w\Lib\Apie\Retrievers;
 
+use CallbackFilterIterator;
 use Generator;
 use LimitIterator;
 use RewindableGenerator;
 use W2w\Lib\Apie\ApiResources\Status;
 use W2w\Lib\Apie\Exceptions\InvalidClassTypeException;
 use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
+use W2w\Lib\Apie\Models\ApiResourceClassMetadata;
+use W2w\Lib\Apie\SearchFilters\SearchFilter;
+use W2w\Lib\Apie\SearchFilters\SearchFilterRequest;
 use W2w\Lib\Apie\StatusChecks\StatusCheckInterface;
 use W2w\Lib\Apie\StatusChecks\StatusCheckListInterface;
+use W2w\Lib\Apie\ValueObjects\PhpPrimitive;
 
 /**
  * Status check retriever retrieves instances of Status. A status check needs to implement StatusCheckInterface
  * or StatusCheckListInterface and sent in the constructor of this method.
  */
-class StatusCheckRetriever implements ApiResourceRetrieverInterface
+class StatusCheckRetriever implements ApiResourceRetrieverInterface, SearchFilterProviderInterface
 {
     private $statusChecks;
 
@@ -81,14 +86,38 @@ class StatusCheckRetriever implements ApiResourceRetrieverInterface
      *
      * @param string $resourceClass
      * @param array $context
-     * @param int $pageIndex
-     * @param int $numberOfItems
+     * @param SearchFilterRequest $searchFilterRequest
      * @return iterable<Status>
      */
-    public function retrieveAll(string $resourceClass, array $context, int $pageIndex, int $numberOfItems): iterable
+    public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest): iterable
     {
-        return new LimitIterator(new RewindableGenerator(function () {
-            return $this->iterate();
-        }), $pageIndex, $numberOfItems);
+        $offset = $searchFilterRequest->getOffset();
+        $numberOfItems = $searchFilterRequest->getNumberOfItems();
+        $filter = (array_key_exists('status', $searchFilterRequest->getSearches()))
+            ? function (Status $status) use ($searchFilterRequest) { return $status->getStatus() === $searchFilterRequest->getSearches()['status']; }
+            : function () { return true; };
+        return new LimitIterator(
+            new CallbackFilterIterator(
+                new RewindableGenerator(function () {
+                    return $this->iterate();
+                }),
+                $filter
+            ),
+            $offset,
+            $numberOfItems
+        );
+    }
+
+    /**
+     * Retrieves search filter for an api resource.
+     *
+     * @param ApiResourceClassMetadata $classMetadata
+     * @return SearchFilter
+     */
+    public function getSearchFilter(ApiResourceClassMetadata $classMetadata): SearchFilter
+    {
+        $res = new SearchFilter();
+        $res->addPrimitiveSearchFilter('status', PhpPrimitive::STRING);
+        return $res;
     }
 }

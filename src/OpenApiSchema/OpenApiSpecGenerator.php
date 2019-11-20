@@ -6,6 +6,9 @@ use W2w\Lib\Apie\ApiResourceMetadataFactory;
 use W2w\Lib\Apie\Resources\ApiResourcesInterface;
 use W2w\Lib\Apie\ClassResourceConverter;
 use erasys\OpenApi\Spec\v3 as OASv3;
+use W2w\Lib\Apie\Retrievers\SearchFilterProviderInterface;
+use W2w\Lib\Apie\SearchFilters\SearchFilter;
+use W2w\Lib\Apie\ValueObjects\PhpPrimitive;
 
 /**
  * Class that generated an OpenAPI spec from a list of API resources.
@@ -166,12 +169,12 @@ class OpenApiSpecGenerator
                             [
                                 'application/json' => new OASv3\MediaType(
                                     [
-                                       'schema' => $errorSchema,
+                                        'schema' => $errorSchema,
                                     ]
                                 ),
                                 'application/xml' => new OASv3\MediaType(
                                     [
-                                       'schema' => $errorSchema,
+                                        'schema' => $errorSchema,
                                     ]
                                 ),
                             ]
@@ -355,6 +358,19 @@ class OpenApiSpecGenerator
                     ],
                 ]
             );
+            $metadata = $this->apiResourceMetadataFactory->getMetadata($apiResourceClass);
+            $retriever = $metadata->hasResourceRetriever() ? $metadata->getResourceRetriever() : null;
+            if ($retriever instanceof SearchFilterProviderInterface) {
+                foreach ($retriever->getSearchFilter($metadata)->getAllPrimitiveSearchFilter() as $name => $filter) {
+                    $schema = $filter->getSchemaForFilter();
+                    $paths['get']->parameters[] = new OASv3\Parameter(
+                        $name,
+                        'query',
+                        'search filter ' . $name,
+                        ['schema' => $schema]
+                    );
+                }
+            }
         }
 
         if ($this->allowed($apiResourceClass, 'post')) {

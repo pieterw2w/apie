@@ -3,6 +3,8 @@
 namespace W2w\Lib\Apie\Models;
 
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use W2w\Lib\Apie\Encodings\FormatRetriever;
 use Zend\Diactoros\Response\TextResponse;
@@ -25,7 +27,7 @@ class ApiResourceFacadeResponse
     /**
      * @param SerializerInterface $serializer
      * @param array $serializerContext
-     * @param $resource
+     * @param mixed $resource
      * @param FormatRetriever $formatRetriever
      * @param string|null $acceptHeader
      */
@@ -61,5 +63,19 @@ class ApiResourceFacadeResponse
         $response = $this->serializer->serialize($this->resource, $format, $this->serializerContext);
 
         return new TextResponse($response, is_null($this->resource) ? 204 : 200, ['content-type' => $contentType]);
+    }
+
+    /**
+     * Gets data the way we would send it normalized.
+     *
+     * @return mixed
+     */
+    public function getNormalizedData()
+    {
+        if (!$this->serializer instanceof NormalizerInterface) {
+            throw new RuntimeException('ApiResourceFacadeResponse requires a serializer with Normalizer support for this method');
+        }
+        $format = $this->formatRetriever->getFormat($this->acceptHeader ?? 'application/json');
+        return $this->serializer->normalize($this->resource, $format, $this->serializerContext);
     }
 }

@@ -7,6 +7,7 @@ use W2w\Lib\Apie\ApiResources\Status;
 use W2w\Lib\Apie\Exceptions\InvalidClassTypeException;
 use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\Retrievers\StatusCheckRetriever;
+use W2w\Lib\Apie\SearchFilters\SearchFilterRequest;
 use W2w\Lib\Apie\StatusChecks\StaticStatusCheck;
 use W2w\Lib\Apie\StatusChecks\StatusCheckListInterface;
 
@@ -47,7 +48,7 @@ class StatusCheckRetrieverTest extends TestCase
     public function testRetrieveAll_wrong_status_check()
     {
         $this->testItem = new StatusCheckRetriever([$this]);
-        $actual = $this->testItem->retrieveAll(Status::class, [], 0, 10);
+        $actual = $this->testItem->retrieveAll(Status::class, [], new SearchFilterRequest(0, 10));
         $this->expectException(InvalidClassTypeException::class);
         iterator_to_array($actual);
     }
@@ -60,7 +61,7 @@ class StatusCheckRetrieverTest extends TestCase
         );
 
         $this->testItem = new StatusCheckRetriever([$listItem->reveal()]);
-        $actual = $this->testItem->retrieveAll(Status::class, [], 0, 10);
+        $actual = $this->testItem->retrieveAll(Status::class, [], new SearchFilterRequest(0, 10));
         $this->expectException(InvalidClassTypeException::class);
         iterator_to_array($actual);
     }
@@ -73,7 +74,7 @@ class StatusCheckRetrieverTest extends TestCase
                 new Status('a status object', 'OK', 'https://php.net', []),
                 new Status('static test', 'OK', 'https://phpunit.de', []),
             ],
-            iterator_to_array($this->testItem->retrieveAll(Status::class, [], 0, 10))
+            iterator_to_array($this->testItem->retrieveAll(Status::class, [], new SearchFilterRequest(0, 10)))
         );
     }
 

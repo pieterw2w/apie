@@ -3,7 +3,7 @@ namespace W2w\Test\Apie;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
-use W2w\Lib\Apie\ApiResources\App;
+use W2w\Lib\Apie\ApiResources\ApplicationInfo;
 use W2w\Lib\Apie\ApiResources\Status;
 use W2w\Lib\Apie\Resources\ApiResources;
 use W2w\Lib\Apie\ClassResourceConverter;
@@ -19,21 +19,21 @@ class ClassResourceConverterTest extends TestCase
     {
         $this->testItem = new ClassResourceConverter(
             new CamelCaseToSnakeCaseNameConverter(),
-            new ApiResources([App::class, Status::class, SimplePopo::class, RecursiveObject::class]),
+            new ApiResources([ApplicationInfo::class, Status::class, SimplePopo::class, RecursiveObject::class]),
             true
         );
     }
 
     public function testNormalize()
     {
-        $this->assertEquals('app', $this->testItem->normalize(App::class));
+        $this->assertEquals('application_info', $this->testItem->normalize(ApplicationInfo::class));
         $this->assertEquals('simple_popo', $this->testItem->normalize(SimplePopo::class));
         $this->assertEquals('class_resource_converter_test', $this->testItem->normalize(__CLASS__));
     }
 
     public function testDenormalize()
     {
-        $this->assertEquals(App::class, $this->testItem->denormalize('app'));
+        $this->assertEquals(ApplicationInfo::class, $this->testItem->denormalize('application_info'));
         $this->assertEquals(SimplePopo::class, $this->testItem->denormalize('simple_popo'));
     }
 

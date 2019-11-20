@@ -39,12 +39,16 @@
         }
     },
     "require-dev": {
-        "bruli/php-value-objects": "^1.0",
         "nesbot/carbon": "*",
         "phpunit/phpunit": "^7.0.0|^8.0.0",
         "guzzlehttp/guzzle": "^6.3",
         "haydenpierce/class-finder": "^0.4.0",
-        "webonyx/graphql-php": "^0.13.8"
+        "webonyx/graphql-php": "^0.13.8",
+        "phpstan/phpstan": "^0.11.19",
+        "doctrine/cache": "^1.9",
+        "phpstan/extension-installer": "^1.0",
+        "phpstan/phpstan-phpunit": "^0.11.2",
+        "jangregor/phpstan-prophecy": "^0.4.2"
     },
     "archive": {
         "exclude": ["/tests"]
