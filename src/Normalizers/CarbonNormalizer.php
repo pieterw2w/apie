@@ -9,6 +9,7 @@ use Carbon\CarbonInterface;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 /**
@@ -16,38 +17,49 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
  */
 class CarbonNormalizer extends DateTimeNormalizer
 {
+    private $allowedTypes = [
+        Carbon::class,
+        CarbonInterface::class
+    ];
+
+    private $before = [
+        CarbonInterface::class => DateTimeInterface::class,
+        Carbon::class => DateTime::class,
+    ];
+
+    private $after = [
+        DateTime::class => Carbon::class,
+        DateTimeInterface::class => Carbon::class,
+        Carbon::class => Carbon::class,
+        CarbonInterface::class => Carbon::class,
+    ];
+
+    public function __construct($defaultContext = [], DateTimeZone $timezone = null)
+    {
+        parent::__construct($defaultContext, $timezone);
+        // carbon 2 support.
+        if (class_exists(CarbonImmutable::class)) {
+            $this->allowedTypes[] = CarbonImmutable::class;
+            $this->before[CarbonImmutable::class] = DateTimeImmutable::class;
+            $this->after[DateTimeInterface::class] = CarbonImmutable::class;
+            $this->after[CarbonInterface::class] = CarbonImmutable::class;
+            $this->after[CarbonImmutable::class] = CarbonImmutable::class;
+            $this->after[DateTimeImmutable::class] = CarbonImmutable::class;
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
     public function denormalize($data, $type, $format = null, array $context = [])
     {
         $internalType = $type;
-        if ($type === CarbonInterface::class) {
-            $internalType = DateTimeInterface::class;
-        }
-        if ($type === Carbon::class) {
-            $internalType = DateTime::class;
-        }
-        if ($type === CarbonImmutable::class) {
-            $internalType = DateTimeImmutable::class;
+        if (isset($this->before[$type])) {
+            $internalType = $this->before[$type];
         }
         $result = parent::denormalize($data, $internalType, $format, $context);
-        switch($type) {
-            case Carbon::class:
-            case DateTime::class:
-                return Carbon::make($result);
-            case DateTimeInterface::class:
-            case CarbonInterface::class:
-                if (class_exists(CarbonImmutable::class)) {
-                    return CarbonImmutable::make($result);
-                }
-                return Carbon::make($result);
-            case CarbonImmutable::class:
-            case DateTimeImmutable::class:
-                if (class_exists(CarbonImmutable::class)) {
-                    return CarbonImmutable::make($result);
-                }
-                return $result;
+        if (isset($this->after[$type])) {
+            return $this->after[$type]::make($result);
         }
         return $result;
     }
@@ -57,7 +69,7 @@ class CarbonNormalizer extends DateTimeNormalizer
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return $type === Carbon::class || $type === CarbonImmutable::class || parent::supportsDenormalization($data, $type, $format);
+        return in_array($type, $this->allowedTypes) || parent::supportsDenormalization($data, $type, $format);
     }
 
     /**

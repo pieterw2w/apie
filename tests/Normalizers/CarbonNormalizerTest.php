@@ -15,32 +15,37 @@ class CarbonNormalizerTest extends TestCase
     public function testDenormalize()
     {
         $testItem = new CarbonNormalizer([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s']);
-        $this->assertEquals(
+        $this->assertEqualTime(
             new Carbon('1970-01-01 0:00:00'),
             $testItem->denormalize('1970-01-01 0:00:00', Carbon::class)
         );
-        $this->assertEquals(
+        $this->assertEqualTime(
             new CarbonImmutable('1970-01-01 0:00:00'),
             $testItem->denormalize('1970-01-01 0:00:00', CarbonImmutable::class)
         );
-        $this->assertEquals(
+        $this->assertEqualTime(
             new Carbon('1970-01-01 0:00:00'),
             $testItem->denormalize('1970-01-01 0:00:00', DateTime::class)
         );
-        $this->assertEquals(
+        $this->assertEqualTime(
             new CarbonImmutable('1970-01-01 0:00:00'),
             $testItem->denormalize('1970-01-01 0:00:00', DateTimeImmutable::class)
         );
-        $this->assertEquals(
+        $this->assertEqualTime(
             new CarbonImmutable('1970-01-01 0:00:00'),
             $testItem->denormalize('1970-01-01 0:00:00', DateTimeInterface::class)
         );
+    }
 
-        $class = new class('1970-01-01 0:00:00') extends DateTime{};
-
-        $this->assertEquals(
-            $class,
-            $testItem->denormalize('1970-01-01 0:00:00', get_class($class))
-        );
+    /**
+     * https://github.com/sebastianbergmann/phpunit/issues/3948
+     *
+     * @param DateTimeInterface $expected
+     * @param DateTimeInterface $actual
+     */
+    private function assertEqualTime(DateTimeInterface $expected, DateTimeInterface $actual)
+    {
+        $this->assertEquals($expected, $actual);
+        $this->assertEquals(get_class($expected), get_class($actual));
     }
 }
