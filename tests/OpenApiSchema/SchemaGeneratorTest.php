@@ -20,6 +20,7 @@ use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
 use W2w\Lib\Apie\BaseGroupLoader;
 use W2w\Lib\Apie\ClassResourceConverter;
 use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
+use W2w\Lib\Apie\ValueObjects\PhpPrimitive;
 use W2w\Test\Apie\Mocks\Data\SimplePopo;
 use W2w\Test\Apie\OpenApiSchema\Data\MultipleTypesObject;
 use W2w\Test\Apie\OpenApiSchema\Data\RecursiveObject;
@@ -197,14 +198,18 @@ class SchemaGeneratorTest extends TestCase
 
     public function testCreateSchema_value_objects()
     {
-        $expected = new Schema(['type' => 'string', 'format' => 'urlvalueobject']);
+        $expected = new Schema([
+            'type' => 'string',
+            'format' => 'php_primitive',
+            'enum' => array_values(PhpPrimitive::getValidValues())
+        ]);
         $this->assertEquals(
             $expected,
-            $this->testItem->createSchema(UrlValueObject::class, 'get', ['get', 'read'])
+            $this->testItem->createSchema(PhpPrimitive::class, 'get', ['get', 'read'])
         );
         $this->assertEquals(
             $expected,
-            $this->testItem->createSchema(UrlValueObject::class, 'get', ['get', 'read']),
+            $this->testItem->createSchema(PhpPrimitive::class, 'get', ['get', 'read']),
             'asking again gives a cached result'
         );
     }
