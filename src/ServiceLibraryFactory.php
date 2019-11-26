@@ -464,7 +464,7 @@ class ServiceLibraryFactory
         return $this->classMetadataFactory;
     }
 
-    private function getSerializerCache(): CacheItemPoolInterface
+    public function getSerializerCache(): CacheItemPoolInterface
     {
         if (!$this->serializerCache) {
             $this->serializerCache = new ArrayAdapter(0, true);
