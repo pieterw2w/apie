@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": "^7.2",
-        "symfony/serializer": "^4.0|^5.0",
+        "symfony/serializer": "^4.2|^5.0",
         "psr/cache": "^1.0",
         "symfony/cache": "^4.0|^5.0",
         "symfony/http-kernel": "^4.0|^5.0",
@@ -44,11 +44,14 @@
         "guzzlehttp/guzzle": "^6.3",
         "haydenpierce/class-finder": "^0.4.0",
         "webonyx/graphql-php": "^0.13.8",
-        "phpstan/phpstan": "^0.11.19",
+        "phpstan/phpstan": "^0.12.3",
         "doctrine/cache": "^1.9",
         "phpstan/extension-installer": "^1.0",
-        "phpstan/phpstan-phpunit": "^0.11.2",
-        "jangregor/phpstan-prophecy": "^0.4.2"
+        "phpstan/phpstan-phpunit": "0.12.2",
+        "jangregor/phpstan-prophecy": "0.5.1"
+    },
+    "conflict": {
+        "phpspec/prophecy": "1.10.0"
     },
     "conflict": {
         "phpspec/prophecy": "1.10.0"
