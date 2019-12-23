@@ -24,7 +24,6 @@
         "zendframework/zend-diactoros": "^2.1",
         "jeroen/rewindable-generator": "^1.2",
         "psr/container": "^1.0",
-        "gbprod/uuid-normalizer": "^1.1",
         "symfony/finder": "^4.3",
         "phpdocumentor/reflection-docblock": "^4.3"
     },

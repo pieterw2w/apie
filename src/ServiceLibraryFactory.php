@@ -8,8 +8,6 @@ use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Cache\PhpFileCache;
 use erasys\OpenApi\Spec\v3\Info;
-use GBProd\UuidNormalizer\UuidDenormalizer;
-use GBProd\UuidNormalizer\UuidNormalizer;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -47,6 +45,7 @@ use W2w\Lib\Apie\Normalizers\CarbonNormalizer;
 use W2w\Lib\Apie\Normalizers\ContextualNormalizer;
 use W2w\Lib\Apie\Normalizers\EvilReflectionPropertyNormalizer;
 use W2w\Lib\Apie\Normalizers\ExceptionNormalizer;
+use W2w\Lib\Apie\Normalizers\UuidNormalizer;
 use W2w\Lib\Apie\Normalizers\ValueObjectNormalizer;
 use W2w\Lib\Apie\OpenApiSchema\OpenApiSpecGenerator;
 use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
@@ -528,7 +527,6 @@ class ServiceLibraryFactory
             }
             $this->normalizers[] = new ValueObjectNormalizer();
             $this->normalizers[] = new UuidNormalizer();
-            $this->normalizers[] = new UuidDenormalizer();
 
             $this->normalizers[] = new JsonSerializableNormalizer();
             $this->normalizers[] = new ArrayDenormalizer();
