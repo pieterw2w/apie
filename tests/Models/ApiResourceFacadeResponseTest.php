@@ -2,6 +2,7 @@
 namespace W2w\Test\Apie\Models;
 
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use W2w\Lib\Apie\Encodings\FormatRetriever;
@@ -45,5 +46,24 @@ class ApiResourceFacadeResponseTest extends TestCase
         $this->assertEquals(200, $actual->getStatusCode());
         $this->assertEquals($xml, (string) $actual->getBody());
         $this->assertEquals('application/xml', $actual->getHeader('content-type')[0] ?? null);
+    }
+
+    public function testGetNormalizedData_throw_error_wrong_serializer_instance()
+    {
+        $serializer = $this->prophesize(SerializerInterface::class);
+
+        $resource = new SimplePopo();
+
+        $formatRetriever = new FormatRetriever();
+
+        $testItem = new ApiResourceFacadeResponse(
+            $serializer->reveal(),
+            [],
+            $resource,
+            $formatRetriever,
+            'application/xhtml+xml'
+        );
+        $this->expectException(RuntimeException::class);
+        $testItem->getNormalizedData();
     }
 }

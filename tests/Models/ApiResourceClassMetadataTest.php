@@ -5,6 +5,7 @@ namespace W2w\Test\Apie\Models;
 
 use PHPUnit\Framework\TestCase;
 use W2w\Lib\Apie\Annotations\ApiResource;
+use W2w\Lib\Apie\Exceptions\InvalidReturnTypeOfApiResourceException;
 use W2w\Lib\Apie\Models\ApiResourceClassMetadata;
 use W2w\Lib\Apie\Persisters\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Retrievers\ApiResourceRetrieverInterface;
@@ -12,6 +13,20 @@ use W2w\Test\Apie\Mocks\Data\SimplePopo;
 
 class ApiResourceClassMetadataTest extends TestCase
 {
+    public function testGetResourceRetriever_throws_error_if_missing()
+    {
+        $testItem = new ApiResourceClassMetadata(SimplePopo::class, new ApiResource(), null, null);
+        $this->expectException(InvalidReturnTypeOfApiResourceException::class);
+        $testItem->getResourceRetriever();
+    }
+
+    public function testGetResourcePersister_throws_error_if_missing()
+    {
+        $testItem = new ApiResourceClassMetadata(SimplePopo::class, new ApiResource(), null, null);
+        $this->expectException(InvalidReturnTypeOfApiResourceException::class);
+        $testItem->getResourcePersister();
+    }
+
     public function testGetters()
     {
         $retriever = $this->prophesize(ApiResourceRetrieverInterface::class)->reveal();
