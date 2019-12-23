@@ -51,10 +51,7 @@
         "jangregor/phpstan-prophecy": "0.5.1"
     },
     "conflict": {
-        "phpspec/prophecy": "1.10.0"
-    },
-    "conflict": {
-        "phpspec/prophecy": "1.10.0"
+        "phpspec/prophecy": "1.10.*"
     },
     "archive": {
         "exclude": ["/tests"]
