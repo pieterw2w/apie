@@ -7,6 +7,9 @@ use Symfony\Component\Serializer\Mapping\ClassDiscriminatorResolverInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Throwable;
+use W2w\Lib\Apie\Exceptions\ApieException;
+use W2w\Lib\Apie\Exceptions\ValidationException;
 
 /**
  * Class overriding ObjectNormalizer to workaround https://github.com/symfony/symfony/issues/33622
@@ -72,6 +75,18 @@ class ApieObjectNormalizer extends ObjectNormalizer
     public function hasCacheableSupportsMethod(): bool
     {
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function setAttributeValue($object, $attribute, $value, $format = null, array $context = [])
+    {
+        try {
+            parent::setAttributeValue($object, $attribute, $value, $format, $context);
+        } catch (Throwable $throwable) {
+            throw new ValidationException(['attribute' => $throwable->getMessage()], $throwable);
+        }
     }
 
     /**

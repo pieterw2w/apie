@@ -5,6 +5,7 @@ namespace W2w\Lib\Apie\Normalizers;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use ReflectionClass;
 use Throwable;
+use W2w\Lib\Apie\Exceptions\ValidationException;
 
 /**
  * Class that normalizes a throwable class.
@@ -36,6 +37,9 @@ class ExceptionNormalizer implements NormalizerInterface
         ];
         if ($this->showStack) {
             $res['trace'] = $object->getTraceAsString();
+        }
+        if ($object instanceof ValidationException) {
+            $res['errors'] = $object->getErrors();
         }
 
         return $res;

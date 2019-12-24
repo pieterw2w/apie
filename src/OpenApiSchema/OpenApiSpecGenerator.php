@@ -7,8 +7,6 @@ use W2w\Lib\Apie\Resources\ApiResourcesInterface;
 use W2w\Lib\Apie\ClassResourceConverter;
 use erasys\OpenApi\Spec\v3 as OASv3;
 use W2w\Lib\Apie\Retrievers\SearchFilterProviderInterface;
-use W2w\Lib\Apie\SearchFilters\SearchFilter;
-use W2w\Lib\Apie\ValueObjects\PhpPrimitive;
 
 /**
  * Class that generated an OpenAPI spec from a list of API resources.
@@ -59,8 +57,24 @@ class OpenApiSpecGenerator
 
         $stringSchema = new OASv3\Schema(['type' => 'string']);
         $stringOrIntSchema = new OASv3\Schema(['oneOf' => [$stringSchema, new OASv3\Schema(['type' => 'integer'])]]);
+        $stringArraySchema = new OASv3\Schema(['type' => 'array', 'items' => $stringSchema]);
 
         $errorSchema = new OASv3\Reference('#/components/schemas/Error');
+
+        $validationErrorSchema = new OASv3\Schema([
+            'type'       => 'object',
+            'properties' => [
+                'type'    => $stringSchema,
+                'message' => $stringSchema,
+                'code'    => $stringOrIntSchema,
+                'trace'   => $stringSchema,
+                'errors'  => new OASv3\Schema([
+                    'type'       => 'object',
+                    'additionalProperties' => $stringArraySchema
+                ]),
+            ],
+            'xml' => new OASv3\Xml(['name' => 'response']),
+        ]);
 
         $doc = new OASv3\Document(
             $this->info,
@@ -124,12 +138,12 @@ class OpenApiSpecGenerator
                             [
                                 'application/json' => new OASv3\MediaType(
                                     [
-                                        'schema' => $errorSchema,
+                                        'schema' => $validationErrorSchema,
                                     ]
                                 ),
                                 'application/xml' => new OASv3\MediaType(
                                     [
-                                        'schema' => $errorSchema,
+                                        'schema' => $validationErrorSchema,
                                     ]
                                 ),
                             ]
@@ -383,7 +397,7 @@ class OpenApiSpecGenerator
                     ),
                     '401' => new OASv3\Reference('#/components/responses/NotAuthorized'),
                     '415' => new OASv3\Reference('#/components/responses/InvalidFormat'),
-                    '424' => new OASv3\Reference('#/components/responses/ValidationError'),
+                    '422' => new OASv3\Reference('#/components/responses/ValidationError'),
                     '429' => new OASv3\Reference('#/components/responses/TooManyRequests'),
                     '500' => new OASv3\Reference('#/components/responses/InternalError'),
                     '502' => new OASv3\Reference('#/components/responses/ServerDependencyError'),
@@ -473,7 +487,7 @@ class OpenApiSpecGenerator
                     '401' => new OASv3\Reference('#/components/responses/NotAuthorized'),
                     '404' => new OASv3\Reference('#/components/responses/NotFound'),
                     '415' => new OASv3\Reference('#/components/responses/InvalidFormat'),
-                    '424' => new OASv3\Reference('#/components/responses/ValidationError'),
+                    '422' => new OASv3\Reference('#/components/responses/ValidationError'),
                     '429' => new OASv3\Reference('#/components/responses/TooManyRequests'),
                     '500' => new OASv3\Reference('#/components/responses/InternalError'),
                     '502' => new OASv3\Reference('#/components/responses/ServerDependencyError'),

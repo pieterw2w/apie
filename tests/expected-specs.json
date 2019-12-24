@@ -436,7 +436,7 @@
                     "415": {
                         "$ref": "#/components/responses/InvalidFormat"
                     },
-                    "424": {
+                    "422": {
                         "$ref": "#/components/responses/ValidationError"
                     },
                     "429": {
@@ -717,7 +717,7 @@
                     "415": {
                         "$ref": "#/components/responses/InvalidFormat"
                     },
-                    "424": {
+                    "422": {
                         "$ref": "#/components/responses/ValidationError"
                     },
                     "429": {
@@ -951,7 +951,7 @@
                     "415": {
                         "$ref": "#/components/responses/InvalidFormat"
                     },
-                    "424": {
+                    "422": {
                         "$ref": "#/components/responses/ValidationError"
                     },
                     "429": {
@@ -1122,12 +1122,78 @@
                 "content": {
                     "application/json": {
                         "schema": {
-                            "$ref": "#/components/schemas/Error"
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string"
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "code": {
+                                    "oneOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "integer"
+                                        }
+                                    ]
+                                },
+                                "trace": {
+                                    "type": "string"
+                                },
+                                "errors": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "xml": {
+                                "name": "response"
+                            }
                         }
                     },
                     "application/xml": {
                         "schema": {
-                            "$ref": "#/components/schemas/Error"
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string"
+                                },
+                                "message": {
+                                    "type": "string"
+                                },
+                                "code": {
+                                    "oneOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "integer"
+                                        }
+                                    ]
+                                },
+                                "trace": {
+                                    "type": "string"
+                                },
+                                "errors": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "xml": {
+                                "name": "response"
+                            }
                         }
                     }
                 }
