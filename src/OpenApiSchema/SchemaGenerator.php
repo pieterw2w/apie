@@ -109,18 +109,6 @@ class SchemaGenerator
             return $this->alreadyDefined[$cacheKey] = $resourceClass::toSchema();
         }
 
-        if (is_a($resourceClass, AbstractStringValueObject::class, true)) {
-            @trigger_error(
-                sprintf('The use of bruli/php-value-objects is deprecated, use %s instead', ValueObjectInterface::class),
-                E_USER_DEPRECATED
-            );
-
-            return $this->alreadyDefined[$cacheKey] = new Schema([
-                'type'   => 'string',
-                'format' => strtolower((new ReflectionClass($resourceClass))->getShortName()),
-            ]);
-        }
-
         $name = $this->converter->normalize($resourceClass);
         $this->alreadyDefined[$cacheKey] = $schema = new Schema([
             'title'       => $name,
