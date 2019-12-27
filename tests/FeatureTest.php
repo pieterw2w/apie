@@ -12,7 +12,9 @@ use Psr\Container\NotFoundExceptionInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use W2w\Lib\Apie\Annotations\ApiResource;
 use W2w\Lib\Apie\ApiResources\ApplicationInfo;
+use W2w\Lib\Apie\Exceptions\MethodNotAllowedException;
 use W2w\Lib\Apie\IdentifierExtractor;
 use W2w\Lib\Apie\Retrievers\ApplicationInfoRetriever;
 use W2w\Lib\Apie\Retrievers\MemoryDataLayer;
@@ -36,6 +38,16 @@ class FeatureTest extends TestCase
             $expected->getId(),
             $testItem->getApiResourceFacade()->post(SimplePopo::class, $request)->getResource()->getId()
         );
+    }
+
+    public function test_service_library_override_annotation_works()
+    {
+        $testItem = new ServiceLibraryFactory([SimplePopo::class], true, null);
+        $testItem->overrideAnnotationConfig([SimplePopo::class => new ApiResource()]);
+        $request = new ServerRequest('POST', '/simple_popo/', [], '{}');
+        $this->expectException(MethodNotAllowedException::class);
+        $testItem->getApiResourceFacade()->post(SimplePopo::class, $request)->getResource();
+
     }
 
     public function test_service_library_defaults_crud_works()

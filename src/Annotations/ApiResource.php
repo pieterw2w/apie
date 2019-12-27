@@ -31,4 +31,13 @@ class ApiResource
      * @var string[]
      */
     public $disabledMethods = [];
+
+    public static function createFromArray(array $annotations)
+    {
+        $result = new self();
+        foreach ($annotations as $key => $value) {
+            $result->$key = $value;
+        }
+        return $result;
+    }
 }

@@ -184,6 +184,11 @@ class ServiceLibraryFactory
     private $callables = [];
 
     /**
+     * @var ApiResource[]|null
+     */
+    private $overrideAnnotationConfigs;
+
+    /**
      * @param string[]|ApiResourcesInterface $apiResourceClasses
      * @param bool $debug
      * @param string|null $cacheFolder
@@ -376,8 +381,25 @@ class ServiceLibraryFactory
             } else {
                 $this->annotationReader = new AnnotationReader();
             }
+            if ($this->overrideAnnotationConfigs) {
+                $this->annotationReader = new ExtendReaderWithConfigReader($this->annotationReader, $this->overrideAnnotationConfigs);
+            }
         }
         return $this->annotationReader;
+    }
+
+    /**
+     * @param ApiResource[] $config
+     *
+     * @return ServiceLibraryFactory
+     */
+    public function overrideAnnotationConfig(array $config): self
+    {
+        if (isset($this->overrideAnnotationConfigs) || isset($this->annotationReader)) {
+            throw new RuntimeException('I have already instantiated the reader and can no longer override the annotation config!');
+        }
+        $this->overrideAnnotationConfigs = $config;
+        return $this;
     }
 
     private function getApiResourceMetadataFactory(): ApiResourceMetadataFactory
