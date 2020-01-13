@@ -189,6 +189,11 @@ class ServiceLibraryFactory
     private $overrideAnnotationConfigs;
 
     /**
+     * @var callable|null
+     */
+    private $addSpecsHook;
+
+    /**
      * @param string[]|ApiResourcesInterface $apiResourceClasses
      * @param bool $debug
      * @param string|null $cacheFolder
@@ -472,7 +477,7 @@ class ServiceLibraryFactory
         return $this->propertyConverter;
     }
 
-    private function getClassMetadataFactory(): ClassMetadataFactoryInterface
+    public function getClassMetadataFactory(): ClassMetadataFactoryInterface
     {
         if (!$this->classMetadataFactory) {
             $this->classMetadataFactory = new ClassMetadataFactory(
@@ -503,7 +508,7 @@ class ServiceLibraryFactory
         return $this->propertyAccessor;
     }
 
-    private function getPropertyTypeExtractor(): PropertyTypeExtractorInterface
+    public function getPropertyTypeExtractor(): PropertyTypeExtractorInterface
     {
         if (!$this->propertyTypeExtractor) {
             $factory = $this->getClassMetadataFactory();
@@ -600,6 +605,22 @@ class ServiceLibraryFactory
         return $this->schemaGenerator;
     }
 
+    /**
+     * Call this method in case you want to add a hook to OpenApiSpecGenerator to add your own custom
+     * modifications.
+     *
+     * @param callable $addSpecsHook
+     * @return ServiceLibraryFactory
+     */
+    public function setOpenApiSpecsHook(callable $addSpecsHook): self
+    {
+        if ($this->openApiSpecGenerator) {
+            throw new RuntimeException('I can only set this callback if the OpenAPI spec generator was not called yet!');
+        }
+        $this->addSpecsHook = $addSpecsHook;
+        return $this;
+    }
+
     public function getOpenApiSpecGenerator(string $baseUrl): OpenApiSpecGenerator
     {
         if (!$this->openApiSpecGenerator) {
@@ -609,7 +630,8 @@ class ServiceLibraryFactory
                 $this->getInfo(),
                 $this->getSchemaGenerator(),
                 $this->getApiResourceMetadataFactory(),
-                $baseUrl
+                $baseUrl,
+                $this->addSpecsHook
             );
         }
         return $this->openApiSpecGenerator;

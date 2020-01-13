@@ -3,12 +3,13 @@ namespace W2w\Lib\Apie\Normalizers;
 
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
+use Symfony\Component\Serializer\Exception\MissingConstructorArgumentsException;
+use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Mapping\ClassDiscriminatorResolverInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Throwable;
-use W2w\Lib\Apie\Exceptions\ApieException;
 use W2w\Lib\Apie\Exceptions\ValidationException;
 
 /**
@@ -65,8 +66,39 @@ class ApieObjectNormalizer extends ObjectNormalizer
      */
     public function denormalize($data, $type, $format = null, array $context = [])
     {
-        $context['apie_direction'] = 'write';
-        return parent::denormalize($data, $type, $format, $context);
+        try {
+            $context['apie_direction'] = 'write';
+            return parent::denormalize($data, $type, $format, $context);
+        } catch (NotNormalizableValueException $notNormalizableValueException) {
+            $message = $notNormalizableValueException->getMessage();
+            // Failed to denormalize attribute "%s" value for class "%s": %s.
+            if (preg_match(
+                '/^Failed to denormalize attribute "([\\w_]+)" value for class "([\\w\\\\]+)": (.+)\\.$/',
+                $message,
+                $matches
+            )) {
+                throw new ValidationException([$matches[1] => [$matches[3]]], $notNormalizableValueException);
+            }
+            // The type of the "%s" attribute for class "%s" %s.
+            if (preg_match(
+                '/^The type of the "([\\w_]+)" attribute for class "([\\w\\\\]+)" (.*).$/',
+                $message,
+                $matches
+            )) {
+                throw new ValidationException([$matches[1] => [$matches[3]]], $notNormalizableValueException);
+            }
+            throw $notNormalizableValueException;
+        } catch (MissingConstructorArgumentsException $missingConstructorArgumentsException) {
+            $message = $missingConstructorArgumentsException->getMessage();
+            if (preg_match(
+                '/^Cannot create an instance of .* from serialized data because its constructor requires parameter "([\\w_]+)" to be present.$/',
+                $message,
+                $matches
+            )) {
+                throw new ValidationException([$matches[1] => [$matches[1] . ' is required']], $missingConstructorArgumentsException);
+            }
+            throw $missingConstructorArgumentsException;
+        }
     }
 
     /**
@@ -85,7 +117,7 @@ class ApieObjectNormalizer extends ObjectNormalizer
         try {
             parent::setAttributeValue($object, $attribute, $value, $format, $context);
         } catch (Throwable $throwable) {
-            throw new ValidationException(['attribute' => $throwable->getMessage()], $throwable);
+            throw new ValidationException([$attribute => $throwable->getMessage()], $throwable);
         }
     }
 

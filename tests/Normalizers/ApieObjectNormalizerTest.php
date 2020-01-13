@@ -18,7 +18,10 @@ use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use W2w\Lib\Apie\BaseGroupLoader;
+use W2w\Lib\Apie\Exceptions\ValidationException;
 use W2w\Lib\Apie\Normalizers\ApieObjectNormalizer;
+use W2w\Lib\Apie\ServiceLibraryFactory;
+use W2w\Test\Apie\Mocks\Data\FullRestObject;
 use W2w\Test\Apie\Mocks\Data\SimplePopo;
 use W2w\Test\Apie\Mocks\Data\SumExample;
 
@@ -38,6 +41,57 @@ class ApieObjectNormalizerTest extends TestCase
             ],
             json_decode($actual, true)
         );
+    }
+
+    /**
+     * @dataProvider denormalizeValidationExceptionProvider
+     */
+    public function test_denormalize_errors_to_validation_exception(array $expectedErrors, string $outputClass, array $data)
+    {
+        // this tests requires a properly configured property type extractor, ServiceLibraryFactory provides a
+        // proper one, even though this makes it almost a feature test and not a unit test.
+        $tmp = (new ServiceLibraryFactory([], false, null));
+        $propertyInfoExtractor = $tmp->getPropertyTypeExtractor();
+        $normalizer = new ApieObjectNormalizer(
+            $tmp->getClassMetadataFactory(),
+            new CamelCaseToSnakeCaseNameConverter(),
+            PropertyAccess::createPropertyAccessor(),
+            $propertyInfoExtractor,
+            null,
+            null,
+            []
+        );
+        $serializer = new Serializer([new DateTimeNormalizer(['datetime_format' => DateTime::ATOM]), $normalizer], [new JsonEncoder()]);
+        try {
+            $serializer->denormalize($data, $outputClass, 'json');
+            $this->fail('A validation exception should have been thrown!');
+        } catch (ValidationException $validationException) {
+            $this->assertEquals($expectedErrors, $validationException->getErrors());
+        }
+    }
+
+    public function denormalizeValidationExceptionProvider()
+    {
+        yield [
+            ['one' => ['one is required']],
+            SumExample::class,
+            []
+        ];
+        yield [
+            ['one' => ['must be one of "float" ("string" given)']],
+            SumExample::class,
+            ['one' => 'this is not a number', 'two' => 12]
+        ];
+        yield [
+            ['stringValue' => ['must be one of "string" ("integer" given)']],
+            FullRestObject::class,
+            ['string_value' => 12]
+        ];
+        yield [
+            ['value' => ['value is required']],
+            FullRestObject::class,
+            ['value_object' => '']
+        ];
     }
 
     public function testGithub_issue_1()

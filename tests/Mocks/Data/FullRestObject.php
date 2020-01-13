@@ -6,7 +6,6 @@ namespace W2w\Test\Apie\Mocks\Data;
 use Ramsey\Uuid\Uuid;
 use W2w\Lib\Apie\Annotations\ApiResource;
 use W2w\Lib\Apie\Retrievers\MemoryDataLayer;
-use W2w\Lib\Apie\ValueObjects\ValueObjectInterface;
 use W2w\Test\Apie\OpenApiSchema\ValueObject;
 
 /**

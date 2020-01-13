@@ -25,13 +25,16 @@ class OpenApiSpecGenerator
 
     private $baseUrl;
 
+    private $addSpecsHook;
+
     public function __construct(
         ApiResourcesInterface $apiResources,
         ClassResourceConverter $converter,
         OASv3\Info $info,
         SchemaGenerator $schemaGenerator,
         ApiResourceMetadataFactory $apiResourceMetadataFactory,
-        string $baseUrl
+        string $baseUrl,
+        ?callable $addSpecsHook = null
     ) {
         $this->apiResources = $apiResources;
         $this->converter = $converter;
@@ -39,6 +42,7 @@ class OpenApiSpecGenerator
         $this->schemaGenerator = $schemaGenerator;
         $this->apiResourceMetadataFactory = $apiResourceMetadataFactory;
         $this->baseUrl = $baseUrl;
+        $this->addSpecsHook = $addSpecsHook;
     }
 
     /**
@@ -242,6 +246,12 @@ class OpenApiSpecGenerator
                 ]),
             ]
         );
+        if (is_callable($this->addSpecsHook)) {
+            $res = call_user_func($this->addSpecsHook, $doc);
+            if ($res instanceof OASv3\Document) {
+                return $res;
+            }
+        }
 
         return $doc;
     }
