@@ -2,6 +2,7 @@
 
 namespace W2w\Lib\Apie\OpenApiSchema;
 
+use erasys\OpenApi\Spec\v3\Discriminator;
 use erasys\OpenApi\Spec\v3\Schema;
 use PhpValueObjects\AbstractStringValueObject;
 use ReflectionClass;
@@ -78,6 +79,35 @@ class SchemaGenerator
         $this->alreadyDefined = [];
 
         return $this;
+    }
+
+    /**
+     * Define an OpenAPI discriminator spec for an interface or base class that have a discriminator column.
+     *
+     * @param string $resourceInterface
+     * @param string $discriminatorColumn
+     * @param array $subclasses
+     * @param string $operation
+     * @param string[] $groups
+     * @return Schema
+     */
+    public function defineSchemaForPolymorphicObject(
+        string $resourceInterface,
+        string $discriminatorColumn,
+        array $subclasses,
+        string $operation = 'get',
+        array $groups = []
+    ): Schema {
+        $cacheKey = $this->getCacheKey($resourceInterface, $operation, $groups) . ',0';
+        $subschemas = [];
+        foreach ($subclasses as $keyValue => $subclass) {
+            $subschemas[$keyValue] = $this->createSchema($subclass, $operation, $groups);
+        }
+        $this->alreadyDefined[$cacheKey] = new Schema([
+            'oneOf' => array_values($subschemas),
+            'discriminator' => new Discriminator($discriminatorColumn, $subschemas)
+        ]);
+        return $this->alreadyDefined[$cacheKey];
     }
 
     /**

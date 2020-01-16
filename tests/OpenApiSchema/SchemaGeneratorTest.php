@@ -5,6 +5,7 @@ use DateTimeInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\Reader;
+use erasys\OpenApi\Spec\v3\Discriminator;
 use erasys\OpenApi\Spec\v3\Schema;
 use PHPUnit\Framework\TestCase;
 use PhpValueObjects\Tests\Network\UrlValueObject;
@@ -23,6 +24,10 @@ use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
 use W2w\Lib\Apie\ValueObjects\PhpPrimitive;
 use W2w\Test\Apie\Mocks\Data\SimplePopo;
 use W2w\Test\Apie\OpenApiSchema\Data\MultipleTypesObject;
+use W2w\Test\Apie\OpenApiSchema\Data\Polymorphic\ClassA;
+use W2w\Test\Apie\OpenApiSchema\Data\Polymorphic\ClassB;
+use W2w\Test\Apie\OpenApiSchema\Data\Polymorphic\ClassC;
+use W2w\Test\Apie\OpenApiSchema\Data\Polymorphic\TestInterface;
 use W2w\Test\Apie\OpenApiSchema\Data\RecursiveObject;
 
 class SchemaGeneratorTest extends TestCase
@@ -211,6 +216,97 @@ class SchemaGeneratorTest extends TestCase
             $expected,
             $this->testItem->createSchema(PhpPrimitive::class, 'get', ['get', 'read']),
             'asking again gives a cached result'
+        );
+    }
+
+    public function testCreateSchema_interface()
+    {
+        $expected = new Schema([
+            'type' => 'object',
+            'title' => TestInterface::class,
+            'description' => TestInterface::class . ' get for groups get, read',
+            'properties' => [
+                'type' => new Schema(['type' => 'string', 'nullable' => false]),
+                'required_in_interface' => new Schema(['type' => 'string', 'nullable' => false]),
+            ],
+        ]);
+        $this->assertEquals(
+            $expected,
+            $this->testItem->createSchema(TestInterface::class, 'get', ['get', 'read'])
+        );
+        $this->assertEquals(
+            $expected,
+            $this->testItem->createSchema(TestInterface::class, 'get', ['get', 'read']),
+            'asking again gives a cached result'
+        );
+    }
+
+    public function testDefineSchemaForPolymorphicObject()
+    {
+        $schemaA = new Schema([
+            'type' => 'object',
+            'title' => ClassA::class,
+            'description' => ClassA::class . ' get for groups get, read',
+            'properties' => [
+                'type' => new Schema(['type' => 'string', 'nullable' => false]),
+                'required_in_interface' => new Schema(['type' => 'string', 'nullable' => false]),
+                'this_is_a' => new Schema(['type' => 'string', 'nullable' => false]),
+            ],
+        ]);
+        $schemaB = new Schema([
+            'type' => 'object',
+            'title' => ClassB::class,
+            'description' => ClassB::class . ' get for groups get, read',
+            'properties' => [
+                'type' => new Schema(['type' => 'string', 'nullable' => false]),
+                'required_in_interface' => new Schema(['type' => 'string', 'nullable' => false]),
+                'this_is_b' => new Schema(['type' => 'string', 'nullable' => true]),
+                'b_or_c' => new Schema(['type' => 'string', 'nullable' => false]),
+            ],
+        ]);
+        $schemaC = new Schema([
+            'type' => 'object',
+            'title' => ClassC::class,
+            'description' => ClassC::class . ' get for groups get, read',
+            'properties' => [
+                'type' => new Schema(['type' => 'string', 'nullable' => false]),
+                'required_in_interface' => new Schema(['type' => 'string', 'nullable' => false]),
+                'b_or_c' => new Schema(['type' => 'integer', 'nullable' => false]),
+            ],
+        ]);
+        $expected = new Schema([
+            'oneOf' => [
+                $schemaA,
+                $schemaB,
+                $schemaC,
+            ],
+            'discriminator' => new Discriminator(
+                'type',
+                [
+                    'A' => $schemaA,
+                    'B' => $schemaB,
+                    'C' => $schemaC
+                ]
+            )
+        ]);
+        $this->assertEquals(
+            $expected,
+            $this->testItem->defineSchemaForPolymorphicObject(
+                TestInterface::class,
+                'type',
+                [
+                    'A' => ClassA::class,
+                    'B' => ClassB::class,
+                    'C' => ClassC::class
+                ],
+                'get',
+                ['get', 'read']
+            )
+        );
+        $this->assertEquals(
+            $expected,
+            $this->testItem->createSchema(TestInterface::class, 'get', ['get', 'read']),
+            'running createSchema gives the created result'
         );
     }
 
