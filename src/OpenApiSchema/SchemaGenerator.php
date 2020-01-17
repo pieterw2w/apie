@@ -4,8 +4,6 @@ namespace W2w\Lib\Apie\OpenApiSchema;
 
 use erasys\OpenApi\Spec\v3\Discriminator;
 use erasys\OpenApi\Spec\v3\Schema;
-use PhpValueObjects\AbstractStringValueObject;
-use ReflectionClass;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\Type;
 use Symfony\Component\Serializer\Mapping\AttributeMetadataInterface;
@@ -19,6 +17,8 @@ use W2w\Lib\Apie\ValueObjects\ValueObjectInterface;
  */
 class SchemaGenerator
 {
+    private const MAX_RECURSION = 2;
+
     /**
      * @var ClassMetadataFactory
      */
@@ -96,18 +96,22 @@ class SchemaGenerator
         string $discriminatorColumn,
         array $subclasses,
         string $operation = 'get',
-        array $groups = []
+        array $groups = ['get', 'read']
     ): Schema {
-        $cacheKey = $this->getCacheKey($resourceInterface, $operation, $groups) . ',0';
+        $cacheKey = $this->getCacheKey($resourceInterface, $operation, $groups);
         $subschemas = [];
+        $discriminatorMapping = [];
         foreach ($subclasses as $keyValue => $subclass) {
-            $subschemas[$keyValue] = $this->createSchema($subclass, $operation, $groups);
+            $subschemas[$subclass] = $discriminatorMapping[$keyValue] = $this->createSchema($subclass, $operation, $groups);
         }
-        $this->alreadyDefined[$cacheKey] = new Schema([
+        $this->alreadyDefined[$cacheKey . ',0'] = new Schema([
             'oneOf' => array_values($subschemas),
-            'discriminator' => new Discriminator($discriminatorColumn, $subschemas)
+            'discriminator' => new Discriminator($discriminatorColumn, $discriminatorMapping)
         ]);
-        return $this->alreadyDefined[$cacheKey];
+        for ($i = 1; $i < self::MAX_RECURSION; $i++) {
+            $this->alreadyDefined[$cacheKey . ',' . $i] = $this->alreadyDefined[$cacheKey . ',0'];
+        }
+        return $this->alreadyDefined[$cacheKey . ',0'];
     }
 
     /**
@@ -208,8 +212,7 @@ class SchemaGenerator
             if ($arrayType) {
                 if ($arrayType->getClassName()) {
                     $propertySchema->items = $this->createSchemaRecursive($arrayType->getClassName(), $operation, $groups, $recursion + 1);
-                }
-                if ($arrayType->getBuiltinType()) {
+                } elseif ($arrayType->getBuiltinType()) {
                     $type = $this->translateType($arrayType->getBuiltinType());
                     $propertySchema->items = new Schema([
                         'type' => $type,
@@ -223,7 +226,7 @@ class SchemaGenerator
             $propertySchema->format = $type->getBuiltinType();
         }
         $className = $type->getClassName();
-        if ('object' === $type->getBuiltinType() && $recursion < 2 && !is_null($className)) {
+        if ('object' === $type->getBuiltinType() && $recursion < self::MAX_RECURSION && !is_null($className)) {
             return $this->createSchemaRecursive($className, $operation, $groups, $recursion + 1);
         }
         return $propertySchema;

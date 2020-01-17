@@ -28,6 +28,7 @@ use W2w\Test\Apie\OpenApiSchema\Data\Polymorphic\ClassA;
 use W2w\Test\Apie\OpenApiSchema\Data\Polymorphic\ClassB;
 use W2w\Test\Apie\OpenApiSchema\Data\Polymorphic\ClassC;
 use W2w\Test\Apie\OpenApiSchema\Data\Polymorphic\TestInterface;
+use W2w\Test\Apie\OpenApiSchema\Data\Polymorphic\TestObject;
 use W2w\Test\Apie\OpenApiSchema\Data\RecursiveObject;
 
 class SchemaGeneratorTest extends TestCase
@@ -243,6 +244,68 @@ class SchemaGeneratorTest extends TestCase
 
     public function testDefineSchemaForPolymorphicObject()
     {
+        $expected = $this->createPolymorphicObjectSchema();
+        $this->assertEquals(
+            $expected,
+            $this->testItem->defineSchemaForPolymorphicObject(
+                TestInterface::class,
+                'type',
+                [
+                    'A' => ClassA::class,
+                    'B' => ClassB::class,
+                    'C' => ClassC::class,
+                    'D' => ClassC::class
+                ],
+                'get',
+                ['get', 'read']
+            )
+        );
+        $this->assertEquals(
+            $expected,
+            $this->testItem->createSchema(TestInterface::class, 'get', ['get', 'read']),
+            'running createSchema gives the created result'
+        );
+    }
+
+    public function testCreateSchemaWithPolymorphicObject()
+    {
+        $this->testItem->defineSchemaForPolymorphicObject(
+            TestInterface::class,
+            'type',
+            [
+                'A' => ClassA::class,
+                'B' => ClassB::class,
+                'C' => ClassC::class,
+                'D' => ClassC::class
+            ],
+            'get',
+            ['get', 'read']
+        );
+
+        $polymorphicSchema = $this->createPolymorphicObjectSchema();
+
+        $expected = new Schema([
+            'type' => 'object',
+            'title' => TestObject::class,
+            'description' => TestObject::class  . ' get for groups get, read',
+            'properties' => [
+                'item' => $polymorphicSchema,
+                'list' => new Schema([
+                    'type' => 'array',
+                    'nullable' => false,
+                    'items' => $polymorphicSchema,
+                ]),
+            ],
+        ]);
+
+        $this->assertEquals(
+            $expected,
+            $this->testItem->createSchema(TestObject::class, 'get', ['get', 'read'])
+        );
+    }
+
+    private function createPolymorphicObjectSchema(): Schema
+    {
         $schemaA = new Schema([
             'type' => 'object',
             'title' => ClassA::class,
@@ -274,7 +337,7 @@ class SchemaGeneratorTest extends TestCase
                 'b_or_c' => new Schema(['type' => 'integer', 'nullable' => false]),
             ],
         ]);
-        $expected = new Schema([
+        return new Schema([
             'oneOf' => [
                 $schemaA,
                 $schemaB,
@@ -285,33 +348,16 @@ class SchemaGeneratorTest extends TestCase
                 [
                     'A' => $schemaA,
                     'B' => $schemaB,
-                    'C' => $schemaC
+                    'C' => $schemaC,
+                    'D' => $schemaC
                 ]
             )
         ]);
-        $this->assertEquals(
-            $expected,
-            $this->testItem->defineSchemaForPolymorphicObject(
-                TestInterface::class,
-                'type',
-                [
-                    'A' => ClassA::class,
-                    'B' => ClassB::class,
-                    'C' => ClassC::class
-                ],
-                'get',
-                ['get', 'read']
-            )
-        );
-        $this->assertEquals(
-            $expected,
-            $this->testItem->createSchema(TestInterface::class, 'get', ['get', 'read']),
-            'running createSchema gives the created result'
-        );
     }
 
     public function testCreateSchema_multiple_types()
     {
+        $simplePopoSchema = $this->testItem->createSchema(SimplePopo::class, 'get', ['get', 'read']);
         $expected = new Schema(
             [
                 'title'       => MultipleTypesObject::class,
@@ -338,10 +384,7 @@ class SchemaGeneratorTest extends TestCase
                     ]),
                     'object_array' => new Schema([
                         'type' => 'array',
-                        'items' => new Schema([
-                            'type' => 'object'
-                            // TODO: where are the properties of SimplePopo?
-                        ])
+                        'items' => $simplePopoSchema,
                     ]),
                     'name' => new Schema(['type' => 'string']),
                     'value_object' => new Schema(['type' => 'string', 'format' => 'value_object']),
