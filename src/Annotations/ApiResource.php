@@ -32,7 +32,11 @@ class ApiResource
      */
     public $disabledMethods = [];
 
-    public static function createFromArray(array $annotations)
+    /**
+     * @param mixed[] $annotations
+     * @return ApiResource
+     */
+    public static function createFromArray(array $annotations): self
     {
         $result = new self();
         foreach ($annotations as $key => $value) {

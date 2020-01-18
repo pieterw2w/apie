@@ -88,7 +88,7 @@ class MemoryDataLayer implements ApiResourcePersisterInterface, ApiResourceRetri
      * Removes an existing API resource.
      *
      * @param string $resourceClass
-     * @param $id
+     * @param string|int $id
      * @param array $context
      * @return mixed
      */

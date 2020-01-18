@@ -52,8 +52,8 @@ class FileStorageDataLayer implements ApiResourcePersisterInterface, ApiResource
      * Persist an existing API resource. The input resource is the modified API resource. Should return the new API
      * resource.
      *
-     * @param $resource
-     * @param $int
+     * @param mixed $resource
+     * @param mixed $int
      * @param array $context
      * @return mixed
      */
@@ -74,7 +74,7 @@ class FileStorageDataLayer implements ApiResourcePersisterInterface, ApiResource
      * Removes an existing API resource.
      *
      * @param string $resourceClass
-     * @param $id
+     * @param string|int $id
      * @param array $context
      * @return mixed
      */
@@ -90,7 +90,7 @@ class FileStorageDataLayer implements ApiResourcePersisterInterface, ApiResource
      * Retrieves a single resource by some identifier.
      *
      * @param string $resourceClass
-     * @param mixed $id
+     * @param string|int $id
      * @param array $context
      * @return mixed
      */

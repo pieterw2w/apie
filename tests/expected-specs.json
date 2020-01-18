@@ -792,7 +792,7 @@
                 }
             }
         },
-        "/full_rest_object/{id}": {
+        "/full_rest_object/{uuid}": {
             "get": {
                 "responses": {
                     "200": {
@@ -1055,7 +1055,7 @@
             },
             "parameters": [
                 {
-                    "name": "id",
+                    "name": "uuid",
                     "in": "path",
                     "description": "the id of the resource",
                     "required": true,

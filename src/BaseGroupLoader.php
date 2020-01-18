@@ -30,5 +30,6 @@ class BaseGroupLoader implements LoaderInterface
                 }
             }
         }
+        return true;
     }
 }

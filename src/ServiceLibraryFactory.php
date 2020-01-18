@@ -179,6 +179,11 @@ class ServiceLibraryFactory
     private $openApiSpecGenerator;
 
     /**
+     * @var IdentifierExtractor
+     */
+    private $identifierExtractor;
+
+    /**
      * @var callable[]
      */
     private $callables = [];
@@ -630,10 +635,19 @@ class ServiceLibraryFactory
                 $this->getInfo(),
                 $this->getSchemaGenerator(),
                 $this->getApiResourceMetadataFactory(),
+                $this->getIdentifierExtractor(),
                 $baseUrl,
                 $this->addSpecsHook
             );
         }
         return $this->openApiSpecGenerator;
+    }
+
+    private function getIdentifierExtractor(): IdentifierExtractor
+    {
+        if (!$this->identifierExtractor) {
+            $this->identifierExtractor = new IdentifierExtractor($this->getPropertyAccessor());
+        }
+        return $this->identifierExtractor;
     }
 }

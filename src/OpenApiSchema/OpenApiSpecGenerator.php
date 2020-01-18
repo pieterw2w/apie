@@ -3,6 +3,7 @@
 namespace W2w\Lib\Apie\OpenApiSchema;
 
 use W2w\Lib\Apie\ApiResourceMetadataFactory;
+use W2w\Lib\Apie\IdentifierExtractor;
 use W2w\Lib\Apie\Resources\ApiResourcesInterface;
 use W2w\Lib\Apie\ClassResourceConverter;
 use erasys\OpenApi\Spec\v3 as OASv3;
@@ -23,6 +24,8 @@ class OpenApiSpecGenerator
 
     private $apiResourceMetadataFactory;
 
+    private $identifierExtractor;
+
     private $baseUrl;
 
     private $addSpecsHook;
@@ -33,6 +36,7 @@ class OpenApiSpecGenerator
         OASv3\Info $info,
         SchemaGenerator $schemaGenerator,
         ApiResourceMetadataFactory $apiResourceMetadataFactory,
+        IdentifierExtractor $identifierExtractor,
         string $baseUrl,
         ?callable $addSpecsHook = null
     ) {
@@ -41,8 +45,15 @@ class OpenApiSpecGenerator
         $this->info = $info;
         $this->schemaGenerator = $schemaGenerator;
         $this->apiResourceMetadataFactory = $apiResourceMetadataFactory;
+        $this->identifierExtractor = $identifierExtractor;
         $this->baseUrl = $baseUrl;
         $this->addSpecsHook = $addSpecsHook;
+    }
+
+    private function getIdentifierKey(string $className): ?string
+    {
+        $context = $this->apiResourceMetadataFactory->getMetadata($className)->getContext();
+        return $this->identifierExtractor->getIdentifierKeyOfClass($className, $context);
     }
 
     /**
@@ -55,8 +66,11 @@ class OpenApiSpecGenerator
         $paths = [];
         foreach ($this->apiResources->getApiResources() as $apiResourceClass) {
             $path = $this->converter->normalize($apiResourceClass);
+            $identifierName = $this->getIdentifierKey($apiResourceClass);
             $paths['/' . $path] = $this->convertAllToPathItem($apiResourceClass, $path);
-            $paths['/' . $path . '/{id}'] = $this->convertToPathItem($apiResourceClass, $path);
+            if ($identifierName) {
+                $paths['/' . $path . '/{' . $identifierName . '}'] = $this->convertToPathItem($apiResourceClass, $path, $identifierName);
+            }
         }
 
         $stringSchema = new OASv3\Schema(['type' => 'string']);
@@ -435,11 +449,11 @@ class OpenApiSpecGenerator
      * @param string $resourceName
      * @return OASv3\PathItem
      */
-    private function convertToPathItem(string $apiResourceClass, string $resourceName): OASv3\PathItem
+    private function convertToPathItem(string $apiResourceClass, string $resourceName, string $identifierName): OASv3\PathItem
     {
         $paths = [
             'parameters' => [
-                new OASv3\Parameter('id', 'path', 'the id of the resource', ['required' => true, 'schema' => new OASv3\Schema(['type' => 'string'])]),
+                new OASv3\Parameter($identifierName, 'path', 'the id of the resource', ['required' => true, 'schema' => new OASv3\Schema(['type' => 'string'])]),
             ],
         ];
         if ($this->allowed($apiResourceClass, 'get')) {

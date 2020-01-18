@@ -5,6 +5,7 @@ namespace W2w\Test\Apie;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use W2w\Lib\Apie\IdentifierExtractor;
+use W2w\Test\Apie\Mocks\Data\FullRestObject;
 use W2w\Test\Apie\Mocks\Data\SimplePopo;
 
 class IdentifierExtractorTest extends TestCase
@@ -46,4 +47,11 @@ class IdentifierExtractorTest extends TestCase
         );
     }
 
+    public function testGetIdentifierKeyOfClass()
+    {
+        $this->assertEquals('id', $this->testItem->getIdentifierKeyOfClass(SimplePopo::class));
+        $this->assertEquals('uuid', $this->testItem->getIdentifierKeyOfClass(FullRestObject::class));
+        $this->assertEquals(null, $this->testItem->getIdentifierKeyOfClass(__CLASS__));
+        $this->assertEquals('pizza', $this->testItem->getIdentifierKeyOfClass(__CLASS__, ['identifier' => 'pizza']));
+    }
 }

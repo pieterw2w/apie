@@ -1,6 +1,9 @@
 <?php
 namespace W2w\Lib\Apie;
 
+use ReflectionException;
+use ReflectionMethod;
+use ReflectionProperty;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
@@ -13,6 +16,41 @@ class IdentifierExtractor
     public function __construct(PropertyAccessor $propertyAccessor)
     {
         $this->propertyAccessor = $propertyAccessor;
+    }
+
+    /**
+     * Determines the identifier from a class without having an instance of the class.
+     *
+     * @param string $className
+     * @param array $context
+     * @return string|null
+     */
+    public function getIdentifierKeyOfClass(string $className, array $context = []): ?string
+    {
+        if (!empty($context['identifier'])) {
+            return $context['identifier'];
+        }
+        $todo = [
+            [ReflectionMethod::class, 'getId', 'id'],
+            [ReflectionMethod::class, 'id', 'id'],
+            [ReflectionProperty::class, 'id', 'id'],
+            [ReflectionMethod::class, 'getUuid', 'uuid'],
+            [ReflectionMethod::class, 'uuid', 'uuid'],
+            [ReflectionProperty::class, 'uuid', 'uuid'],
+        ];
+        while (!empty($todo)) {
+            list($reflectionClass, $property, $result) = array_shift($todo);
+            try {
+                /** @var ReflectionProperty|ReflectionMethod $test */
+                $test = new $reflectionClass($className, $property);
+                if ($test->isPublic()) {
+                    return $result;
+                }
+            } catch (ReflectionException $e) {
+                $e->getMessage();//ignore
+            }
+        }
+        return null;
     }
 
     /**
