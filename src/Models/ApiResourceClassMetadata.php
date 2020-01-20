@@ -125,7 +125,7 @@ class ApiResourceClassMetadata
      */
     public function allowGetAll(): bool
     {
-        return !in_array('get', $this->resource->disabledMethods);
+        return !in_array('get', $this->resource->disabledMethods) && !in_array('get-all', $this->resource->disabledMethods);
     }
 
     /**
