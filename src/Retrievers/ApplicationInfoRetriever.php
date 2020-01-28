@@ -3,7 +3,6 @@
 namespace W2w\Lib\Apie\Retrievers;
 
 use W2w\Lib\Apie\ApiResources\ApplicationInfo;
-use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\SearchFilters\SearchFilterRequest;
 
 /**
@@ -53,10 +52,6 @@ class ApplicationInfoRetriever implements ApiResourceRetrieverInterface
      */
     public function retrieve(string $resourceClass, $id, array $context)
     {
-        if ($id !== 'name') {
-            throw new ResourceNotFoundException($id);
-        }
-
         return new ApplicationInfo(
             $this->appName,
             $this->environment,
@@ -80,6 +75,6 @@ class ApplicationInfoRetriever implements ApiResourceRetrieverInterface
             return [];
         }
 
-        return [$this->retrieve($resourceClass, 'name', $context)];
+        return [$this->retrieve($resourceClass, '', $context)];
     }
 }

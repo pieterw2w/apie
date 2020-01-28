@@ -42,11 +42,6 @@
                                             "debug": {
                                                 "type": "boolean",
                                                 "nullable": false
-                                            },
-                                            "id": {
-                                                "description": "There is always only one resource, which is 'name'.",
-                                                "type": "string",
-                                                "nullable": false
                                             }
                                         },
                                         "xml": {
@@ -77,11 +72,6 @@
                                             },
                                             "debug": {
                                                 "type": "boolean",
-                                                "nullable": false
-                                            },
-                                            "id": {
-                                                "description": "There is always only one resource, which is 'name'.",
-                                                "type": "string",
                                                 "nullable": false
                                             }
                                         },
@@ -136,123 +126,6 @@
                     }
                 ]
             }
-        },
-        "/application_info/{id}": {
-            "get": {
-                "responses": {
-                    "200": {
-                        "description": "Retrieves a single instance of application_info",
-                        "headers": {
-                            "x-ratelimit-limit": {
-                                "$ref": "#/components/headers/x-ratelimit-limit"
-                            },
-                            "x-ratelimit-remaining": {
-                                "$ref": "#/components/headers/x-ratelimit-remaining"
-                            }
-                        },
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "title": "application_info",
-                                    "description": "application_info get for groups get, read",
-                                    "type": "object",
-                                    "properties": {
-                                        "app_name": {
-                                            "type": "string",
-                                            "nullable": false
-                                        },
-                                        "environment": {
-                                            "type": "string",
-                                            "nullable": false
-                                        },
-                                        "hash": {
-                                            "type": "string",
-                                            "nullable": false
-                                        },
-                                        "debug": {
-                                            "type": "boolean",
-                                            "nullable": false
-                                        },
-                                        "id": {
-                                            "description": "There is always only one resource, which is 'name'.",
-                                            "type": "string",
-                                            "nullable": false
-                                        }
-                                    },
-                                    "xml": {
-                                        "name": "item"
-                                    }
-                                }
-                            },
-                            "application/xml": {
-                                "schema": {
-                                    "title": "application_info",
-                                    "description": "application_info get for groups get, read",
-                                    "type": "object",
-                                    "properties": {
-                                        "app_name": {
-                                            "type": "string",
-                                            "nullable": false
-                                        },
-                                        "environment": {
-                                            "type": "string",
-                                            "nullable": false
-                                        },
-                                        "hash": {
-                                            "type": "string",
-                                            "nullable": false
-                                        },
-                                        "debug": {
-                                            "type": "boolean",
-                                            "nullable": false
-                                        },
-                                        "id": {
-                                            "description": "There is always only one resource, which is 'name'.",
-                                            "type": "string",
-                                            "nullable": false
-                                        }
-                                    },
-                                    "xml": {
-                                        "name": "item"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "$ref": "#/components/responses/NotAuthorized"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/NotFound"
-                    },
-                    "429": {
-                        "$ref": "#/components/responses/TooManyRequests"
-                    },
-                    "500": {
-                        "$ref": "#/components/responses/InternalError"
-                    },
-                    "502": {
-                        "$ref": "#/components/responses/ServerDependencyError"
-                    },
-                    "503": {
-                        "$ref": "#/components/responses/MaintenanceMode"
-                    }
-                },
-                "tags": [
-                    "application_info"
-                ]
-            },
-            "parameters": [
-                {
-                    "name": "id",
-                    "in": "path",
-                    "description": "the id of the resource",
-                    "required": true,
-                    "schema": {
-                        "type": "string"
-                    }
-                }
-            ]
         },
         "/simple_popo": {
             "get": {

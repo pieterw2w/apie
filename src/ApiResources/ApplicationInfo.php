@@ -50,16 +50,6 @@ class ApplicationInfo
     }
 
     /**
-     * There is always only one resource, which is 'name'.
-     *
-     * @return string
-     */
-    public function getId(): string
-    {
-        return 'name';
-    }
-
-    /**
      * Returns the application name.
      *
      * @return string
