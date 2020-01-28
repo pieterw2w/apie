@@ -1,8 +1,8 @@
 {
     "openapi": "3.0.1",
     "info": {
-        "title": "Unit test title",
-        "version": "1.0"
+        "title": "Apie",
+        "version": "3.0"
     },
     "paths": {
         "/application_info": {
@@ -929,6 +929,320 @@
             "parameters": [
                 {
                     "name": "uuid",
+                    "in": "path",
+                    "description": "the id of the resource",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ]
+        },
+        "/status": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Retrieves all instances of status",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "title": "status",
+                                        "description": "status get for groups get, read",
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "nullable": false
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "nullable": false
+                                            },
+                                            "optional_reference": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "context": {
+                                                "type": "array",
+                                                "items": {
+                                                    "oneOf": [
+                                                        {
+                                                            "type": "string",
+                                                            "nullable": true
+                                                        },
+                                                        {
+                                                            "type": "integer"
+                                                        },
+                                                        {
+                                                            "type": "boolean"
+                                                        }
+                                                    ]
+                                                },
+                                                "nullable": true
+                                            },
+                                            "no_errors": {
+                                                "description": "Returns true to tell the status check is 'healthy'.",
+                                                "type": "boolean",
+                                                "nullable": false
+                                            }
+                                        },
+                                        "xml": {
+                                            "name": "item"
+                                        }
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "title": "status",
+                                        "description": "status get for groups get, read",
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "nullable": false
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "nullable": false
+                                            },
+                                            "optional_reference": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "context": {
+                                                "type": "array",
+                                                "items": {
+                                                    "oneOf": [
+                                                        {
+                                                            "type": "string",
+                                                            "nullable": true
+                                                        },
+                                                        {
+                                                            "type": "integer"
+                                                        },
+                                                        {
+                                                            "type": "boolean"
+                                                        }
+                                                    ]
+                                                },
+                                                "nullable": true
+                                            },
+                                            "no_errors": {
+                                                "description": "Returns true to tell the status check is 'healthy'.",
+                                                "type": "boolean",
+                                                "nullable": false
+                                            }
+                                        },
+                                        "xml": {
+                                            "name": "item"
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "response"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "status"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "pagination index counting from 0",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "number of results",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "search filter status",
+                        "schema": {
+                            "type": "string",
+                            "minimum": 1
+                        }
+                    }
+                ]
+            }
+        },
+        "/status/{id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Retrieves a single instance of status",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "title": "status",
+                                    "description": "status get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "nullable": false
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "nullable": false
+                                        },
+                                        "optional_reference": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "context": {
+                                            "type": "array",
+                                            "items": {
+                                                "oneOf": [
+                                                    {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    {
+                                                        "type": "integer"
+                                                    },
+                                                    {
+                                                        "type": "boolean"
+                                                    }
+                                                ]
+                                            },
+                                            "nullable": true
+                                        },
+                                        "no_errors": {
+                                            "description": "Returns true to tell the status check is 'healthy'.",
+                                            "type": "boolean",
+                                            "nullable": false
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "title": "status",
+                                    "description": "status get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "nullable": false
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "nullable": false
+                                        },
+                                        "optional_reference": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "context": {
+                                            "type": "array",
+                                            "items": {
+                                                "oneOf": [
+                                                    {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    {
+                                                        "type": "integer"
+                                                    },
+                                                    {
+                                                        "type": "boolean"
+                                                    }
+                                                ]
+                                            },
+                                            "nullable": true
+                                        },
+                                        "no_errors": {
+                                            "description": "Returns true to tell the status check is 'healthy'.",
+                                            "type": "boolean",
+                                            "nullable": false
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "status"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
                     "in": "path",
                     "description": "the id of the resource",
                     "required": true,

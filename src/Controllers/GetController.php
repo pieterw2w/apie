@@ -4,8 +4,8 @@ namespace W2w\Lib\Apie\Controllers;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use W2w\Lib\Apie\ApiResourceFacade;
-use W2w\Lib\Apie\ClassResourceConverter;
+use W2w\Lib\Apie\Core\ApiResourceFacade;
+use W2w\Lib\Apie\Core\ClassResourceConverter;
 
 /**
  * Controller that handles to get a single resource.

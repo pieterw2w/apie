@@ -1,8 +1,8 @@
 <?php
 namespace W2w\Test\Apie\OpenApiSchema;
 
-use W2w\Lib\Apie\ValueObjects\StringTrait;
-use W2w\Lib\Apie\ValueObjects\ValueObjectInterface;
+use W2w\Lib\Apie\Interfaces\ValueObjectInterface;
+use W2w\Lib\Apie\Plugins\ValueObject\ValueObjects\StringTrait;
 
 class ValueObject implements ValueObjectInterface
 {

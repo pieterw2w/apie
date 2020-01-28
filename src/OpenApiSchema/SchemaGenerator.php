@@ -9,8 +9,8 @@ use Symfony\Component\PropertyInfo\Type;
 use Symfony\Component\Serializer\Mapping\AttributeMetadataInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
-use W2w\Lib\Apie\ClassResourceConverter;
-use W2w\Lib\Apie\ValueObjects\ValueObjectInterface;
+use W2w\Lib\Apie\Core\ClassResourceConverter;
+use W2w\Lib\Apie\Interfaces\ValueObjectInterface;
 
 /**
  * Class that uses symfony/property-info and reflection to create a Schema instance of a class.
@@ -139,6 +139,7 @@ class SchemaGenerator
             }
         }
 
+        // TODO use the one in ValueObjectPlugin::getDynamicSchemaLogic
         if (is_a($resourceClass, ValueObjectInterface::class, true)) {
             return $this->alreadyDefined[$cacheKey] = $resourceClass::toSchema();
         }

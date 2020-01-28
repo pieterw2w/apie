@@ -4,10 +4,10 @@
 namespace W2w\Test\Apie\Controllers;
 
 use PHPUnit\Framework\TestCase;
-use W2w\Lib\Apie\ApiResourceFacade;
-use W2w\Lib\Apie\ClassResourceConverter;
 use W2w\Lib\Apie\Controllers\DeleteController;
-use W2w\Lib\Apie\Models\ApiResourceFacadeResponse;
+use W2w\Lib\Apie\Core\ApiResourceFacade;
+use W2w\Lib\Apie\Core\ClassResourceConverter;
+use W2w\Lib\Apie\Core\Models\ApiResourceFacadeResponse;
 use Zend\Diactoros\Response\TextResponse;
 use Zend\Diactoros\ServerRequest;
 

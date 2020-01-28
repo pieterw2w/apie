@@ -2,12 +2,12 @@
 
 namespace W2w\Lib\Apie\OpenApiSchema;
 
-use W2w\Lib\Apie\ApiResourceMetadataFactory;
-use W2w\Lib\Apie\IdentifierExtractor;
-use W2w\Lib\Apie\Resources\ApiResourcesInterface;
-use W2w\Lib\Apie\ClassResourceConverter;
 use erasys\OpenApi\Spec\v3 as OASv3;
-use W2w\Lib\Apie\Retrievers\SearchFilterProviderInterface;
+use W2w\Lib\Apie\Core\ApiResourceMetadataFactory;
+use W2w\Lib\Apie\Core\ClassResourceConverter;
+use W2w\Lib\Apie\Core\IdentifierExtractor;
+use W2w\Lib\Apie\Core\Resources\ApiResourcesInterface;
+use W2w\Lib\Apie\Interfaces\SearchFilterProviderInterface;
 
 /**
  * Class that generated an OpenAPI spec from a list of API resources.
