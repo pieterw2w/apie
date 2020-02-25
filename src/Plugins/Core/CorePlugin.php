@@ -12,7 +12,6 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
-use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\Extractor\SerializerExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
@@ -44,6 +43,8 @@ use W2w\Lib\Apie\PluginInterfaces\NormalizerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SerializerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SymfonyComponentProviderInterface;
 use W2w\Lib\Apie\Plugins\Core\Encodings\FormatRetriever;
+use W2w\Lib\Apie\Plugins\Core\PropertyInfo\ReflectionExtractor;
+use W2w\Lib\Apie\Plugins\Core\PropertyInfo\ReflectionExtractorFactory;
 use W2w\Lib\Apie\Plugins\Core\ResourceFactories\FallbackFactory;
 use W2w\Lib\Apie\Plugins\Core\Serializers\Mapping\BaseGroupLoader;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\ApieObjectNormalizer;
@@ -178,7 +179,7 @@ class CorePlugin implements SerializerProviderInterface,
     {
         if (!$this->propertyTypeExtractor) {
             $factory = $this->getApie()->getClassMetadataFactory();
-            $reflectionExtractor = new ReflectionExtractor();
+            $reflectionExtractor = ReflectionExtractorFactory::create();
             $phpDocExtractor = new PhpDocExtractor();
 
             $this->propertyTypeExtractor = new PropertyInfoExtractor(

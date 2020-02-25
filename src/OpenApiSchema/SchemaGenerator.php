@@ -99,12 +99,29 @@ class SchemaGenerator
         array $groups = ['get', 'read']
     ): Schema {
         $cacheKey = $this->getCacheKey($resourceInterface, $operation, $groups);
+        /** @var Schema[] $subschemas */
         $subschemas = [];
         $discriminatorMapping = [];
         foreach ($subclasses as $keyValue => $subclass) {
             $subschemas[$subclass] = $discriminatorMapping[$keyValue] = $this->createSchema($subclass, $operation, $groups);
+            $properties = $subschemas[$subclass]->properties;
+            if (isset($properties[$discriminatorColumn])) {
+                $properties[$discriminatorColumn]->default = $keyValue;
+                $properties[$discriminatorColumn]->example = $keyValue;
+            } else {
+                $properties[$discriminatorColumn] = new Schema([
+                    'type' => 'string',
+                    'default' => $keyValue,
+                    'example' => $keyValue
+                ]);
+            }
+            $subschemas[$subclass]->properties = $properties;
         }
         $this->alreadyDefined[$cacheKey . ',0'] = new Schema([
+            'type' => 'object',
+            'properties' => [
+                $discriminatorColumn => new Schema(['type' => 'string']),
+            ],
             'oneOf' => array_values($subschemas),
             'discriminator' => new Discriminator($discriminatorColumn, $discriminatorMapping)
         ]);
