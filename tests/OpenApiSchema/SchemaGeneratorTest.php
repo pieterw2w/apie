@@ -7,6 +7,7 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use erasys\OpenApi\Spec\v3\Discriminator;
 use erasys\OpenApi\Spec\v3\Schema;
 use PHPUnit\Framework\TestCase;
+use Pjordaan\AlternateReflectionExtractor\ReflectionExtractor;
 use Prophecy\Argument;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
@@ -18,7 +19,6 @@ use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\SearchFilters\PhpPrimitive;
 use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
-use W2w\Lib\Apie\Plugins\Core\PropertyInfo\ReflectionExtractorFactory;
 use W2w\Lib\Apie\Plugins\Core\Serializers\Mapping\BaseGroupLoader;
 use W2w\Test\Apie\Mocks\AbstractTestClassForSchemaGenerator;
 use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
@@ -42,7 +42,7 @@ class SchemaGeneratorTest extends TestCase
         AnnotationRegistry::registerLoader('class_exists');
         // a full list of extractors is shown further below
         $phpDocExtractor = new PhpDocExtractor();
-        $reflectionExtractor = ReflectionExtractorFactory::create();
+        $reflectionExtractor = new ReflectionExtractor();
 
         // list of PropertyListExtractorInterface (any iterable)
         $listExtractors = [$reflectionExtractor];

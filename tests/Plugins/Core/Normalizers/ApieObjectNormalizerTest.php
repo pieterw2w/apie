@@ -4,6 +4,7 @@ namespace W2w\Test\Apie\Plugins\Core\Normalizers;
 use DateTime;
 use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit\Framework\TestCase;
+use Pjordaan\AlternateReflectionExtractor\ReflectionExtractor;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\SerializerExtractor;
@@ -16,7 +17,6 @@ use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\ApieObjectNormalizer;
-use W2w\Lib\Apie\Plugins\Core\PropertyInfo\ReflectionExtractorFactory;
 use W2w\Lib\Apie\Plugins\Core\Serializers\Mapping\BaseGroupLoader;
 use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
 use W2w\Test\Apie\Mocks\ApiResources\SumExample;
@@ -49,7 +49,7 @@ class ApieObjectNormalizerTest extends TestCase
                 ]
             )
         );
-        $reflectionExtractor = ReflectionExtractorFactory::create();
+        $reflectionExtractor = new ReflectionExtractor();
         $phpDocExtractor = new PhpDocExtractor();
         $normalizer = new ApieObjectNormalizer(
             $factory,
