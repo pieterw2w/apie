@@ -6,6 +6,7 @@ use W2w\Lib\Apie\Interfaces\ValueObjectInterface;
 use W2w\Lib\Apie\PluginInterfaces\NormalizerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SchemaProviderInterface;
 use W2w\Lib\Apie\Plugins\ValueObject\Normalizers\ValueObjectNormalizer;
+use W2w\Lib\Apie\Plugins\ValueObject\Schema\ValueObjectSchemaBuilder;
 
 class ValueObjectPlugin implements NormalizerProviderInterface, SchemaProviderInterface
 {
@@ -34,9 +35,7 @@ class ValueObjectPlugin implements NormalizerProviderInterface, SchemaProviderIn
     public function getDynamicSchemaLogic(): array
     {
         return [
-            ValueObjectInterface::class => function (string $resourceClass) {
-                return $resourceClass::toSchema();
-            }
+            ValueObjectInterface::class => new ValueObjectSchemaBuilder()
         ];
     }
 }

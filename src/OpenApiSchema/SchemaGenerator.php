@@ -10,7 +10,6 @@ use Symfony\Component\Serializer\Mapping\AttributeMetadataInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
-use W2w\Lib\Apie\Interfaces\ValueObjectInterface;
 
 /**
  * Class that uses symfony/property-info and reflection to create a Schema instance of a class.
@@ -50,21 +49,34 @@ class SchemaGenerator
     private $predefined = [];
 
     /**
+     * @var callable[]
+     */
+    private $schemaCallbacks = [];
+
+    /**
+     * @var bool[]
+     */
+    private $building = [];
+
+    /**
      * @param ClassMetadataFactory $classMetadataFactory
      * @param PropertyInfoExtractor $propertyInfoExtractor
      * @param ClassResourceConverter $converter
      * @param NameConverterInterface $nameConverter
+     * @param callable[] $schemaCallbacks
      */
     public function __construct(
         ClassMetadataFactory $classMetadataFactory,
         PropertyInfoExtractor $propertyInfoExtractor,
         ClassResourceConverter $converter,
-        NameConverterInterface $nameConverter
+        NameConverterInterface $nameConverter,
+        array $schemaCallbacks = []
     ) {
         $this->classMetadataFactory = $classMetadataFactory;
         $this->propertyInfoExtractor = $propertyInfoExtractor;
         $this->converter = $converter;
         $this->nameConverter = $nameConverter;
+        $this->schemaCallbacks = $schemaCallbacks;
     }
 
     /**
@@ -156,9 +168,8 @@ class SchemaGenerator
             }
         }
 
-        // TODO use the one in ValueObjectPlugin::getDynamicSchemaLogic
-        if (is_a($resourceClass, ValueObjectInterface::class, true)) {
-            return $this->alreadyDefined[$cacheKey] = $resourceClass::toSchema();
+        if ($predefinedSchema = $this->runCallbacks($cacheKey, $resourceClass, $operation, $groups, $recursion)) {
+            return $this->alreadyDefined[$cacheKey] = $predefinedSchema;
         }
 
         $name = $this->converter->normalize($resourceClass);
@@ -182,7 +193,7 @@ class SchemaGenerator
             ]);
             $types = $this->propertyInfoExtractor->getTypes($resourceClass, $attributeMetadata->getName()) ?? [];
             $type = reset($types);
-            if ($type instanceof Type) {
+            if ($type instanceof Type && ($recursion < (1 + self::MAX_RECURSION))) {
                 $properties[$name] = $this->convertTypeToSchema($type, $operation, $groups, $recursion);
             }
             if (!$properties[$name]->description) {
@@ -199,12 +210,49 @@ class SchemaGenerator
     }
 
     /**
+     * Iterate over a list of callbacks to see if they provide a schema for this resource class.
+     *
+     * @param string $cacheKey
+     * @param string $resourceClass
+     * @param string $operation
+     * @param array $groups
+     * @param int $recursion
+     *
+     * @return Schema|null
+     */
+    private function runCallbacks(string $cacheKey, string $resourceClass, string $operation, array $groups, int $recursion): ?Schema
+    {
+        if (!empty($this->building[$cacheKey])) {
+            return null;
+        }
+        $this->building[$cacheKey] = true;
+        try {
+            // specifically defined: just call it.
+            if (isset($this->schemaCallbacks[$resourceClass])) {
+                return $this->schemaCallbacks[$resourceClass]($resourceClass, $operation, $groups, $recursion, $this);
+            }
+            foreach ($this->schemaCallbacks as $classDeclaration => $callable) {
+                if (is_a($resourceClass, $classDeclaration, true)) {
+                    $res = $callable($resourceClass, $operation, $groups, $recursion, $this);
+                    if ($res instanceof Schema) {
+                        return $res;
+                    }
+                }
+            }
+            return null;
+        } finally {
+            unset($this->building[$cacheKey]);
+        }
+    }
+
+    /**
      * Convert Type into Schema.
      *
      * @param Type $type
      * @param string $operation
      * @param string[] $groups
      * @param int $recursion
+     *
      * @return Schema
      */
     private function convertTypeToSchema(Type $type, string $operation, array $groups, int $recursion): Schema

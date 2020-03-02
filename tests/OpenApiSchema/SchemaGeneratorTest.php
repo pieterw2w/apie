@@ -18,8 +18,10 @@ use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter
 use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\SearchFilters\PhpPrimitive;
+use W2w\Lib\Apie\Interfaces\ValueObjectInterface;
 use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
 use W2w\Lib\Apie\Plugins\Core\Serializers\Mapping\BaseGroupLoader;
+use W2w\Lib\Apie\Plugins\ValueObject\Schema\ValueObjectSchemaBuilder;
 use W2w\Test\Apie\Mocks\AbstractTestClassForSchemaGenerator;
 use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
 use W2w\Test\Apie\OpenApiSchema\Data\MultipleTypesObject;
@@ -82,7 +84,10 @@ class SchemaGeneratorTest extends TestCase
             $classMetadataFactory,
             $propertyInfo,
             $classResourceConverter->reveal(),
-            new MetadataAwareNameConverter($classMetadataFactory, new CamelCaseToSnakeCaseNameConverter())
+            new MetadataAwareNameConverter($classMetadataFactory, new CamelCaseToSnakeCaseNameConverter()),
+            [
+                ValueObjectInterface::class => new ValueObjectSchemaBuilder()
+            ]
         );
 
         $this->testItem->defineSchemaForResource(

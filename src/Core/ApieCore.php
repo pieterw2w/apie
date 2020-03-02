@@ -73,14 +73,13 @@ class ApieCore
                 $this->apie->getClassMetadataFactory(),
                 $this->apie->getPropertyTypeExtractor(),
                 $this->getClassResourceConverter(),
-                $this->apie->getPropertyConverter()
+                $this->apie->getPropertyConverter(),
+                $this->apie->getDynamicSchemaLogic()
             );
             foreach ($this->apie->getDefinedStaticData() as $class => $schema) {
                 $this->schemaGenerator->defineSchemaForResource($class, $schema);
             }
-            foreach ($this->apie->getDynamicSchemaLogic() as $class => $schema) {
-                // TODO: make method in schema generator
-            }
+
         }
         return $this->schemaGenerator;
     }
