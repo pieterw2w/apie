@@ -185,18 +185,18 @@ class CorePlugin implements SerializerProviderInterface,
                 [
                     new SerializerExtractor($factory),
                     $reflectionExtractor,
-                ],
-                [
+                ] + $this->getApie()->getListExtractors(),
+                $this->getApie()->getTypeExtractors() +[
                     $phpDocExtractor,
                     $reflectionExtractor,
                 ],
-                [
+                $this->getApie()->getDescriptionExtractors() + [
                     $phpDocExtractor,
-                ],
-                [
+                ] ,
+                $this->getApie()->getAccessExtractors() + [
                     $reflectionExtractor,
-                ],
-                [
+                ] ,
+                $this->getApie()->getInitializableExtractors() + [
                     $reflectionExtractor,
                 ]
             );

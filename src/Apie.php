@@ -7,6 +7,10 @@ use erasys\OpenApi\Spec\v3\Document;
 use erasys\OpenApi\Spec\v3\Info;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyInfo\PropertyAccessExtractorInterface;
+use Symfony\Component\PropertyInfo\PropertyDescriptionExtractorInterface;
+use Symfony\Component\PropertyInfo\PropertyInitializableExtractorInterface;
+use Symfony\Component\PropertyInfo\PropertyListExtractorInterface;
 use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
@@ -36,6 +40,7 @@ use W2w\Lib\Apie\PluginInterfaces\EncoderProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\NormalizerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\OpenApiEventProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\OpenApiInfoProviderInterface;
+use W2w\Lib\Apie\PluginInterfaces\PropertyInfoExtractorProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\ResourceProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SchemaProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SerializerProviderInterface;
@@ -53,7 +58,8 @@ final class Apie implements SerializerProviderInterface,
     OpenApiInfoProviderInterface,
     ApieConfigInterface,
     SchemaProviderInterface,
-    OpenApiEventProviderInterface
+    OpenApiEventProviderInterface,
+    PropertyInfoExtractorProviderInterface
 {
     const VERSION = "3.0";
 
@@ -143,9 +149,14 @@ final class Apie implements SerializerProviderInterface,
     private $chainableFormatRetriever;
 
     /**
-     * @var OpenApiEventProviderInterface
+     * @var OpenApiEventProviderInterface[]
      */
     private $openApiEventProviders = [];
+
+    /**
+     * @var PropertyInfoExtractorProviderInterface[]
+     */
+    private $propertyInfoExtractors = [];
 
     /**
 
@@ -171,6 +182,7 @@ final class Apie implements SerializerProviderInterface,
             ApieConfigInterface::class => 'configs',
             SchemaProviderInterface::class => 'schemaDefinitions',
             OpenApiEventProviderInterface::class => 'openApiEventProviders',
+            PropertyInfoExtractorProviderInterface::class => 'propertyInfoExtractors',
         ];
         if ($addCorePlugin) {
             $plugins[] = new CorePlugin();
@@ -433,5 +445,50 @@ final class Apie implements SerializerProviderInterface,
             $document = $openApiEventProvider->onOpenApiDocGenerated($document);
         }
         return $document;
+    }
+
+    public function getListExtractors(): array
+    {
+        $result = [];
+        foreach ($this->propertyInfoExtractors as $extractor) {
+            $result  = $result + $extractor->getListExtractors();
+        }
+        return $result;
+    }
+
+    public function getTypeExtractors(): array
+    {
+        $result = [];
+        foreach ($this->propertyInfoExtractors as $extractor) {
+            $result  = $result + $extractor->getTypeExtractors();
+        }
+        return $result;
+    }
+
+    public function getDescriptionExtractors(): array
+    {
+        $result = [];
+        foreach ($this->propertyInfoExtractors as $extractor) {
+            $result  = $result + $extractor->getDescriptionExtractors();
+        }
+        return $result;
+    }
+
+    public function getAccessExtractors(): array
+    {
+        $result = [];
+        foreach ($this->propertyInfoExtractors as $extractor) {
+            $result  = $result + $extractor->getAccessExtractors();
+        }
+        return $result;
+    }
+
+    public function getInitializableExtractors(): array
+    {
+        $result = [];
+        foreach ($this->propertyInfoExtractors as $extractor) {
+            $result  = $result + $extractor->getInitializableExtractors();
+        }
+        return $result;
     }
 }
