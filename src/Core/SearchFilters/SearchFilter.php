@@ -2,7 +2,7 @@
 namespace W2w\Lib\Apie\Core\SearchFilters;
 
 use W2w\Lib\Apie\Exceptions\NameAlreadyDefinedException;
-use W2w\Lib\Apie\Exceptions\NameNotFoundException;
+use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\NameNotFoundException;
 
 final class SearchFilter
 {

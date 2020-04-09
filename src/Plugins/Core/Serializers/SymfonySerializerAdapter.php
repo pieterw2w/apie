@@ -6,8 +6,7 @@ use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Serializer\Serializer;
 use W2w\Lib\Apie\Interfaces\FormatRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\ResourceSerializerInterface;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\ContextualNormalizer;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\EvilReflectionPropertyNormalizer;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
 use Zend\Diactoros\Response\TextResponse;
 
 class SymfonySerializerAdapter implements ResourceSerializerInterface
@@ -92,16 +91,11 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
      */
     public function hydrateWithReflection(array $data, string $resourceClass)
     {
-        ContextualNormalizer::enableDenormalizer(EvilReflectionPropertyNormalizer::class);
-        try {
-            return $this->serializer->denormalize(
-                $data,
-                $resourceClass,
-                null,
-                ['disable_type_enforcement' => true]
-            );
-        } finally {
-            ContextualNormalizer::disableDenormalizer(EvilReflectionPropertyNormalizer::class);
-        }
+        return $this->serializer->denormalize(
+            $data,
+            $resourceClass,
+            null,
+            ['disable_type_enforcement' => true, 'object_access' => new ObjectAccess(false)]
+        );
     }
 }

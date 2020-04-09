@@ -5,6 +5,7 @@ namespace W2w\Lib\Apie\Exceptions;
 
 use W2w\Lib\Apie\Interfaces\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Interfaces\ApiResourceRetrieverInterface;
+use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ApieException;
 
 /**
  * Exception thrown if the persister or retriever did not return an instance of the resource we wanted.

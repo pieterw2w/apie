@@ -1,6 +1,8 @@
 <?php
 namespace W2w\Lib\Apie\Exceptions;
 
+use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ApieException;
+
 /**
  * Exception thrown when the page index filled in for pagination is negative.
  */

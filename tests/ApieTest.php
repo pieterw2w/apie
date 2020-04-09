@@ -43,7 +43,6 @@ class ApieTest extends TestCase
         yield [BadConfigurationException::class, 'getClassMetadataFactory'];
         yield [BadConfigurationException::class, 'getPropertyConverter'];
         yield [BadConfigurationException::class, 'getPropertyAccessor'];
-        yield [BadConfigurationException::class, 'getPropertyTypeExtractor'];
         yield [BadConfigurationException::class, 'getCacheItemPool'];
         yield [BadConfigurationException::class, 'getAnnotationReader'];
         yield [BadConfigurationException::class, 'getResourceSerializer'];
@@ -68,7 +67,6 @@ class ApieTest extends TestCase
         yield [ClassMetadataFactory::class, 'getClassMetadataFactory'];
         yield [MetadataAwareNameConverter::class, 'getPropertyConverter'];
         yield [PropertyAccessor::class, 'getPropertyAccessor'];
-        yield [PropertyInfoExtractor::class, 'getPropertyTypeExtractor'];
         yield [ArrayAdapter::class, 'getCacheItemPool'];
         yield [AnnotationReader::class, 'getAnnotationReader'];
         yield [SymfonySerializerAdapter::class, 'getResourceSerializer'];

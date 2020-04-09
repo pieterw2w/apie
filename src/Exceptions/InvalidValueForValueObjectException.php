@@ -2,6 +2,7 @@
 namespace W2w\Lib\Apie\Exceptions;
 
 use ReflectionClass;
+use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ApieException;
 
 class InvalidValueForValueObjectException extends ApieException
 {

@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 use W2w\Lib\Apie\Core\SearchFilters\PhpPrimitive;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilter;
 use W2w\Lib\Apie\Exceptions\NameAlreadyDefinedException;
-use W2w\Lib\Apie\Exceptions\NameNotFoundException;
+use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\NameNotFoundException;
 
 class SearchFilterTest extends TestCase
 {

@@ -9,11 +9,11 @@ use Ramsey\Uuid\Uuid;
 use W2w\Lib\Apie\Annotations\ApiResource;
 use W2w\Lib\Apie\DefaultApie;
 use W2w\Lib\Apie\Exceptions\MethodNotAllowedException;
-use W2w\Lib\Apie\Exceptions\ValidationException;
 use W2w\Lib\Apie\Plugins\ApplicationInfo\ApiResources\ApplicationInfo;
 use W2w\Lib\Apie\Plugins\FakeAnnotations\FakeAnnotationsPlugin;
 use W2w\Lib\Apie\Plugins\StaticConfig\StaticConfigPlugin;
 use W2w\Lib\Apie\Plugins\StaticConfig\StaticResourcesPlugin;
+use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ValidationException;
 use W2w\Test\Apie\Mocks\ApiResources\FullRestObject;
 use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
 use W2w\Test\Apie\Mocks\ApiResources\SumExample;
@@ -184,7 +184,7 @@ class FeatureTest extends TestCase
     /**
      * @dataProvider serializeErrorsToValidationExceptionProvider
      */
-    public function test_serialize_errors_to_validation_exception(array $expectedErrors, array $expectedErrorsOld, string $outputClass, array $data)
+    public function test_serialize_errors_to_validation_exception(array $expectedErrors, string $outputClass, array $data)
     {
         // this tests requires a properly configured property type extractor, Apie provides a
         // proper one with help of CorePlugin, even though this makes it almost a feature test and not a unit test.
@@ -194,8 +194,6 @@ class FeatureTest extends TestCase
             $serializer->postData($outputClass, json_encode($data), 'application/json');
             $this->fail('A validation exception should have been thrown!');
         } catch (ValidationException $validationException) {
-            $this->assertEquals($expectedErrorsOld, $validationException->getErrors());
-        } catch (\W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ValidationException $validationException) {
         $this->assertEquals($expectedErrors, $validationException->getErrors());
         }
     }
@@ -204,13 +202,11 @@ class FeatureTest extends TestCase
     {
         yield [
             ['one' => ['one is required'], 'two' => ['two is required']],
-            ['one' => ['one is required']],
             SumExample::class,
             []
         ];
         yield [
             ['one' => ['must be one of "float" ("this is not a number" given)']],
-            ['one' => ['must be one of "float" ("string" given)']],
             SumExample::class,
             ['one' => 'this is not a number', 'two' => 12]
         ];

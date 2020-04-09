@@ -29,8 +29,8 @@ use W2w\Lib\Apie\Exceptions\NotAnApiePluginException;
 use W2w\Lib\Apie\Interfaces\ApiResourceFactoryInterface;
 use W2w\Lib\Apie\Interfaces\FormatRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\ResourceSerializerInterface;
+use W2w\Lib\Apie\OpenApiSchema\OpenApiSchemaGenerator;
 use W2w\Lib\Apie\OpenApiSchema\OpenApiSpecGenerator;
-use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
 use W2w\Lib\Apie\PluginInterfaces\AnnotationReaderProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\ApieAwareInterface;
 use W2w\Lib\Apie\PluginInterfaces\ApieConfigInterface;
@@ -159,7 +159,6 @@ final class Apie implements SerializerProviderInterface,
     private $propertyInfoExtractors = [];
 
     /**
-
      * @param object[] $plugins
      * @param bool $debug
      * @param string|null $cacheFolder
@@ -322,14 +321,6 @@ final class Apie implements SerializerProviderInterface,
         return reset($this->symfonyComponents)->getPropertyAccessor();
     }
 
-    public function getPropertyTypeExtractor(): PropertyTypeExtractorInterface
-    {
-        if (empty($this->symfonyComponents)) {
-            throw new BadConfigurationException('I have no symfony component provider set up');
-        }
-        return reset($this->symfonyComponents)->getPropertyTypeExtractor();
-    }
-
     public function getCacheItemPool(): CacheItemPoolInterface
     {
         if (empty($this->cacheItemPools)) {
@@ -376,7 +367,7 @@ final class Apie implements SerializerProviderInterface,
         return $this->apieCore->getOpenApiSpecGenerator();
     }
 
-    public function getSchemaGenerator(): SchemaGenerator
+    public function getSchemaGenerator(): OpenApiSchemaGenerator
     {
         return $this->apieCore->getSchemaGenerator();
     }

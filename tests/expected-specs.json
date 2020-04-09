@@ -336,14 +336,6 @@
                                 "description": "SimplePopo post for groups post, write",
                                 "type": "object",
                                 "properties": {
-                                    "id": {
-                                        "type": "string",
-                                        "nullable": false
-                                    },
-                                    "created_at": {
-                                        "type": "string",
-                                        "format": "date-time"
-                                    },
                                     "arbitrary_field": {
                                         "type": "object",
                                         "additionalProperties": true
@@ -360,14 +352,6 @@
                                 "description": "SimplePopo post for groups post, write",
                                 "type": "object",
                                 "properties": {
-                                    "id": {
-                                        "type": "string",
-                                        "nullable": false
-                                    },
-                                    "created_at": {
-                                        "type": "string",
-                                        "format": "date-time"
-                                    },
                                     "arbitrary_field": {
                                         "type": "object",
                                         "additionalProperties": true
@@ -867,10 +851,6 @@
                                 "description": "FullRestObject put for groups put, write",
                                 "type": "object",
                                 "properties": {
-                                    "uuid": {
-                                        "type": "string",
-                                        "format": "uuid"
-                                    },
                                     "string_value": {
                                         "type": "string",
                                         "nullable": false
@@ -891,10 +871,6 @@
                                 "description": "FullRestObject put for groups put, write",
                                 "type": "object",
                                 "properties": {
-                                    "uuid": {
-                                        "type": "string",
-                                        "format": "uuid"
-                                    },
                                     "string_value": {
                                         "type": "string",
                                         "nullable": false

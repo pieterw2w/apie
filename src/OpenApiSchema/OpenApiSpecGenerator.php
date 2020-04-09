@@ -34,7 +34,7 @@ class OpenApiSpecGenerator
         ApiResourcesInterface $apiResources,
         ClassResourceConverter $converter,
         OASv3\Info $info,
-        SchemaGenerator $schemaGenerator,
+        OpenApiSchemaGenerator $schemaGenerator,
         ApiResourceMetadataFactory $apiResourceMetadataFactory,
         IdentifierExtractor $identifierExtractor,
         string $baseUrl,

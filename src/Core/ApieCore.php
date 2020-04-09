@@ -7,7 +7,6 @@ use W2w\Lib\Apie\Apie;
 use W2w\Lib\Apie\Core\Resources\ApiResources;
 use W2w\Lib\Apie\OpenApiSchema\OpenApiSchemaGenerator;
 use W2w\Lib\Apie\OpenApiSchema\OpenApiSpecGenerator;
-use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
 use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
 
 /**
@@ -43,7 +42,7 @@ class ApieCore
     private $identifierExtractor;
 
     /**
-     * @var SchemaGenerator|null
+     * @var OpenApiSchemaGenerator|null
      */
     private $schemaGenerator;
 
@@ -68,15 +67,13 @@ class ApieCore
         );
     }
 
-    public function getSchemaGenerator(): SchemaGenerator
+    public function getSchemaGenerator(): OpenApiSchemaGenerator
     {
         if (!$this->schemaGenerator) {
             $this->schemaGenerator = new OpenApiSchemaGenerator(
                 $this->apie->getDynamicSchemaLogic(),
-                new ObjectAccess(false),
+                new ObjectAccess(true),
                 $this->apie->getClassMetadataFactory(),
-                $this->apie->getPropertyTypeExtractor(),
-                $this->getClassResourceConverter(),
                 $this->apie->getPropertyConverter()
             );
             foreach ($this->apie->getDefinedStaticData() as $class => $schema) {

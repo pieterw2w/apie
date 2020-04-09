@@ -1,8 +1,6 @@
 <?php
 
-
 namespace W2w\Lib\Apie\Exceptions;
-
 
 class NameAlreadyDefinedException extends BadConfigurationException
 {

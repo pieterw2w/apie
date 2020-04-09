@@ -4,17 +4,17 @@ namespace W2w\Lib\Apie\OpenApiSchema;
 
 use erasys\OpenApi\Spec\v3\Schema;
 use ReflectionClass;
-use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\Type;
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
-use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\PluginInterfaces\DynamicSchemaInterface;
 use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\FilteredObjectAccess;
 use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccessInterface;
 
-class OpenApiSchemaGenerator extends SchemaGenerator
+class OpenApiSchemaGenerator
 {
+    private const MAX_RECURSION = 3;
+
     /**
      * @var DynamicSchemaInterface[]
      */
@@ -45,7 +45,7 @@ class OpenApiSchemaGenerator extends SchemaGenerator
     private $nameConverter;
 
     /**
-     * @var ClassMetadataFactory
+     * @var ClassMetadataFactoryInterface
      */
     private $classMetadataFactory;
 
@@ -55,25 +55,22 @@ class OpenApiSchemaGenerator extends SchemaGenerator
     public function __construct(
         array $schemaGenerators,
         ObjectAccessInterface $objectAccess,
-        ClassMetadataFactory $classMetadataFactory,
-        PropertyInfoExtractor $propertyInfoExtractor,
-        ClassResourceConverter $converter,
+        ClassMetadataFactoryInterface $classMetadataFactory,
         NameConverterInterface $nameConverter
     ) {
         $this->schemaGenerators = $schemaGenerators;
         $this->objectAccess = $objectAccess;
         $this->nameConverter = $nameConverter;
         $this->classMetadataFactory = $classMetadataFactory;
-        parent::__construct($classMetadataFactory, $propertyInfoExtractor, $converter, $nameConverter, $schemaGenerators);
     }
 
     /**
      * Define a resource class and Schema manually.
      * @param string $resourceClass
      * @param Schema $schema
-     * @return SchemaGenerator
+     * @return OpenApiSchemaGenerator
      */
-    public function defineSchemaForResource(string $resourceClass, Schema $schema): SchemaGenerator
+    public function defineSchemaForResource(string $resourceClass, Schema $schema): OpenApiSchemaGenerator
     {
         $this->predefined[$resourceClass] = $schema;
         $this->alreadyDefined = [];
@@ -160,7 +157,7 @@ class OpenApiSchemaGenerator extends SchemaGenerator
             'title' => $refl->getShortName(),
             'description' => $refl->getShortName() . ' ' . $operation . ' for groups ' . implode(', ', $groups),
         ]);
-        if ($recursion > 3) {
+        if ($recursion > self::MAX_RECURSION) {
             return $this->alreadyDefined[$cacheKey] = $schema;
         }
         $objectAccess = $this->filterObjectAccess($this->objectAccess, $resourceClass, $groups);
@@ -168,8 +165,9 @@ class OpenApiSchemaGenerator extends SchemaGenerator
             case 'post':
                 $constructorArgs = $objectAccess->getConstructorArguments($refl);
                 foreach ($constructorArgs as $key => $type) {
-                    $fieldName = $this->nameConverter->normalize($key);
-                    $schema->properties[$fieldName] = $this->convertTypeToSchema($type, $operation, $groups, $recursion + 1);
+                    /** @scrutinizer ignore-call */
+                    $fieldName = $this->nameConverter->normalize($key, $resourceClass);
+                    $schema->properties[$fieldName] = $this->convertTypeToSchema($type, $operation, $groups, $recursion);
                     $description = $objectAccess->getDescription($refl, $fieldName, false);
                     if ($description) {
                         $schema->properties[$fieldName]->description = $description;
@@ -179,7 +177,8 @@ class OpenApiSchemaGenerator extends SchemaGenerator
             case 'put':
                 $setterFields = $objectAccess->getSetterFields($refl);
                 foreach ($setterFields as $setterField) {
-                    $fieldName = $this->nameConverter->normalize($setterField);
+                    /** @scrutinizer ignore-call */
+                    $fieldName = $this->nameConverter->normalize($setterField, $resourceClass);
                     $schema->properties[$fieldName] = $this->convertTypesToSchema($objectAccess->getSetterTypes($refl, $setterField), $operation, $groups, $recursion);
                     $description = $objectAccess->getDescription($refl, $fieldName, false);
                     if ($description) {
@@ -190,7 +189,8 @@ class OpenApiSchemaGenerator extends SchemaGenerator
             case 'get':
                 $getterFields = $objectAccess->getGetterFields($refl);
                 foreach ($getterFields as $getterField) {
-                    $fieldName = $this->nameConverter->normalize($getterField);
+                    /** @scrutinizer ignore-call */
+                    $fieldName = $this->nameConverter->normalize($getterField, $resourceClass);
                     $schema->properties[$fieldName] = $this->convertTypesToSchema($objectAccess->getGetterTypes($refl, $getterField), $operation, $groups, $recursion);
                     $description = $objectAccess->getDescription($refl, $fieldName, true);
                     if ($description) {
@@ -207,7 +207,6 @@ class OpenApiSchemaGenerator extends SchemaGenerator
         $allowedAttributes = [];
         foreach ($this->classMetadataFactory->getMetadataFor($className)->getAttributesMetadata() as $attributeMetadata) {
             $name = $attributeMetadata->getName();
-
             if (array_intersect($attributeMetadata->getGroups(), $groups)) {
                 $allowedAttributes[] = $name;
             }
@@ -225,11 +224,70 @@ class OpenApiSchemaGenerator extends SchemaGenerator
         return $this->convertTypeToSchema($type, $operation, $groups, $recursion + 1);
     }
 
+    /**
+     * Returns OpenApi property type for scalars.
+     *
+     * @param string $type
+     * @return string
+     */
+    private function translateType(string $type): string
+    {
+        switch ($type) {
+            case 'int': return 'integer';
+            case 'bool': return 'boolean';
+            case 'float': return 'number';
+            case 'double': return 'number';
+        }
+
+        return $type;
+    }
+
     protected function convertTypeToSchema(?Type $type, string $operation, array $groups, int $recursion): Schema
     {
-        if ($type && $type->getBuiltinType() === Type::BUILTIN_TYPE_OBJECT && $type->getClassName()) {
-            return $this->createSchemaRecursive($type->getClassName(), $operation, $groups, $recursion);
+        if ($type === null) {
+            return new Schema(['type' => 'object', 'additionalProperties' => true]);
         }
-        return parent::convertTypeToSchema($type, $operation, $groups, $recursion);
+        if ($type && $type->getBuiltinType() === Type::BUILTIN_TYPE_OBJECT && $type->getClassName()) {
+            return $this->createSchemaRecursive($type->getClassName(), $operation, $groups, $recursion + 1);
+        }
+        $propertySchema = new Schema([
+            'type'        => 'string',
+            'nullable'    => true,
+        ]);
+        $propertySchema->type = $this->translateType($type->getBuiltinType());
+        if (!$type->isNullable()) {
+            $propertySchema->nullable = false;
+        }
+        if ($type->isCollection()) {
+            $propertySchema->type = 'array';
+            $propertySchema->items = new Schema([
+                'oneOf' => [
+                    new Schema(['type' => 'string', 'nullable' => true]),
+                    new Schema(['type' => 'integer']),
+                    new Schema(['type' => 'boolean']),
+                ],
+            ]);
+            $arrayType = $type->getCollectionValueType();
+            if ($arrayType) {
+                if ($arrayType->getClassName()) {
+                    $propertySchema->items = $this->createSchemaRecursive($arrayType->getClassName(), $operation, $groups, $recursion + 1);
+                } elseif ($arrayType->getBuiltinType()) {
+                    $schemaType = $this->translateType($arrayType->getBuiltinType());
+                    $propertySchema->items = new Schema([
+                        'type' => $schemaType,
+                        'format' => ($schemaType === 'number') ? $arrayType->getBuiltinType() : null,
+                    ]);
+                }
+            }
+            return $propertySchema;
+        }
+        if ($propertySchema->type === 'number') {
+            $propertySchema->format = $type->getBuiltinType();
+        }
+        $className = $type->getClassName();
+        if (Type::BUILTIN_TYPE_OBJECT === $type->getBuiltinType() && $recursion < self::MAX_RECURSION && !is_null($className)) {
+            return $this->createSchemaRecursive($className, $operation, $groups, $recursion + 1);
+        }
+        return $propertySchema;
     }
 }

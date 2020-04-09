@@ -4,13 +4,9 @@ namespace W2w\Test\Apie\OpenApiSchema;
 use DateTimeInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use erasys\OpenApi\Spec\v3\Discriminator;
 use erasys\OpenApi\Spec\v3\Schema;
 use PHPUnit\Framework\TestCase;
-use Pjordaan\AlternateReflectionExtractor\ReflectionExtractor;
 use Prophecy\Argument;
-use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
-use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Serializer\Mapping\Loader\LoaderChain;
@@ -19,55 +15,26 @@ use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\SearchFilters\PhpPrimitive;
 use W2w\Lib\Apie\Interfaces\ValueObjectInterface;
-use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
+use W2w\Lib\Apie\OpenApiSchema\OpenApiSchemaGenerator;
 use W2w\Lib\Apie\Plugins\Core\Serializers\Mapping\BaseGroupLoader;
 use W2w\Lib\Apie\Plugins\ValueObject\Schema\ValueObjectSchemaBuilder;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
 use W2w\Test\Apie\Mocks\AbstractTestClassForSchemaGenerator;
 use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
 use W2w\Test\Apie\OpenApiSchema\Data\MultipleTypesObject;
-use W2w\Test\Apie\OpenApiSchema\Data\Polymorphic\ClassA;
-use W2w\Test\Apie\OpenApiSchema\Data\Polymorphic\ClassB;
-use W2w\Test\Apie\OpenApiSchema\Data\Polymorphic\ClassC;
 use W2w\Test\Apie\OpenApiSchema\Data\Polymorphic\TestInterface;
-use W2w\Test\Apie\OpenApiSchema\Data\Polymorphic\TestObject;
 use W2w\Test\Apie\OpenApiSchema\Data\RecursiveObject;
 
 class SchemaGeneratorTest extends TestCase
 {
     /**
-     * @var SchemaGenerator
+     * @var OpenApiSchemaGenerator
      */
     private $testItem;
 
     protected function setUp(): void
     {
         AnnotationRegistry::registerLoader('class_exists');
-        // a full list of extractors is shown further below
-        $phpDocExtractor = new PhpDocExtractor();
-        $reflectionExtractor = new ReflectionExtractor();
-
-        // list of PropertyListExtractorInterface (any iterable)
-        $listExtractors = [$reflectionExtractor];
-
-        // list of PropertyTypeExtractorInterface (any iterable)
-        $typeExtractors = [$phpDocExtractor, $reflectionExtractor];
-
-        // list of PropertyDescriptionExtractorInterface (any iterable)
-        $descriptionExtractors = [$phpDocExtractor];
-
-        // list of PropertyAccessExtractorInterface (any iterable)
-        $accessExtractors = [$reflectionExtractor];
-
-        // list of PropertyInitializableExtractorInterface (any iterable)
-        $propertyInitializableExtractors = [$reflectionExtractor];
-
-        $propertyInfo = new PropertyInfoExtractor(
-            $listExtractors,
-            $typeExtractors,
-            $descriptionExtractors,
-            $accessExtractors,
-            $propertyInitializableExtractors
-        );
 
         $classResourceConverter = $this->prophesize(ClassResourceConverter::class);
         $classResourceConverter->normalize(Argument::any())->willReturnArgument(0);
@@ -80,14 +47,13 @@ class SchemaGeneratorTest extends TestCase
             ])
         );
 
-        $this->testItem = new SchemaGenerator(
-            $classMetadataFactory,
-            $propertyInfo,
-            $classResourceConverter->reveal(),
-            new MetadataAwareNameConverter($classMetadataFactory, new CamelCaseToSnakeCaseNameConverter()),
+        $this->testItem = new OpenApiSchemaGenerator(
             [
                 ValueObjectInterface::class => new ValueObjectSchemaBuilder()
-            ]
+            ],
+            new ObjectAccess(true),
+            $classMetadataFactory,
+            new MetadataAwareNameConverter($classMetadataFactory, new CamelCaseToSnakeCaseNameConverter())
         );
 
         $this->testItem->defineSchemaForResource(
@@ -98,9 +64,14 @@ class SchemaGeneratorTest extends TestCase
 
     public function testCreateSchema()
     {
+        $arbitraryField = new Schema([
+            'type' => 'object',
+            'additionalProperties' => true,
+        ]);
+
         $expected = new Schema([
-            'title' => SimplePopo::class,
-            'description' => SimplePopo::class . ' get for groups get, read',
+            'title' => 'SimplePopo',
+            'description' => 'SimplePopo get for groups get, read',
             'type' => 'object',
             'properties' => [
                 'id' => new Schema([
@@ -110,10 +81,7 @@ class SchemaGeneratorTest extends TestCase
                     'type' => 'string',
                     'format' => 'date-time'
                 ]),
-                'arbitrary_field' => new Schema([
-                    'type' => 'string',
-                    'nullable' => true
-                ])
+                'arbitrary_field' => $arbitraryField
             ]
         ]);
 
@@ -128,14 +96,11 @@ class SchemaGeneratorTest extends TestCase
         );
 
         $expected = new Schema([
-            'title' => SimplePopo::class,
-            'description' => SimplePopo::class . ' post for groups post, write',
+            'title' => 'SimplePopo',
+            'description' => 'SimplePopo post for groups post, write',
             'type' => 'object',
             'properties' => [
-                'arbitrary_field' => new Schema([
-                    'type' => 'string',
-                    'nullable' => true
-                ])
+                'arbitrary_field' => $arbitraryField
             ]
         ]);
 
@@ -150,14 +115,11 @@ class SchemaGeneratorTest extends TestCase
         );
 
         $expected = new Schema([
-            'title' => SimplePopo::class,
-            'description' => SimplePopo::class . ' put for groups put, write',
+            'title' => 'SimplePopo',
+            'description' => 'SimplePopo put for groups put, write',
             'type' => 'object',
             'properties' => [
-                'arbitrary_field' => new Schema([
-                    'type' => 'string',
-                    'nullable' => true
-                ])
+                'arbitrary_field' => $arbitraryField
             ]
         ]);
 
@@ -183,17 +145,15 @@ class SchemaGeneratorTest extends TestCase
 
     public function testCreateSchema_recursive_object()
     {
-        $wrap = function (Schema $schema) {
+        $wrap = function (?Schema $schema) {
             return new Schema([
-                'title' => RecursiveObject::class,
-                'description' => RecursiveObject::class . ' get for groups get, read',
+                'title' => 'RecursiveObject',
+                'description' => 'RecursiveObject get for groups get, read',
                 'type'        => 'object',
-                'properties'  => [
-                    'child' => $schema
-                ],
+                'properties'  => $schema ? [ 'child' => $schema ] : [],
             ]);
         };
-        $expected = $wrap($wrap($wrap(new Schema(['type' => 'object', 'nullable' => false]))));
+        $expected = $wrap($wrap($wrap(null)));
 
         $this->assertEquals(
             $expected,
@@ -228,8 +188,8 @@ class SchemaGeneratorTest extends TestCase
     {
         $expected = new Schema([
             'type' => 'object',
-            'title' => TestInterface::class,
-            'description' => TestInterface::class . ' get for groups get, read',
+            'title' => 'TestInterface',
+            'description' => 'TestInterface get for groups get, read',
             'properties' => [
                 'type' => new Schema(['type' => 'string', 'nullable' => false]),
                 'required_in_interface' => new Schema(['type' => 'string', 'nullable' => false]),
@@ -250,8 +210,8 @@ class SchemaGeneratorTest extends TestCase
     {
         $expected = new Schema([
             'type' => 'object',
-            'title' => AbstractTestClassForSchemaGenerator::class,
-            'description' => AbstractTestClassForSchemaGenerator::class . ' get for groups get, read',
+            'title' => 'AbstractTestClassForSchemaGenerator',
+            'description' => 'AbstractTestClassForSchemaGenerator get for groups get, read',
             'properties' => [
                 'value' => new Schema(['type' => 'string', 'nullable' => true]),
             ],
@@ -268,8 +228,8 @@ class SchemaGeneratorTest extends TestCase
 
         $expected = new Schema([
             'type' => 'object',
-            'title' => AbstractTestClassForSchemaGenerator::class,
-            'description' => AbstractTestClassForSchemaGenerator::class . ' post for groups post, write',
+            'title' => 'AbstractTestClassForSchemaGenerator',
+            'description' => 'AbstractTestClassForSchemaGenerator post for groups post, write',
             'properties' => [
                 'another_value' => new Schema(['type' => 'string', 'nullable' => true]),
             ],
@@ -285,131 +245,13 @@ class SchemaGeneratorTest extends TestCase
         );
     }
 
-    public function testDefineSchemaForPolymorphicObject()
-    {
-        $expected = $this->createPolymorphicObjectSchema();
-        $this->assertEquals(
-            $expected,
-            $this->testItem->defineSchemaForPolymorphicObject(
-                TestInterface::class,
-                'type',
-                [
-                    'A' => ClassA::class,
-                    'B' => ClassB::class,
-                    'C' => ClassC::class,
-                    'D' => ClassC::class
-                ],
-                'get',
-                ['get', 'read']
-            )
-        );
-        $this->assertEquals(
-            $expected,
-            $this->testItem->createSchema(TestInterface::class, 'get', ['get', 'read']),
-            'running createSchema gives the created result'
-        );
-    }
-
-    public function testCreateSchemaWithPolymorphicObject()
-    {
-        $this->testItem->defineSchemaForPolymorphicObject(
-            TestInterface::class,
-            'type',
-            [
-                'A' => ClassA::class,
-                'B' => ClassB::class,
-                'C' => ClassC::class,
-                'D' => ClassC::class
-            ],
-            'get',
-            ['get', 'read']
-        );
-
-        $polymorphicSchema = $this->createPolymorphicObjectSchema();
-
-        $expected = new Schema([
-            'type' => 'object',
-            'title' => TestObject::class,
-            'description' => TestObject::class  . ' get for groups get, read',
-            'properties' => [
-                'item' => $polymorphicSchema,
-                'list' => new Schema([
-                    'type' => 'array',
-                    'nullable' => false,
-                    'items' => $polymorphicSchema,
-                ]),
-            ],
-        ]);
-
-        $this->assertEquals(
-            $expected,
-            $this->testItem->createSchema(TestObject::class, 'get', ['get', 'read'])
-        );
-    }
-
-    private function createPolymorphicObjectSchema(): Schema
-    {
-        $schemaA = new Schema([
-            'type' => 'object',
-            'title' => ClassA::class,
-            'description' => ClassA::class . ' get for groups get, read',
-            'properties' => [
-                'type' => new Schema(['type' => 'string', 'nullable' => false, 'default' => 'A', 'example' => 'A']),
-                'required_in_interface' => new Schema(['type' => 'string', 'nullable' => false]),
-                'this_is_a' => new Schema(['type' => 'string', 'nullable' => false]),
-            ],
-        ]);
-        $schemaB = new Schema([
-            'type' => 'object',
-            'title' => ClassB::class,
-            'description' => ClassB::class . ' get for groups get, read',
-            'properties' => [
-                'type' => new Schema(['type' => 'string', 'nullable' => false, 'default' => 'B', 'example' => 'B']),
-                'required_in_interface' => new Schema(['type' => 'string', 'nullable' => false]),
-                'this_is_b' => new Schema(['type' => 'string', 'nullable' => true]),
-                'b_or_c' => new Schema(['type' => 'string', 'nullable' => false]),
-            ],
-        ]);
-        $schemaC = new Schema([
-            'type' => 'object',
-            'title' => ClassC::class,
-            'description' => ClassC::class . ' get for groups get, read',
-            'properties' => [
-                'type' => new Schema(['type' => 'string', 'nullable' => false, 'default' => 'D', 'example' => 'D']),
-                'required_in_interface' => new Schema(['type' => 'string', 'nullable' => false]),
-                'b_or_c' => new Schema(['type' => 'integer', 'nullable' => false]),
-            ],
-        ]);
-
-        return new Schema([
-            'type' => 'object',
-            'properties' => [
-                'type' => new Schema(['type' => 'string']),
-            ],
-            'oneOf' => [
-                $schemaA,
-                $schemaB,
-                $schemaC,
-            ],
-            'discriminator' => new Discriminator(
-                'type',
-                [
-                    'A' => $schemaA,
-                    'B' => $schemaB,
-                    'C' => $schemaC,
-                    'D' => $schemaC
-                ]
-            )
-        ]);
-    }
-
     public function testCreateSchema_multiple_types()
     {
         $simplePopoSchema = $this->testItem->createSchema(SimplePopo::class, 'get', ['get', 'read']);
         $expected = new Schema(
             [
-                'title'       => MultipleTypesObject::class,
-                'description' => MultipleTypesObject::class . ' get for groups get, read',
+                'title'       => 'MultipleTypesObject',
+                'description' => 'MultipleTypesObject get for groups get, read',
                 'type'        => 'object',
                 'properties'  => [
                     'floating_point' => new Schema(['type' => 'number', 'format' => 'float']),
@@ -439,7 +281,6 @@ class SchemaGeneratorTest extends TestCase
                 ]
             ]
         );
-
         $this->assertEquals(
             $expected,
             $this->testItem->createSchema(MultipleTypesObject::class, 'get', ['get', 'read'])
