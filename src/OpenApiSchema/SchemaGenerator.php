@@ -7,19 +7,20 @@ use erasys\OpenApi\Spec\v3\Schema;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\Type;
 use Symfony\Component\Serializer\Mapping\AttributeMetadataInterface;
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 
 /**
  * Class that uses symfony/property-info and reflection to create a Schema instance of a class.
+ * @deprecated use OpenApiSchemaGenerator
  */
 class SchemaGenerator
 {
     private const MAX_RECURSION = 2;
 
     /**
-     * @var ClassMetadataFactory
+     * @var ClassMetadataFactoryInterface
      */
     private $classMetadataFactory;
 
@@ -59,14 +60,14 @@ class SchemaGenerator
     private $building = [];
 
     /**
-     * @param ClassMetadataFactory $classMetadataFactory
+     * @param ClassMetadataFactoryInterface $classMetadataFactory
      * @param PropertyInfoExtractor $propertyInfoExtractor
      * @param ClassResourceConverter $converter
      * @param NameConverterInterface $nameConverter
      * @param callable[] $schemaCallbacks
      */
     public function __construct(
-        ClassMetadataFactory $classMetadataFactory,
+        ClassMetadataFactoryInterface $classMetadataFactory,
         PropertyInfoExtractor $propertyInfoExtractor,
         ClassResourceConverter $converter,
         NameConverterInterface $nameConverter,
@@ -85,7 +86,7 @@ class SchemaGenerator
      * @param Schema $schema
      * @return SchemaGenerator
      */
-    public function defineSchemaForResource(string $resourceClass, Schema $schema): self
+    public function defineSchemaForResource(string $resourceClass, Schema $schema)
     {
         $this->predefined[$resourceClass] = $schema;
         $this->alreadyDefined = [];
@@ -255,8 +256,11 @@ class SchemaGenerator
      *
      * @return Schema
      */
-    private function convertTypeToSchema(Type $type, string $operation, array $groups, int $recursion): Schema
+    protected function convertTypeToSchema(?Type $type, string $operation, array $groups, int $recursion): Schema
     {
+        if ($type === null) {
+            return new Schema(['type' => 'object', 'additionalProperties' => true]);
+        }
         $propertySchema = new Schema([
             'type'        => 'string',
             'nullable'    => true,

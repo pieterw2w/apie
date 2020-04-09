@@ -7,10 +7,6 @@ use erasys\OpenApi\Spec\v3\Document;
 use erasys\OpenApi\Spec\v3\Info;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyInfo\PropertyAccessExtractorInterface;
-use Symfony\Component\PropertyInfo\PropertyDescriptionExtractorInterface;
-use Symfony\Component\PropertyInfo\PropertyInitializableExtractorInterface;
-use Symfony\Component\PropertyInfo\PropertyListExtractorInterface;
 use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
@@ -38,6 +34,7 @@ use W2w\Lib\Apie\PluginInterfaces\ApiResourceFactoryProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\CacheItemPoolProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\EncoderProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\NormalizerProviderInterface;
+use W2w\Lib\Apie\PluginInterfaces\ObjectAccessProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\OpenApiEventProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\OpenApiInfoProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\PropertyInfoExtractorProviderInterface;
@@ -46,6 +43,10 @@ use W2w\Lib\Apie\PluginInterfaces\SchemaProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SerializerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SymfonyComponentProviderInterface;
 use W2w\Lib\Apie\Plugins\Core\CorePlugin;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\CachedObjectAccess;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\GroupedObjectAccess;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccessInterface;
 
 final class Apie implements SerializerProviderInterface,
     ResourceProviderInterface,
@@ -154,6 +155,11 @@ final class Apie implements SerializerProviderInterface,
     private $openApiEventProviders = [];
 
     /**
+     * @var ObjectAccessProviderInterface[]
+     */
+    private $objectAccesses = [];
+
+    /**
      * @var PropertyInfoExtractorProviderInterface[]
      */
     private $propertyInfoExtractors = [];
@@ -182,6 +188,7 @@ final class Apie implements SerializerProviderInterface,
             ApieConfigInterface::class => 'configs',
             SchemaProviderInterface::class => 'schemaDefinitions',
             OpenApiEventProviderInterface::class => 'openApiEventProviders',
+            ObjectAccessProviderInterface::class => 'objectAccesses',
             PropertyInfoExtractorProviderInterface::class => 'propertyInfoExtractors',
         ];
         if ($addCorePlugin) {
@@ -490,5 +497,21 @@ final class Apie implements SerializerProviderInterface,
             $result  = $result + $extractor->getInitializableExtractors();
         }
         return $result;
+    }
+
+    public function getObjectAccess(): ObjectAccessInterface
+    {
+        $objectAccess = new ObjectAccess();
+        if (!empty($this->objectAccesses)) {
+            $list = [];
+            foreach ($this->objectAccesses as $objectAccess) {
+                $list = array_merge($list, $objectAccess->getObjectAccesses());
+            }
+            $objectAccess = new GroupedObjectAccess($objectAccess, $list);
+        }
+        if (!$this->debug && $this->cacheFolder) {
+            return new CachedObjectAccess($objectAccess, $this->getCacheItemPool());
+        }
+        return $objectAccess;
     }
 }
