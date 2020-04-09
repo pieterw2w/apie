@@ -1,10 +1,11 @@
 <?php
+
+
 namespace W2w\Lib\Apie\Exceptions;
 
-class NameNotFoundException extends BadConfigurationException
+/**
+ * @deprecated use \W2w\Lib\ApieObjectAccessNormalizer\Exceptions\NameNotFoundException
+ */
+class NameNotFoundException extends \W2w\Lib\ApieObjectAccessNormalizer\Exceptions\NameNotFoundException
 {
-    public function __construct(string $name)
-    {
-        parent::__construct('Name "' . $name . '" not found!"');
-    }
 }

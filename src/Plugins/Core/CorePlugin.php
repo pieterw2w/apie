@@ -51,6 +51,7 @@ use W2w\Lib\Apie\Plugins\Core\Normalizers\ContextualNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\EvilReflectionPropertyNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\ExceptionNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Serializers\SymfonySerializerAdapter;
+use W2w\Lib\ApieObjectAccessNormalizer\Normalizers\ApieObjectAccessNormalizer;
 
 /**
  * Plugin with most default functionality.
@@ -121,8 +122,8 @@ class CorePlugin implements SerializerProviderInterface,
             new ExceptionNormalizer($this->getApie()->isDebug()),
             new JsonSerializableNormalizer(),
             new ArrayDenormalizer(),
-            new ContextualNormalizer([$evilObjectNormalizer]),
-            $objectNormalizer
+            new ContextualNormalizer([$objectNormalizer, $evilObjectNormalizer]),
+            new ApieObjectAccessNormalizer(null, $this->getApie()->getPropertyConverter(), $classMetadataFactory)
         ];
 
     }

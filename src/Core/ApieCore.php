@@ -5,8 +5,10 @@ namespace W2w\Lib\Apie\Core;
 use erasys\OpenApi\Spec\v3\Document;
 use W2w\Lib\Apie\Apie;
 use W2w\Lib\Apie\Core\Resources\ApiResources;
+use W2w\Lib\Apie\OpenApiSchema\OpenApiSchemaGenerator;
 use W2w\Lib\Apie\OpenApiSchema\OpenApiSpecGenerator;
 use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
 
 /**
  * Used by Apie to create the general Apie classes which you are not supposed to override in a plugin.
@@ -69,12 +71,13 @@ class ApieCore
     public function getSchemaGenerator(): SchemaGenerator
     {
         if (!$this->schemaGenerator) {
-            $this->schemaGenerator = new SchemaGenerator(
+            $this->schemaGenerator = new OpenApiSchemaGenerator(
+                $this->apie->getDynamicSchemaLogic(),
+                new ObjectAccess(false),
                 $this->apie->getClassMetadataFactory(),
                 $this->apie->getPropertyTypeExtractor(),
                 $this->getClassResourceConverter(),
-                $this->apie->getPropertyConverter(),
-                $this->apie->getDynamicSchemaLogic()
+                $this->apie->getPropertyConverter()
             );
             foreach ($this->apie->getDefinedStaticData() as $class => $schema) {
                 $this->schemaGenerator->defineSchemaForResource($class, $schema);

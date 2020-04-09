@@ -184,7 +184,7 @@ class FeatureTest extends TestCase
     /**
      * @dataProvider serializeErrorsToValidationExceptionProvider
      */
-    public function test_serialize_errors_to_validation_exception(array $expectedErrors, string $outputClass, array $data)
+    public function test_serialize_errors_to_validation_exception(array $expectedErrors, array $expectedErrorsOld, string $outputClass, array $data)
     {
         // this tests requires a properly configured property type extractor, Apie provides a
         // proper one with help of CorePlugin, even though this makes it almost a feature test and not a unit test.
@@ -194,26 +194,25 @@ class FeatureTest extends TestCase
             $serializer->postData($outputClass, json_encode($data), 'application/json');
             $this->fail('A validation exception should have been thrown!');
         } catch (ValidationException $validationException) {
-            $this->assertEquals($expectedErrors, $validationException->getErrors());
+            $this->assertEquals($expectedErrorsOld, $validationException->getErrors());
+        } catch (\W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ValidationException $validationException) {
+        $this->assertEquals($expectedErrors, $validationException->getErrors());
         }
     }
 
     public function serializeErrorsToValidationExceptionProvider()
     {
         yield [
+            ['one' => ['one is required'], 'two' => ['two is required']],
             ['one' => ['one is required']],
             SumExample::class,
             []
         ];
         yield [
+            ['one' => ['must be one of "float" ("this is not a number" given)']],
             ['one' => ['must be one of "float" ("string" given)']],
             SumExample::class,
             ['one' => 'this is not a number', 'two' => 12]
-        ];
-        yield [
-            ['stringValue' => ['must be one of "string" ("integer" given)']],
-            FullRestObject::class,
-            ['string_value' => 12]
         ];
     }
 }

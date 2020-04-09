@@ -23,8 +23,8 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "title": "application_info",
-                                        "description": "application_info get for groups get, read",
+                                        "title": "ApplicationInfo",
+                                        "description": "ApplicationInfo get for groups get, read",
                                         "type": "object",
                                         "properties": {
                                             "app_name": {
@@ -54,8 +54,8 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "title": "application_info",
-                                        "description": "application_info get for groups get, read",
+                                        "title": "ApplicationInfo",
+                                        "description": "ApplicationInfo get for groups get, read",
                                         "type": "object",
                                         "properties": {
                                             "app_name": {
@@ -145,8 +145,8 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "title": "simple_popo",
-                                        "description": "simple_popo get for groups get, read",
+                                        "title": "SimplePopo",
+                                        "description": "SimplePopo get for groups get, read",
                                         "type": "object",
                                         "properties": {
                                             "id": {
@@ -158,8 +158,8 @@
                                                 "format": "date-time"
                                             },
                                             "arbitrary_field": {
-                                                "type": "string",
-                                                "nullable": true
+                                                "type": "object",
+                                                "additionalProperties": true
                                             }
                                         },
                                         "xml": {
@@ -172,8 +172,8 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "title": "simple_popo",
-                                        "description": "simple_popo get for groups get, read",
+                                        "title": "SimplePopo",
+                                        "description": "SimplePopo get for groups get, read",
                                         "type": "object",
                                         "properties": {
                                             "id": {
@@ -185,8 +185,8 @@
                                                 "format": "date-time"
                                             },
                                             "arbitrary_field": {
-                                                "type": "string",
-                                                "nullable": true
+                                                "type": "object",
+                                                "additionalProperties": true
                                             }
                                         },
                                         "xml": {
@@ -255,8 +255,8 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "title": "simple_popo",
-                                    "description": "simple_popo get for groups get, read",
+                                    "title": "SimplePopo",
+                                    "description": "SimplePopo get for groups get, read",
                                     "type": "object",
                                     "properties": {
                                         "id": {
@@ -268,8 +268,8 @@
                                             "format": "date-time"
                                         },
                                         "arbitrary_field": {
-                                            "type": "string",
-                                            "nullable": true
+                                            "type": "object",
+                                            "additionalProperties": true
                                         }
                                     },
                                     "xml": {
@@ -279,8 +279,8 @@
                             },
                             "application/xml": {
                                 "schema": {
-                                    "title": "simple_popo",
-                                    "description": "simple_popo get for groups get, read",
+                                    "title": "SimplePopo",
+                                    "description": "SimplePopo get for groups get, read",
                                     "type": "object",
                                     "properties": {
                                         "id": {
@@ -292,8 +292,8 @@
                                             "format": "date-time"
                                         },
                                         "arbitrary_field": {
-                                            "type": "string",
-                                            "nullable": true
+                                            "type": "object",
+                                            "additionalProperties": true
                                         }
                                     },
                                     "xml": {
@@ -332,13 +332,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "title": "simple_popo",
-                                "description": "simple_popo post for groups post, write",
+                                "title": "SimplePopo",
+                                "description": "SimplePopo post for groups post, write",
                                 "type": "object",
                                 "properties": {
-                                    "arbitrary_field": {
+                                    "id": {
                                         "type": "string",
-                                        "nullable": true
+                                        "nullable": false
+                                    },
+                                    "created_at": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "arbitrary_field": {
+                                        "type": "object",
+                                        "additionalProperties": true
                                     }
                                 },
                                 "xml": {
@@ -348,13 +356,21 @@
                         },
                         "application/xml": {
                             "schema": {
-                                "title": "simple_popo",
-                                "description": "simple_popo post for groups post, write",
+                                "title": "SimplePopo",
+                                "description": "SimplePopo post for groups post, write",
                                 "type": "object",
                                 "properties": {
-                                    "arbitrary_field": {
+                                    "id": {
                                         "type": "string",
-                                        "nullable": true
+                                        "nullable": false
+                                    },
+                                    "created_at": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "arbitrary_field": {
+                                        "type": "object",
+                                        "additionalProperties": true
                                     }
                                 },
                                 "xml": {
@@ -399,8 +415,8 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "title": "full_rest_object",
-                                        "description": "full_rest_object get for groups get, read",
+                                        "title": "FullRestObject",
+                                        "description": "FullRestObject get for groups get, read",
                                         "type": "object",
                                         "properties": {
                                             "uuid": {
@@ -426,8 +442,8 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "title": "full_rest_object",
-                                        "description": "full_rest_object get for groups get, read",
+                                        "title": "FullRestObject",
+                                        "description": "FullRestObject get for groups get, read",
                                         "type": "object",
                                         "properties": {
                                             "uuid": {
@@ -536,8 +552,8 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "title": "full_rest_object",
-                                    "description": "full_rest_object get for groups get, read",
+                                    "title": "FullRestObject",
+                                    "description": "FullRestObject get for groups get, read",
                                     "type": "object",
                                     "properties": {
                                         "uuid": {
@@ -560,8 +576,8 @@
                             },
                             "application/xml": {
                                 "schema": {
-                                    "title": "full_rest_object",
-                                    "description": "full_rest_object get for groups get, read",
+                                    "title": "FullRestObject",
+                                    "description": "FullRestObject get for groups get, read",
                                     "type": "object",
                                     "properties": {
                                         "uuid": {
@@ -613,8 +629,8 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "title": "full_rest_object",
-                                "description": "full_rest_object post for groups post, write",
+                                "title": "FullRestObject",
+                                "description": "FullRestObject post for groups post, write",
                                 "type": "object",
                                 "properties": {
                                     "uuid": {
@@ -637,8 +653,8 @@
                         },
                         "application/xml": {
                             "schema": {
-                                "title": "full_rest_object",
-                                "description": "full_rest_object post for groups post, write",
+                                "title": "FullRestObject",
+                                "description": "FullRestObject post for groups post, write",
                                 "type": "object",
                                 "properties": {
                                     "uuid": {
@@ -681,8 +697,8 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "title": "full_rest_object",
-                                    "description": "full_rest_object get for groups get, read",
+                                    "title": "FullRestObject",
+                                    "description": "FullRestObject get for groups get, read",
                                     "type": "object",
                                     "properties": {
                                         "uuid": {
@@ -705,8 +721,8 @@
                             },
                             "application/xml": {
                                 "schema": {
-                                    "title": "full_rest_object",
-                                    "description": "full_rest_object get for groups get, read",
+                                    "title": "FullRestObject",
+                                    "description": "FullRestObject get for groups get, read",
                                     "type": "object",
                                     "properties": {
                                         "uuid": {
@@ -767,8 +783,8 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "title": "full_rest_object",
-                                    "description": "full_rest_object get for groups get, read",
+                                    "title": "FullRestObject",
+                                    "description": "FullRestObject get for groups get, read",
                                     "type": "object",
                                     "properties": {
                                         "uuid": {
@@ -791,8 +807,8 @@
                             },
                             "application/xml": {
                                 "schema": {
-                                    "title": "full_rest_object",
-                                    "description": "full_rest_object get for groups get, read",
+                                    "title": "FullRestObject",
+                                    "description": "FullRestObject get for groups get, read",
                                     "type": "object",
                                     "properties": {
                                         "uuid": {
@@ -847,10 +863,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "title": "full_rest_object",
-                                "description": "full_rest_object put for groups put, write",
+                                "title": "FullRestObject",
+                                "description": "FullRestObject put for groups put, write",
                                 "type": "object",
                                 "properties": {
+                                    "uuid": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
                                     "string_value": {
                                         "type": "string",
                                         "nullable": false
@@ -867,10 +887,14 @@
                         },
                         "application/xml": {
                             "schema": {
-                                "title": "full_rest_object",
-                                "description": "full_rest_object put for groups put, write",
+                                "title": "FullRestObject",
+                                "description": "FullRestObject put for groups put, write",
                                 "type": "object",
                                 "properties": {
+                                    "uuid": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
                                     "string_value": {
                                         "type": "string",
                                         "nullable": false
@@ -956,8 +980,8 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "title": "status",
-                                        "description": "status get for groups get, read",
+                                        "title": "Status",
+                                        "description": "Status get for groups get, read",
                                         "type": "object",
                                         "properties": {
                                             "id": {
@@ -974,24 +998,9 @@
                                             },
                                             "context": {
                                                 "type": "array",
-                                                "items": {
-                                                    "oneOf": [
-                                                        {
-                                                            "type": "string",
-                                                            "nullable": true
-                                                        },
-                                                        {
-                                                            "type": "integer"
-                                                        },
-                                                        {
-                                                            "type": "boolean"
-                                                        }
-                                                    ]
-                                                },
                                                 "nullable": true
                                             },
                                             "no_errors": {
-                                                "description": "Returns true to tell the status check is 'healthy'.",
                                                 "type": "boolean",
                                                 "nullable": false
                                             }
@@ -1006,8 +1015,8 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "title": "status",
-                                        "description": "status get for groups get, read",
+                                        "title": "Status",
+                                        "description": "Status get for groups get, read",
                                         "type": "object",
                                         "properties": {
                                             "id": {
@@ -1024,24 +1033,9 @@
                                             },
                                             "context": {
                                                 "type": "array",
-                                                "items": {
-                                                    "oneOf": [
-                                                        {
-                                                            "type": "string",
-                                                            "nullable": true
-                                                        },
-                                                        {
-                                                            "type": "integer"
-                                                        },
-                                                        {
-                                                            "type": "boolean"
-                                                        }
-                                                    ]
-                                                },
                                                 "nullable": true
                                             },
                                             "no_errors": {
-                                                "description": "Returns true to tell the status check is 'healthy'.",
                                                 "type": "boolean",
                                                 "nullable": false
                                             }
@@ -1123,8 +1117,8 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "title": "status",
-                                    "description": "status get for groups get, read",
+                                    "title": "Status",
+                                    "description": "Status get for groups get, read",
                                     "type": "object",
                                     "properties": {
                                         "id": {
@@ -1141,24 +1135,9 @@
                                         },
                                         "context": {
                                             "type": "array",
-                                            "items": {
-                                                "oneOf": [
-                                                    {
-                                                        "type": "string",
-                                                        "nullable": true
-                                                    },
-                                                    {
-                                                        "type": "integer"
-                                                    },
-                                                    {
-                                                        "type": "boolean"
-                                                    }
-                                                ]
-                                            },
                                             "nullable": true
                                         },
                                         "no_errors": {
-                                            "description": "Returns true to tell the status check is 'healthy'.",
                                             "type": "boolean",
                                             "nullable": false
                                         }
@@ -1170,8 +1149,8 @@
                             },
                             "application/xml": {
                                 "schema": {
-                                    "title": "status",
-                                    "description": "status get for groups get, read",
+                                    "title": "Status",
+                                    "description": "Status get for groups get, read",
                                     "type": "object",
                                     "properties": {
                                         "id": {
@@ -1188,24 +1167,9 @@
                                         },
                                         "context": {
                                             "type": "array",
-                                            "items": {
-                                                "oneOf": [
-                                                    {
-                                                        "type": "string",
-                                                        "nullable": true
-                                                    },
-                                                    {
-                                                        "type": "integer"
-                                                    },
-                                                    {
-                                                        "type": "boolean"
-                                                    }
-                                                ]
-                                            },
                                             "nullable": true
                                         },
                                         "no_errors": {
-                                            "description": "Returns true to tell the status check is 'healthy'.",
                                             "type": "boolean",
                                             "nullable": false
                                         }

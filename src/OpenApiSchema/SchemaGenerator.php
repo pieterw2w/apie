@@ -13,6 +13,7 @@ use W2w\Lib\Apie\Core\ClassResourceConverter;
 
 /**
  * Class that uses symfony/property-info and reflection to create a Schema instance of a class.
+ * @deprecated use OpenApiSchemaGenerator
  */
 class SchemaGenerator
 {
@@ -255,8 +256,11 @@ class SchemaGenerator
      *
      * @return Schema
      */
-    private function convertTypeToSchema(Type $type, string $operation, array $groups, int $recursion): Schema
+    protected function convertTypeToSchema(?Type $type, string $operation, array $groups, int $recursion): Schema
     {
+        if ($type === null) {
+            return new Schema(['type' => 'object', 'additionalProperties' => true]);
+        }
         $propertySchema = new Schema([
             'type'        => 'string',
             'nullable'    => true,
