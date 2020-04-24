@@ -7,6 +7,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
 use W2w\Lib\Apie\Exceptions\InvalidReturnTypeOfApiResourceException;
 
+/**
+ * Event mediator for retrieving a list of resources.
+ */
 class RetrievePaginatedResourcesEvent
 {
     /**
@@ -20,7 +23,7 @@ class RetrievePaginatedResourcesEvent
     private $searchFilterRequest;
 
     /**
-     * @var array[]|null
+     * @var object[]|null
      */
     private $resources;
 
@@ -29,6 +32,11 @@ class RetrievePaginatedResourcesEvent
      */
     private $request;
 
+    /**
+     * @param string $resourceClass
+     * @param SearchFilterRequest $searchFilterRequest
+     * @param ServerRequestInterface|null $request
+     */
     public function __construct(string $resourceClass, SearchFilterRequest $searchFilterRequest, ?ServerRequestInterface $request)
     {
         $this->resourceClass = $resourceClass;
@@ -68,7 +76,7 @@ class RetrievePaginatedResourcesEvent
     }
 
     /**
-     * @return object[]
+     * @return object[]|null
      */
     public function getResources(): ?array
     {

@@ -5,6 +5,9 @@ namespace W2w\Lib\Apie\Events;
 
 use Psr\Http\Message\RequestInterface;
 
+/**
+ * Event mediator for the event that an api resource will be modified.
+ */
 class ModifySingleResourceEvent
 {
     /**

@@ -4,6 +4,11 @@ namespace W2w\Lib\Apie\Core\SearchFilters;
 use W2w\Lib\Apie\Exceptions\NameAlreadyDefinedException;
 use W2w\Lib\Apie\Exceptions\NameNotFoundException;
 
+/**
+ * Search Filter class is used to filter on the GET all resources action, for example
+ * - pagination
+ * - search filters
+ */
 final class SearchFilter
 {
     /**
@@ -28,6 +33,10 @@ final class SearchFilter
         return $this;
     }
 
+    /**
+     * @param string $name
+     * @return PhpPrimitive
+     */
     public function getPrimitiveSearchFilter(string $name): PhpPrimitive
     {
         if (!isset($this->primitiveSearchFilters[$name])) {
@@ -36,11 +45,18 @@ final class SearchFilter
         return $this->primitiveSearchFilters[$name];
     }
 
+    /**
+     * @param string $name
+     * @return bool
+     */
     public function hasPrimitiveSearchFilter(string $name): bool
     {
         return isset($this->primitiveSearchFilters[$name]);
     }
 
+    /**
+     * @return PhpPrimitive[]
+     */
     public function getAllPrimitiveSearchFilter(): array
     {
         return $this->primitiveSearchFilters;

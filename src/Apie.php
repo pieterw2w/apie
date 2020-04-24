@@ -373,8 +373,8 @@ final class Apie implements SerializerProviderInterface,
         $objectAccesses = $this->pluginContainer->getPluginsWithInterface(ObjectAccessProviderInterface::class);
         if (!empty($objectAccesses)) {
             $list = [];
-            foreach ($objectAccesses as $objectAccess) {
-                $list = array_merge($list, $objectAccess->getObjectAccesses());
+            foreach ($objectAccesses as $objectAccessPlugin) {
+                $list = array_merge($list, $objectAccessPlugin->getObjectAccesses());
             }
             $objectAccess = new GroupedObjectAccess($objectAccess, $list);
         }

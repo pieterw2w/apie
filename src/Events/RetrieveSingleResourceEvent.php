@@ -5,6 +5,9 @@ namespace W2w\Lib\Apie\Events;
 use Psr\Http\Message\RequestInterface;
 use W2w\Lib\Apie\Exceptions\InvalidReturnTypeOfApiResourceException;
 
+/**
+ * Event mediator for retrieving a specific resource with identifier.
+ */
 class RetrieveSingleResourceEvent
 {
     /**
@@ -27,6 +30,11 @@ class RetrieveSingleResourceEvent
      */
     private $request;
 
+    /**
+     * @param string $resourceClass
+     * @param string $id
+     * @param RequestInterface|null $request
+     */
     public function __construct(string $resourceClass, string $id, ?RequestInterface $request)
     {
         $this->resourceClass = $resourceClass;

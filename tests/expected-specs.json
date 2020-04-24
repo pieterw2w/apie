@@ -340,9 +340,6 @@
                                         "type": "string",
                                         "nullable": true
                                     }
-                                },
-                                "xml": {
-                                    "name": "item"
                                 }
                             }
                         },
@@ -629,9 +626,6 @@
                                         "type": "string",
                                         "format": "value_object"
                                     }
-                                },
-                                "xml": {
-                                    "name": "item"
                                 }
                             }
                         },
@@ -859,9 +853,6 @@
                                         "type": "string",
                                         "format": "value_object"
                                     }
-                                },
-                                "xml": {
-                                    "name": "item"
                                 }
                             }
                         },

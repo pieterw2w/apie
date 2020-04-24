@@ -3,6 +3,7 @@ namespace W2w\Lib\Apie\Core;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use W2w\Lib\Apie\Core\Models\ApiResourceFacadeResponse;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
 use W2w\Lib\Apie\Events\DeleteResourceEvent;
@@ -11,9 +12,14 @@ use W2w\Lib\Apie\Events\RetrievePaginatedResourcesEvent;
 use W2w\Lib\Apie\Events\RetrieveSingleResourceEvent;
 use W2w\Lib\Apie\Events\StoreExistingResourceEvent;
 use W2w\Lib\Apie\Events\StoreNewResourceEvent;
+use W2w\Lib\Apie\Exceptions\MethodNotAllowedException;
 use W2w\Lib\Apie\Interfaces\FormatRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\ResourceSerializerInterface;
+use W2w\Lib\Apie\OpenApiSchema\SubActions\SubAction;
+use W2w\Lib\Apie\OpenApiSchema\SubActions\SubActionContainer;
+use W2w\Lib\Apie\OpenApiSchema\SubActions\SubActionFactory;
 use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
+use W2w\Lib\Apie\Plugins\Core\Serializers\SymfonySerializerAdapter;
 
 class ApiResourceFacade
 {
@@ -47,12 +53,24 @@ class ApiResourceFacade
      */
     private $resourceLifeCycles;
 
+    /**
+     * @var SubActionContainer
+     */
+    private $subActionContainer;
+
+    /**
+     * @var NameConverterInterface
+     */
+    private $nameConverter;
+
     public function __construct(
         ApiResourceRetriever $retriever,
         ApiResourcePersister $persister,
         ClassResourceConverter $converter,
         ResourceSerializerInterface $serializer,
         FormatRetrieverInterface $formatRetriever,
+        SubActionContainer $subActionContainer,
+        NameConverterInterface $nameConverter,
         iterable $resourceLifeCycles
     ) {
         $this->retriever = $retriever;
@@ -60,6 +78,8 @@ class ApiResourceFacade
         $this->converter = $converter;
         $this->serializer = $serializer;
         $this->formatRetriever = $formatRetriever;
+        $this->subActionContainer = $subActionContainer;
+        $this->nameConverter = $nameConverter;
         $this->resourceLifeCycles = $resourceLifeCycles;
     }
 
@@ -193,6 +213,43 @@ class ApiResourceFacade
 
 
         return $this->createResponse($event->getResource(), $request);
+    }
+
+    /**
+     * Runs a sub action.
+     * @param string $resourceClass
+     * @param string $id
+     * @param string $actionName
+     * @param RequestInterface $request
+     * @return ApiResourceFacadeResponse
+     * @todo move logic to SubActionContainer
+     */
+    public function postSubAction(string $resourceClass, string $id, string $actionName, RequestInterface $request): ApiResourceFacadeResponse
+    {
+        $subActions = $this->subActionContainer->getSubActionsForResourceClass($resourceClass);
+        if (empty($subActions[$actionName])) {
+            throw new MethodNotAllowedException('POST');
+        }
+        /** @var SubAction $subAction */
+        $subAction = $subActions[$actionName];
+        $resource = $this->get($resourceClass, $id, $request)->getResource();
+        $reflectionMethod = $subAction->getReflectionMethod();
+        $context = [
+            'initial-arguments' => [],
+            'object-instance' => $subAction->getObject(),
+        ];
+        assert($this->serializer instanceof SymfonySerializerAdapter);
+        $parameters = $reflectionMethod->getParameters();
+        if ($parameters) {
+            $context['initial-arguments'][$this->nameConverter->normalize($parameters[0]->getName())] = $resource;
+        }
+        $data = $this->serializer->getSerializer()->deserialize(
+            $request->getBody(),
+            'ReflectionMethod::' . get_class($subAction->getObject()) . '::' . $reflectionMethod->getName(),
+            'json',
+            $context
+        );
+        return $this->createResponse($data, $request);
     }
 
     /**

@@ -16,6 +16,7 @@ Documentation:
 4. [Search filters](/docs/04-search-filters.md)
 5. [Apie plugins](/docs/05-plugins.md)
 6. [Versioning](/docs/06-versioning.md)
+7. [Resource sub actions](/docs/07-subactions.md)
 
 ## Apie vs. Api Platform
 This library is heavily inspired by the Symfony Api Platform, but there are some changes:

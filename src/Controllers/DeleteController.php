@@ -22,6 +22,10 @@ class DeleteController
      */
     private $converter;
 
+    /**
+     * @param ApiResourceFacade $apiResourceFacade
+     * @param ClassResourceConverter $converter
+     */
     public function __construct(
         ApiResourceFacade $apiResourceFacade,
         ClassResourceConverter $converter

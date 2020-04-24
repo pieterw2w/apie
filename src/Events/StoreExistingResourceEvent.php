@@ -4,8 +4,12 @@
 namespace W2w\Lib\Apie\Events;
 
 
+use Psr\Http\Message\RequestInterface;
 use W2w\Lib\Apie\Exceptions\InvalidReturnTypeOfApiResourceException;
 
+/**
+ * Event mediator for storing a resource to the data layer.
+ */
 class StoreExistingResourceEvent
 {
     /**
@@ -19,7 +23,7 @@ class StoreExistingResourceEvent
     private $resource;
 
     /**
-     * @param StoreExistingResourceEvent|StoreNewResourceEvent $event
+     * @param ModifySingleResourceEvent|StoreNewResourceEvent $event
      */
     public function __construct($event)
     {
@@ -28,17 +32,36 @@ class StoreExistingResourceEvent
     }
 
     /**
-     * @return ModifySingleResourceEvent
+     * @return string|null
      */
-    public function getEvent(): ModifySingleResourceEvent
+    public function getId(): ?string
+    {
+        if ($this->event instanceof  ModifySingleResourceEvent) {
+            return $this->event->getId();
+        }
+        return null;
+    }
+
+    /**
+     * @return RequestInterface
+     */
+    public function getRequest(): RequestInterface
+    {
+        return $this->event->getRequest();
+    }
+
+    /**
+     * @return ModifySingleResourceEvent|StoreNewResourceEvent
+     */
+    public function getEvent()
     {
         return $this->event;
     }
 
     /**
-     * @return object
+     * @return object|null
      */
-    public function getResource(): object
+    public function getResource(): ?object
     {
         return $this->resource;
     }

@@ -70,11 +70,42 @@ interface ResourceLifeCycleInterface
      */
     public function onPostPersistExistingResource(StoreExistingResourceEvent $event);
 
+    /**
+     * Run before an existing resource is being modified.
+     * @param ModifySingleResourceEvent $event
+     */
     public function onPreModifyResource(ModifySingleResourceEvent $event);
+
+    /**
+     * Run after an existing resource is being modified.
+     * @param ModifySingleResourceEvent $event
+     */
     public function onPostModifyResource(ModifySingleResourceEvent $event);
+
+    /**
+     * Run before a new resource is added.
+     * @param ModifySingleResourceEvent $event
+     */
     public function onPreCreateResource(StoreNewResourceEvent $event);
+
+    /**
+     * Run after a new resource is added.
+     * @param ModifySingleResourceEvent $event
+     */
     public function onPostCreateResource(StoreNewResourceEvent $event);
+
+    /**
+     * Run before a modified existing resource has been persisted.
+     *
+     * @param StoreExistingResourceEvent $event
+     */
     public function onPrePersistNewResource(StoreExistingResourceEvent $event);
+
+    /**
+     * Run after a modified existing resource has been persisted.
+     *
+     * @param StoreExistingResourceEvent $event
+     */
     public function onPostPersistNewResource(StoreExistingResourceEvent $event);
 
     /**

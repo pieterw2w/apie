@@ -4,6 +4,9 @@ namespace W2w\Lib\Apie\Events;
 
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * Event mediator for normalizing a value from a hydrated resource to a PSR response.
+ */
 class ResponseEvent
 {
     private $resource;

@@ -3,7 +3,9 @@
 
 namespace W2w\Lib\Apie\Events;
 
-
+/**
+ * Event mediator for the event for deleting a resource.
+ */
 class DeleteResourceEvent
 {
     /**

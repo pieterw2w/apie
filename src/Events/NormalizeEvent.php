@@ -2,8 +2,14 @@
 
 namespace W2w\Lib\Apie\Events;
 
+/**
+ * Event mediator for normalizing a value from a hydrated resource to an array,
+ */
 class NormalizeEvent
 {
+    /**
+     * @var object|iterable
+     */
     private $resource;
 
     /**
@@ -11,12 +17,20 @@ class NormalizeEvent
      */
     private $acceptHeader;
 
+    /**
+     * This variable is added, because the normalized data could be null(DELETE for example) and still being normalized.
+     *
+     * @var bool
+     */
     private $hasNormalizedData = false;
 
+    /**
+     * @var string|int|array|null|float
+     */
     private $normalizedData;
 
     /**
-     * @param mixed $resource
+     * @param object|iterable $resource
      * @param string $acceptHeader
      */
     public function __construct($resource, string $acceptHeader)
@@ -26,6 +40,8 @@ class NormalizeEvent
     }
 
     /**
+     * Returns true if the normalized data was filled in.
+     *
      * @return bool
      */
     public function hasNormalizedData(): bool
@@ -34,7 +50,7 @@ class NormalizeEvent
     }
 
     /**
-     * @return mixed
+     * @return string|int|array|null|float
      */
     public function getNormalizedData()
     {

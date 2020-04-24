@@ -6,8 +6,11 @@ use erasys\OpenApi\Spec\v3 as OASv3;
 use W2w\Lib\Apie\Core\ApiResourceMetadataFactory;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
+use W2w\Lib\Apie\Core\PluginContainer;
 use W2w\Lib\Apie\Core\Resources\ApiResourcesInterface;
 use W2w\Lib\Apie\Interfaces\SearchFilterProviderInterface;
+use W2w\Lib\Apie\OpenApiSchema\SubActions\SubAction;
+use W2w\Lib\Apie\OpenApiSchema\SubActions\SubActionContainer;
 
 /**
  * Class that generated an OpenAPI spec from a list of API resources.
@@ -28,6 +31,8 @@ class OpenApiSpecGenerator
 
     private $baseUrl;
 
+    private $subActionContainer;
+
     private $addSpecsHook;
 
     public function __construct(
@@ -38,6 +43,7 @@ class OpenApiSpecGenerator
         ApiResourceMetadataFactory $apiResourceMetadataFactory,
         IdentifierExtractor $identifierExtractor,
         string $baseUrl,
+        SubActionContainer $subActionContainer,
         ?callable $addSpecsHook = null
     ) {
         $this->apiResources = $apiResources;
@@ -47,6 +53,7 @@ class OpenApiSpecGenerator
         $this->apiResourceMetadataFactory = $apiResourceMetadataFactory;
         $this->identifierExtractor = $identifierExtractor;
         $this->baseUrl = $baseUrl;
+        $this->subActionContainer = $subActionContainer;
         $this->addSpecsHook = $addSpecsHook;
     }
 
@@ -70,6 +77,9 @@ class OpenApiSpecGenerator
             $paths['/' . $path] = $this->convertAllToPathItem($apiResourceClass, $path);
             if ($identifierName) {
                 $paths['/' . $path . '/{' . $identifierName . '}'] = $this->convertToPathItem($apiResourceClass, $path, $identifierName);
+                foreach ($this->subActionContainer->getSubActionsForResourceClass($apiResourceClass) as $key => $subAction) {
+                    $paths['/' . $path . '/{' . $identifierName . '}/' . $key] = $this->convertSubActionToPathItem($subAction, $path, $identifierName);
+                }
             }
         }
 
@@ -283,6 +293,45 @@ class OpenApiSpecGenerator
         ];
     }
 
+    private function convertSubActionToRequestBody(SubAction $subAction): ?OASv3\RequestBody
+    {
+        $properties = [];
+        foreach ($subAction->getArguments() as $fieldName => $type) {
+            //TODO typehint string etc.
+            if ($type === null || !$type->getClassName()) {
+                $properties[$fieldName] = new OASv3\Schema([
+                    'type' => 'object',
+                    'additionalProperties' => true,
+                ]);
+                continue;
+            }
+            $properties[$fieldName] = $this->schemaGenerator->createSchema($type->getClassName(), 'post', ['write', 'post']);
+        }
+        $jsonSchema = new OASv3\Schema([
+            'type' => 'object',
+            'properties' => $properties,
+        ]);
+        $xmlSchema = unserialize(serialize($jsonSchema));
+        $xmlSchema->xml = new OASv3\Xml(['name' => 'item']);
+
+        return new OASv3\RequestBody(
+            [
+                'application/json' => new OASv3\MediaType(
+                    [
+                        'schema' => $jsonSchema,
+                    ]
+                ),
+                'application/xml' => new OASv3\MediaType(
+                    [
+                        'schema' => $xmlSchema,
+                    ]
+                ),
+            ],
+            'the resource as JSON to persist',
+            true
+        );
+    }
+
     /**
      * Returns the content OpenAPI spec for a resource class and a certain operation.
      *
@@ -294,7 +343,7 @@ class OpenApiSpecGenerator
     {
         $readWrite = $this->determineReadWrite($operation);
         $jsonSchema = $this->schemaGenerator->createSchema($apiResourceClass, $operation, [$operation, $readWrite]);
-        $xmlSchema = $this->schemaGenerator->createSchema($apiResourceClass, $operation, [$operation, $readWrite]);
+        $xmlSchema = unserialize(serialize($jsonSchema));
         $xmlSchema->xml = new OASv3\Xml(['name' => 'item']);
 
         return [
@@ -440,6 +489,45 @@ class OpenApiSpecGenerator
             );
         }
 
+        return new OASv3\PathItem($paths);
+    }
+
+    /**
+     * Creates PathItem for sub actions.
+     *
+     * @param SubAction $subAction
+     * @param string $resourceName
+     * @param string $identifierName
+     * @return OASv3\PathItem
+     */
+    private function convertSubActionToPathItem(SubAction $subAction, string $resourceName, string $identifierName): OASv3\PathItem
+    {
+        $paths = [
+            'parameters' => [
+                new OASv3\Parameter($identifierName, 'path', 'the id of the resource', ['required' => true, 'schema' => new OASv3\Schema(['type' => 'string'])]),
+            ],
+        ];
+        $paths['post'] = new OASv3\Operation(
+            [
+                '200' => new OASv3\Response(
+                    'Retrieves return value of ' . $subAction->getName(),
+                    $subAction->getReturnTypehint()->getClassName() ? $this->convertToContent($subAction->getReturnTypehint()->getClassName(), 'get') : null,
+                    $this->getDefaultHeaders()
+                ),
+                '401' => new OASv3\Reference('#/components/responses/NotAuthorized'),
+                '404' => new OASv3\Reference('#/components/responses/NotFound'),
+                '429' => new OASv3\Reference('#/components/responses/TooManyRequests'),
+                '500' => new OASv3\Reference('#/components/responses/InternalError'),
+                '502' => new OASv3\Reference('#/components/responses/ServerDependencyError'),
+                '503' => new OASv3\Reference('#/components/responses/MaintenanceMode'),
+            ],
+            null,
+            null,
+            [
+                'tags' => [$resourceName],
+                'requestBody' => $this->convertSubActionToRequestBody($subAction),
+            ]
+        );
         return new OASv3\PathItem($paths);
     }
 

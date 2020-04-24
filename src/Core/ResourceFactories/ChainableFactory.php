@@ -8,6 +8,9 @@ use W2w\Lib\Apie\Interfaces\ApiResourceFactoryInterface;
 use W2w\Lib\Apie\Interfaces\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Interfaces\ApiResourceRetrieverInterface;
 
+/**
+ * Groups multiple resource factories together,
+ */
 class ChainableFactory implements ApiResourceFactoryInterface
 {
     /**

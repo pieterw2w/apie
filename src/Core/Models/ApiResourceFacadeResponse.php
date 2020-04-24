@@ -41,6 +41,12 @@ class ApiResourceFacadeResponse
         $this->resourceLifeCycles = $resourceLifeCycles;
     }
 
+    /**
+     * Helper method to call the method on all all lifecycle instances.
+     *
+     * @param string $event
+     * @param mixed[] $args
+     */
     private function runLifeCycleEvent(string $event, ...$args)
     {
         foreach ($this->resourceLifeCycles as $resourceLifeCycle) {

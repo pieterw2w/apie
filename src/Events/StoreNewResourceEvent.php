@@ -7,6 +7,9 @@ namespace W2w\Lib\Apie\Events;
 use Psr\Http\Message\RequestInterface;
 use W2w\Lib\Apie\Exceptions\InvalidReturnTypeOfApiResourceException;
 
+/**
+ * Event mediator for adding a new resource to a data layer,
+ */
 class StoreNewResourceEvent
 {
     /**
@@ -60,7 +63,7 @@ class StoreNewResourceEvent
     public function setResource(?object $resource): void
     {
         if (!$resource instanceof $this->resourceClass) {
-            throw new InvalidReturnTypeOfApiResourceException(null, get_class($resource), $cthis->resourceClass);
+            throw new InvalidReturnTypeOfApiResourceException(null, get_class($resource), $this->resourceClass);
         }
         $this->resource = $resource;
     }

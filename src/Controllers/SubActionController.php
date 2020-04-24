@@ -8,9 +8,9 @@ use W2w\Lib\Apie\Core\ApiResourceFacade;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 
 /**
- * Controller that handles the call to get all resources.
+ * Controller for calling a sub-action.
  */
-class GetAllController
+class SubActionController
 {
     /**
      * @var ApiResourceFacade
@@ -35,17 +35,16 @@ class GetAllController
     }
 
     /**
-     * @param ServerRequestInterface $psrRequest
+     * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $psrRequest): ResponseInterface
+    public function __invoke(ServerRequestInterface $request)
     {
-        $resource = $psrRequest->getAttribute('resource') ?? '';
+        $resource = $request->getAttribute('resource') ?? '';
+        $id = $request->getAttribute('id');
+        $subAction = $request->getAttribute('subaction');
         $resourceClass = $this->converter->denormalize($resource);
-
-        return $this->apiResourceFacade->getAll(
-            $resourceClass,
-            $psrRequest
-        )->getResponse();
+        return $this->apiResourceFacade->postSubAction($resourceClass, $id, $subAction, $request)->getResponse();
     }
+
 }

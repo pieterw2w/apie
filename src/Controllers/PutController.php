@@ -12,8 +12,14 @@ use W2w\Lib\Apie\Core\ClassResourceConverter;
  */
 class PutController
 {
+    /**
+     * @var ClassResourceConverter
+     */
     private $converter;
 
+    /**
+     * @var ApiResourceFacade
+     */
     private $apiResourceFacade;
 
     /**

@@ -235,7 +235,7 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
         $expected = json_decode(file_get_contents(__DIR__ . '/expected-specs.json'), true);
         $this->assertEquals(
             $expected,
-            $testItem->getOpenApiSpecGenerator('/test-url')->getOpenApiSpec()->toArray()
+            $testItem->getOpenApiSpecGenerator()->getOpenApiSpec()->toArray()
         );
     }
 

@@ -6,6 +6,9 @@ namespace W2w\Lib\Apie\Core\Encodings;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use W2w\Lib\Apie\Interfaces\FormatRetrieverInterface;
 
+/**
+ * Combines multiple Format Retrievers into one.
+ */
 class ChainableFormatRetriever implements FormatRetrieverInterface
 {
     /**
