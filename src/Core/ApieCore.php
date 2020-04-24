@@ -8,6 +8,7 @@ use W2w\Lib\Apie\Core\Resources\ApiResources;
 use W2w\Lib\Apie\OpenApiSchema\OpenApiSchemaGenerator;
 use W2w\Lib\Apie\OpenApiSchema\OpenApiSpecGenerator;
 use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
+use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\ApieObjectNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\ContextualNormalizer;
 use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
@@ -23,6 +24,11 @@ class ApieCore
      * @var Apie
      */
     private $apie;
+
+    /**
+     * @var PluginContainer
+     */
+    private $pluginContainer;
 
     /**
      * @var ApiResourceRetriever|null
@@ -49,9 +55,10 @@ class ApieCore
      */
     private $schemaGenerator;
 
-    public function __construct(Apie $apie)
+    public function __construct(Apie $apie, PluginContainer $pluginContainer)
     {
         $this->apie = $apie;
+        $this->pluginContainer = $pluginContainer;
     }
 
     public function getOpenApiSpecGenerator(): OpenApiSpecGenerator
@@ -106,7 +113,8 @@ class ApieCore
             $this->getResourcePersister(),
             $this->getClassResourceConverter(),
             $this->apie->getResourceSerializer(),
-            $this->apie->getFormatRetriever()
+            $this->apie->getFormatRetriever(),
+            $this->pluginContainer->getPluginsWithInterface(ResourceLifeCycleInterface::class)
         );
     }
 
