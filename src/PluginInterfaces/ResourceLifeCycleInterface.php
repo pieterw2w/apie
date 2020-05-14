@@ -3,6 +3,7 @@
 
 namespace W2w\Lib\Apie\PluginInterfaces;
 
+use W2w\Lib\Apie\Events\DecodeEvent;
 use W2w\Lib\Apie\Events\DeleteResourceEvent;
 use W2w\Lib\Apie\Events\ModifySingleResourceEvent;
 use W2w\Lib\Apie\Events\NormalizeEvent;
@@ -69,6 +70,20 @@ interface ResourceLifeCycleInterface
      * @param ModifySingleResourceEvent $event
      */
     public function onPostPersistExistingResource(StoreExistingResourceEvent $event);
+
+    /**
+     * Run before a request body is being decoded.
+     *
+     * @param DecodeEvent $event
+     */
+    public function onPreDecodeRequestBody(DecodeEvent $event);
+
+    /**
+     * Run before a request body is being decoded.
+     *
+     * @param DecodeEvent $event
+     */
+    public function onPostDecodeRequestBody(DecodeEvent $event);
 
     /**
      * Run before an existing resource is being modified.

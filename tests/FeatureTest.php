@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use W2w\Lib\Apie\Annotations\ApiResource;
 use W2w\Lib\Apie\DefaultApie;
+use W2w\Lib\Apie\Events\DecodeEvent;
 use W2w\Lib\Apie\Events\DeleteResourceEvent;
 use W2w\Lib\Apie\Events\ModifySingleResourceEvent;
 use W2w\Lib\Apie\Events\NormalizeEvent;
@@ -52,6 +53,8 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
         );
         $this->assertEventList(
             ['onPreCreateResource', SimplePopo::class],
+            ['onPreDecodeRequestBody', SimplePopo::class],
+            ['onPostDecodeRequestBody', SimplePopo::class],
             ['onPostCreateResource', SimplePopo::class],
             ['onPrePersistNewResource', SimplePopo::class],
             ['onPostPersistNewResource', SimplePopo::class]
@@ -122,24 +125,28 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
             $facade->getAll(FullRestObject::class, $request)->getResource()
         );
         $this->assertEventList(
-                ['onPreCreateResource', FullRestObject::class],
-                ['onPostCreateResource', FullRestObject::class],
-                ['onPrePersistNewResource', FullRestObject::class],
-                ['onPostPersistNewResource', FullRestObject::class],
-                ['onPreRetrieveAllResources', FullRestObject::class],
-                ['onPostRetrieveAllResources', FullRestObject::class],
-                ['onPreRetrieveResource', FullRestObject::class],
-                ['onPostRetrieveResource', FullRestObject::class],
-                ['onPreModifyResource', FullRestObject::class],
-                ['onPostModifyResource', FullRestObject::class],
-                ['onPrePersistExistingResource', FullRestObject::class],
-                ['onPostPersistExistingResource', FullRestObject::class],
-                ['onPreRetrieveAllResources', FullRestObject::class],
-                ['onPostRetrieveAllResources', FullRestObject::class],
-                ['onPreDeleteResource', FullRestObject::class],
-                ['onPostDeleteResource', FullRestObject::class],
-                ['onPreRetrieveAllResources', FullRestObject::class],
-                ['onPostRetrieveAllResources', FullRestObject::class]
+            ['onPreCreateResource', FullRestObject::class],
+            ['onPreDecodeRequestBody', FullRestObject::class],
+            ['onPostDecodeRequestBody', FullRestObject::class],
+            ['onPostCreateResource', FullRestObject::class],
+            ['onPrePersistNewResource', FullRestObject::class],
+            ['onPostPersistNewResource', FullRestObject::class],
+            ['onPreRetrieveAllResources', FullRestObject::class],
+            ['onPostRetrieveAllResources', FullRestObject::class],
+            ['onPreRetrieveResource', FullRestObject::class],
+            ['onPostRetrieveResource', FullRestObject::class],
+            ['onPreModifyResource', FullRestObject::class],
+            ['onPreDecodeRequestBody', SimplePopo::class],
+            ['onPostDecodeRequestBody', SimplePopo::class],
+            ['onPostModifyResource', FullRestObject::class],
+            ['onPrePersistExistingResource', FullRestObject::class],
+            ['onPostPersistExistingResource', FullRestObject::class],
+            ['onPreRetrieveAllResources', FullRestObject::class],
+            ['onPostRetrieveAllResources', FullRestObject::class],
+            ['onPreDeleteResource', FullRestObject::class],
+            ['onPostDeleteResource', FullRestObject::class],
+            ['onPreRetrieveAllResources', FullRestObject::class],
+            ['onPostRetrieveAllResources', FullRestObject::class]
         );
     }
 
@@ -360,6 +367,16 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
     }
 
     public function onPostCreateNormalizedData(NormalizeEvent $event)
+    {
+        $this->eventList[] = [__FUNCTION__, $event];
+    }
+
+    public function onPreDecodeRequestBody(DecodeEvent $event)
+    {
+        $this->eventList[] = [__FUNCTION__, $event];
+    }
+
+    public function onPostDecodeRequestBody(DecodeEvent $event)
     {
         $this->eventList[] = [__FUNCTION__, $event];
     }

@@ -58,7 +58,7 @@ class NormalizeEvent
     }
 
     /**
-     * @param mixed $normalizedData
+     * @param string|int|array|null|float $normalizedData
      */
     public function setNormalizedData($normalizedData): void
     {

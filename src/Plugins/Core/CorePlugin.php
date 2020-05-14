@@ -91,7 +91,7 @@ class CorePlugin implements SerializerProviderInterface,
         $normalizers = $this->getApie()->getNormalizers();
         $encoders = $this->getApie()->getEncoders();
         $serializer = new Serializer($normalizers, $encoders);
-        return new SymfonySerializerAdapter($serializer, $this->getApie()->getFormatRetriever());
+        return new SymfonySerializerAdapter($serializer, $this->getApie()->getFormatRetriever(), $this->getApie()->getResourceLifecycles());
     }
 
     /**

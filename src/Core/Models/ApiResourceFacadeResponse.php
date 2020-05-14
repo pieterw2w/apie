@@ -28,6 +28,7 @@ class ApiResourceFacadeResponse
      * @param ResourceSerializerInterface $serializer
      * @param mixed $resource
      * @param string|null $acceptHeader
+     * @param iterable<ResourceLifeCycleInterface>
      */
     public function __construct(
         ResourceSerializerInterface $serializer,

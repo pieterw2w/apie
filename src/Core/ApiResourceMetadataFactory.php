@@ -50,6 +50,6 @@ class ApiResourceMetadataFactory
             $persister = $this->retrieverFactory->getApiResourcePersisterInstance($annotation->persistClass);
         }
 
-        return new ApiResourceClassMetadata($classNameOrInstance, $annotation, $retriever, $persister);
+        return new ApiResourceClassMetadata($reflClass->getName(), $annotation, $retriever, $persister);
     }
 }

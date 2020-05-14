@@ -167,4 +167,12 @@ class ApiResourceClassMetadata
     {
         return !in_array('put', $this->resource->disabledMethods) && $this->allowGet() && $this->hasResourcePersister();
     }
+
+    /**
+     * @return string
+     */
+    public function getClassName(): string
+    {
+        return $this->className;
+    }
 }

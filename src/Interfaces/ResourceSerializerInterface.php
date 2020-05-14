@@ -5,6 +5,9 @@ namespace W2w\Lib\Apie\Interfaces;
 
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * @TODO add method decodeRequestBody and make $requestBody accept array in version 4.
+ */
 interface ResourceSerializerInterface
 {
     /**

@@ -23,6 +23,7 @@ Other interfaces:
 There is a list of default Apie plugins. These are already set by default with DefaultApie::createDefaultApie().
 
 - **CorePlugin**: Contains most core logic that is probably not going to be overwritten by any other plugin.
+- **PrimaryKeyPlugin**: Contains logic to map an api resource to a primary key if it is a child object.
 - **DateTimePlugin**: Contains logic to map dates correctly.
 - **CarbonPlugin**: Same as DateTimePlugin but prefers [Carbon](https://carbon.nesbot.com/) instances. Ignored if Carbon is not installed.
 - **UuidPlugin**: Maps uuids correctly from [ramsey/uuid](https://github.com/ramsey/uuid).

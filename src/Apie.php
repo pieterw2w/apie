@@ -16,13 +16,13 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use W2w\Lib\Apie\Core\ApieCore;
 use W2w\Lib\Apie\Core\ApiResourceFacade;
+use W2w\Lib\Apie\Core\ApiResourceMetadataFactory;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\Encodings\ChainableFormatRetriever;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Core\PluginContainer;
 use W2w\Lib\Apie\Core\ResourceFactories\ChainableFactory;
 use W2w\Lib\Apie\Exceptions\BadConfigurationException;
-use W2w\Lib\Apie\Exceptions\NotAnApiePluginException;
 use W2w\Lib\Apie\Interfaces\ApiResourceFactoryInterface;
 use W2w\Lib\Apie\Interfaces\FormatRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\ResourceSerializerInterface;
@@ -39,11 +39,13 @@ use W2w\Lib\Apie\PluginInterfaces\ObjectAccessProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\OpenApiEventProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\OpenApiInfoProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\PropertyInfoExtractorProviderInterface;
+use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
 use W2w\Lib\Apie\PluginInterfaces\ResourceProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SchemaProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SerializerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SymfonyComponentProviderInterface;
 use W2w\Lib\Apie\Plugins\Core\CorePlugin;
+use W2w\Lib\Apie\Plugins\PrimaryKey\PrimaryKeyPlugin;
 use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\CachedObjectAccess;
 use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\GroupedObjectAccess;
 use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
@@ -107,6 +109,7 @@ final class Apie implements SerializerProviderInterface,
         $this->debug = $debug;
         $this->cacheFolder = $cacheFolder;
         if ($addCorePlugin) {
+            $plugins[] = new PrimaryKeyPlugin();
             $plugins[] = new CorePlugin();
         }
         $this->pluginContainer = new PluginContainer($plugins);
@@ -127,6 +130,7 @@ final class Apie implements SerializerProviderInterface,
      */
     public function createContext(array $plugins = []): self
     {
+        $plugins[] = new PrimaryKeyPlugin();
         $plugins[] = $this;
         return new Apie($plugins, $this->debug, $this->cacheFolder, false);
     }
@@ -157,10 +161,27 @@ final class Apie implements SerializerProviderInterface,
      */
     public function getResourceSerializer(): ResourceSerializerInterface
     {
-        return $this->pluginContainer->first(
+        $serializer = $this->pluginContainer->first(
             SerializerProviderInterface::class,
             new BadConfigurationException('I have no resource serializer set up')
         )->getResourceSerializer();
+        if (!is_callable([$serializer, 'decodeRequestBody'])) {
+            @trigger_error(
+                'Class ' . get_class($serializer) . ' has no method decodeRequestBody and this will be required in Apie version 4',
+                E_USER_DEPRECATED
+            );
+        }
+        return $serializer;
+    }
+
+    /**
+     * @internal
+     * @deprecated is only added in CorePlugin, will be removed in 4.0.
+     * @return iterable
+     */
+    public function getResourceLifecycles(): iterable
+    {
+        return $this->pluginContainer->getPluginsWithInterface(ResourceLifeCycleInterface::class);
     }
 
     /**
@@ -250,6 +271,11 @@ final class Apie implements SerializerProviderInterface,
     public function getIdentifierExtractor(): IdentifierExtractor
     {
         return $this->apieCore->getIdentifierExtractor();
+    }
+
+    public function getApiResourceMetadataFactory(): ApiResourceMetadataFactory
+    {
+        return $this->apieCore->getApiResourceMetadataFactory();
     }
 
     public function getApiResourceFacade(): ApiResourceFacade

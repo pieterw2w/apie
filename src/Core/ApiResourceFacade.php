@@ -211,7 +211,6 @@ class ApiResourceFacade
         $event->setResource($this->persister->persistNew($event->getResource()));
         $this->runLifeCycleEvent('onPostPersistNewResource', $event);
 
-
         return $this->createResponse($event->getResource(), $request);
     }
 

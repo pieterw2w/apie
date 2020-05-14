@@ -4,22 +4,53 @@ namespace W2w\Lib\Apie\Plugins\Core\Serializers;
 
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Serializer\Serializer;
+use W2w\Lib\Apie\Events\DecodeEvent;
 use W2w\Lib\Apie\Interfaces\FormatRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\ResourceSerializerInterface;
+use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\ContextualNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\EvilReflectionPropertyNormalizer;
 use Zend\Diactoros\Response\TextResponse;
 
+/**
+ * Wrapper around Symfony Serializer.
+ *
+ * @TODO: in version 4 move resourceLifeCycles to ApiResourceFacade.
+ */
 class SymfonySerializerAdapter implements ResourceSerializerInterface
 {
     private $serializer;
 
     private $formatRetriever;
 
-    public function __construct(Serializer $serializer, FormatRetrieverInterface $formatRetriever)
-    {
+    private $resourceLifeCycles;
+
+    /**
+     * @param Serializer $serializer
+     * @param FormatRetrieverInterface $formatRetriever
+     * @param iterable<ResourceLifeCycleInterface> $resourceLifeCycles
+     */
+    public function __construct(
+        Serializer $serializer,
+        FormatRetrieverInterface $formatRetriever,
+        iterable $resourceLifeCycles
+    ) {
         $this->serializer = $serializer;
         $this->formatRetriever = $formatRetriever;
+        $this->resourceLifeCycles = $resourceLifeCycles;
+    }
+
+    /**
+     * Helper method to call the method on all all lifecycle instances.
+     *
+     * @param string $event
+     * @param mixed[] $args
+     */
+    private function runLifeCycleEvent(string $event, ...$args)
+    {
+        foreach ($this->resourceLifeCycles as $resourceLifeCycle) {
+            $resourceLifeCycle->$event(...$args);
+        }
     }
 
     /**
@@ -39,8 +70,15 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
     public function putData(object $resource, string $requestBody, string $contentType): object
     {
         $contentFormat = $this->formatRetriever->getFormat($contentType) ?? 'json';
-        return $this->serializer->deserialize(
-            $requestBody,
+        $event = new DecodeEvent($requestBody, $contentType, $resource, get_class($resource));
+        $this->runLifeCycleEvent('onPreDecodeRequestBody', $event);
+        if (!$event->hasDecodedData()) {
+            $event->setDecodedData($this->decodeRequestBody($requestBody, $contentType));
+        }
+        $this->runLifeCycleEvent('onPostDecodeRequestBody', $event);
+
+        return $this->serializer->denormalize(
+            $event->getDecodedData(),
             get_class($resource),
             $contentFormat,
             [
@@ -51,13 +89,34 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
     }
 
     /**
+     * Decodes a request body to primitives. Forwards compatible with Apie version 4.
+     *
+     * @TODO change in inheritDoc in version 4
+     *
+     * @param string $requestBody
+     * @param string $contentType
+     * @return string|int|bool|float|array
+     */
+    public function decodeRequestBody(string $requestBody, string $contentType)
+    {
+        $contentFormat = $this->formatRetriever->getFormat($contentType) ?? 'json';
+        return $this->serializer->decode($requestBody, $contentFormat, []);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function postData(string $resourceClass, string $requestBody, string $contentType): object
     {
         $contentFormat = $this->formatRetriever->getFormat($contentType) ?? 'json';
-        return $this->serializer->deserialize(
-            $requestBody,
+        $event = new DecodeEvent($requestBody, $contentType, null, $resourceClass);
+        $this->runLifeCycleEvent('onPreDecodeRequestBody', $event);
+        if (!$event->hasDecodedData()) {
+            $event->setDecodedData($this->decodeRequestBody($requestBody, $contentType));
+        }
+        $this->runLifeCycleEvent('onPostDecodeRequestBody', $event);
+        return $this->serializer->denormalize(
+            $event->getDecodedData(),
             $resourceClass,
             $contentFormat,
             [
