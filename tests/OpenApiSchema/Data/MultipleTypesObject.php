@@ -8,7 +8,6 @@ use W2w\Lib\Apie\Plugins\Core\DataLayers\NullDataLayer;
 use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
 use W2w\Test\Apie\OpenApiSchema\ValueObject;
 
-
 /**
  * @ApiResource(persistClass=NullDataLayer::class)
  */

@@ -929,6 +929,820 @@
                 }
             ]
         },
+        "/recursive_object": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Retrieves all instances of recursive_object",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "title": "recursive_object",
+                                        "description": "recursive_object get for groups get, read",
+                                        "type": "object",
+                                        "properties": {
+                                            "child": {
+                                                "title": "recursive_object",
+                                                "description": "recursive_object get for groups get, read",
+                                                "type": "object",
+                                                "properties": {
+                                                    "child": {
+                                                        "title": "recursive_object",
+                                                        "description": "recursive_object get for groups get, read",
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "child": {
+                                                                "type": "object",
+                                                                "nullable": false
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "xml": {
+                                            "name": "item"
+                                        }
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "title": "recursive_object",
+                                        "description": "recursive_object get for groups get, read",
+                                        "type": "object",
+                                        "properties": {
+                                            "child": {
+                                                "title": "recursive_object",
+                                                "description": "recursive_object get for groups get, read",
+                                                "type": "object",
+                                                "properties": {
+                                                    "child": {
+                                                        "title": "recursive_object",
+                                                        "description": "recursive_object get for groups get, read",
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "child": {
+                                                                "type": "object",
+                                                                "nullable": false
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "xml": {
+                                            "name": "item"
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "response"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "recursive_object"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "pagination index counting from 0",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "number of results",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ]
+            },
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Creates a new instance of recursive_object",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "title": "recursive_object",
+                                    "description": "recursive_object get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "child": {
+                                            "title": "recursive_object",
+                                            "description": "recursive_object get for groups get, read",
+                                            "type": "object",
+                                            "properties": {
+                                                "child": {
+                                                    "title": "recursive_object",
+                                                    "description": "recursive_object get for groups get, read",
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "child": {
+                                                            "type": "object",
+                                                            "nullable": false
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "title": "recursive_object",
+                                    "description": "recursive_object get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "child": {
+                                            "title": "recursive_object",
+                                            "description": "recursive_object get for groups get, read",
+                                            "type": "object",
+                                            "properties": {
+                                                "child": {
+                                                    "title": "recursive_object",
+                                                    "description": "recursive_object get for groups get, read",
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "child": {
+                                                            "type": "object",
+                                                            "nullable": false
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "415": {
+                        "$ref": "#/components/responses/InvalidFormat"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationError"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "recursive_object"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "title": "recursive_object",
+                                "description": "recursive_object post for groups post, write",
+                                "type": "object",
+                                "properties": {
+                                    "child": {
+                                        "title": "recursive_object",
+                                        "description": "recursive_object post for groups post, write",
+                                        "type": "object",
+                                        "properties": {
+                                            "child": {
+                                                "title": "recursive_object",
+                                                "description": "recursive_object post for groups post, write",
+                                                "type": "object",
+                                                "properties": {
+                                                    "child": {
+                                                        "type": "object",
+                                                        "nullable": false
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "application/xml": {
+                            "schema": {
+                                "title": "recursive_object",
+                                "description": "recursive_object post for groups post, write",
+                                "type": "object",
+                                "properties": {
+                                    "child": {
+                                        "title": "recursive_object",
+                                        "description": "recursive_object post for groups post, write",
+                                        "type": "object",
+                                        "properties": {
+                                            "child": {
+                                                "title": "recursive_object",
+                                                "description": "recursive_object post for groups post, write",
+                                                "type": "object",
+                                                "properties": {
+                                                    "child": {
+                                                        "type": "object",
+                                                        "nullable": false
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "xml": {
+                                    "name": "item"
+                                }
+                            }
+                        }
+                    },
+                    "description": "the resource as JSON to persist",
+                    "required": true
+                }
+            }
+        },
+        "/recursive_object_with_id": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Retrieves all instances of recursive_object_with_id",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "title": "recursive_object_with_id",
+                                        "description": "recursive_object_with_id get for groups get, read",
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "child": {
+                                                "type": "string",
+                                                "format": "path"
+                                            }
+                                        },
+                                        "xml": {
+                                            "name": "item"
+                                        }
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "title": "recursive_object_with_id",
+                                        "description": "recursive_object_with_id get for groups get, read",
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "child": {
+                                                "type": "string",
+                                                "format": "path"
+                                            }
+                                        },
+                                        "xml": {
+                                            "name": "item"
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "response"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "recursive_object_with_id"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "pagination index counting from 0",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "number of results",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ]
+            },
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Creates a new instance of recursive_object_with_id",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "title": "recursive_object_with_id",
+                                    "description": "recursive_object_with_id get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "child": {
+                                            "type": "string",
+                                            "format": "path"
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "title": "recursive_object_with_id",
+                                    "description": "recursive_object_with_id get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "child": {
+                                            "type": "string",
+                                            "format": "path"
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "415": {
+                        "$ref": "#/components/responses/InvalidFormat"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationError"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "recursive_object_with_id"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "title": "recursive_object_with_id",
+                                "description": "recursive_object_with_id post for groups post, write",
+                                "type": "object",
+                                "properties": {
+                                    "child": {
+                                        "title": "recursive_object_with_id",
+                                        "description": "recursive_object_with_id post for groups post, write",
+                                        "type": "object",
+                                        "properties": {
+                                            "child": {
+                                                "title": "recursive_object_with_id",
+                                                "description": "recursive_object_with_id post for groups post, write",
+                                                "type": "object",
+                                                "properties": {
+                                                    "child": {
+                                                        "type": "object",
+                                                        "nullable": false
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "application/xml": {
+                            "schema": {
+                                "title": "recursive_object_with_id",
+                                "description": "recursive_object_with_id post for groups post, write",
+                                "type": "object",
+                                "properties": {
+                                    "child": {
+                                        "title": "recursive_object_with_id",
+                                        "description": "recursive_object_with_id post for groups post, write",
+                                        "type": "object",
+                                        "properties": {
+                                            "child": {
+                                                "title": "recursive_object_with_id",
+                                                "description": "recursive_object_with_id post for groups post, write",
+                                                "type": "object",
+                                                "properties": {
+                                                    "child": {
+                                                        "type": "object",
+                                                        "nullable": false
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "xml": {
+                                    "name": "item"
+                                }
+                            }
+                        }
+                    },
+                    "description": "the resource as JSON to persist",
+                    "required": true
+                }
+            }
+        },
+        "/recursive_object_with_id/{id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Retrieves a single instance of recursive_object_with_id",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "title": "recursive_object_with_id",
+                                    "description": "recursive_object_with_id get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "child": {
+                                            "type": "string",
+                                            "format": "path"
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "title": "recursive_object_with_id",
+                                    "description": "recursive_object_with_id get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "child": {
+                                            "type": "string",
+                                            "format": "path"
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "recursive_object_with_id"
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "Retrieves and update a single instance of recursive_object_with_id",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "title": "recursive_object_with_id",
+                                    "description": "recursive_object_with_id get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "child": {
+                                            "type": "string",
+                                            "format": "path"
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "title": "recursive_object_with_id",
+                                    "description": "recursive_object_with_id get for groups get, read",
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "child": {
+                                            "type": "string",
+                                            "format": "path"
+                                        }
+                                    },
+                                    "xml": {
+                                        "name": "item"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "415": {
+                        "$ref": "#/components/responses/InvalidFormat"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationError"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "recursive_object_with_id"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "title": "recursive_object_with_id",
+                                "description": "recursive_object_with_id put for groups put, write",
+                                "type": "object",
+                                "properties": {
+                                    "child": {
+                                        "title": "recursive_object_with_id",
+                                        "description": "recursive_object_with_id put for groups put, write",
+                                        "type": "object",
+                                        "properties": {
+                                            "child": {
+                                                "title": "recursive_object_with_id",
+                                                "description": "recursive_object_with_id put for groups put, write",
+                                                "type": "object",
+                                                "properties": {
+                                                    "child": {
+                                                        "type": "object",
+                                                        "nullable": false
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "application/xml": {
+                            "schema": {
+                                "title": "recursive_object_with_id",
+                                "description": "recursive_object_with_id put for groups put, write",
+                                "type": "object",
+                                "properties": {
+                                    "child": {
+                                        "title": "recursive_object_with_id",
+                                        "description": "recursive_object_with_id put for groups put, write",
+                                        "type": "object",
+                                        "properties": {
+                                            "child": {
+                                                "title": "recursive_object_with_id",
+                                                "description": "recursive_object_with_id put for groups put, write",
+                                                "type": "object",
+                                                "properties": {
+                                                    "child": {
+                                                        "type": "object",
+                                                        "nullable": false
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "xml": {
+                                    "name": "item"
+                                }
+                            }
+                        }
+                    },
+                    "description": "the resource as JSON to persist",
+                    "required": true
+                }
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "Deletes a single instance of recursive_object_with_id",
+                        "headers": {
+                            "x-ratelimit-limit": {
+                                "$ref": "#/components/headers/x-ratelimit-limit"
+                            },
+                            "x-ratelimit-remaining": {
+                                "$ref": "#/components/headers/x-ratelimit-remaining"
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/NotAuthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    },
+                    "502": {
+                        "$ref": "#/components/responses/ServerDependencyError"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/MaintenanceMode"
+                    }
+                },
+                "tags": [
+                    "recursive_object_with_id"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "description": "the id of the resource",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ]
+        },
         "/status": {
             "get": {
                 "responses": {

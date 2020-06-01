@@ -30,6 +30,8 @@ use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
 use W2w\Test\Apie\Mocks\ApiResources\SumExample;
 use W2w\Test\Apie\Mocks\Plugins\MemoryDataLayerWithLargeDataPlugin;
 use W2w\Test\Apie\OpenApiSchema\Data\MultipleTypesObject;
+use W2w\Test\Apie\OpenApiSchema\Data\RecursiveObject;
+use W2w\Test\Apie\OpenApiSchema\Data\RecursiveObjectWithId;
 
 class FeatureTest extends TestCase implements ResourceLifeCycleInterface
 {
@@ -231,7 +233,7 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
     public function test_service_library_create_open_api_schema()
     {
         $plugins = [
-            new StaticResourcesPlugin([ApplicationInfo::class, SimplePopo::class, FullRestObject::class]),
+            new StaticResourcesPlugin([ApplicationInfo::class, SimplePopo::class, FullRestObject::class, RecursiveObject::class, RecursiveObjectWithId::class]),
             new StaticConfigPlugin('/test-url'),
         ];
         $testItem = DefaultApie::createDefaultApie(true, $plugins);

@@ -3,6 +3,12 @@
 
 namespace W2w\Test\Apie\OpenApiSchema\Data;
 
+use W2w\Lib\Apie\Annotations\ApiResource;
+use W2w\Lib\Apie\Plugins\Core\DataLayers\NullDataLayer;
+
+/**
+ * @ApiResource(persistClass=NullDataLayer::class, retrieveClass=NullDataLayer::class))
+ */
 class RecursiveObject
 {
     /**

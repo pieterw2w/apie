@@ -38,7 +38,7 @@ final class PrimaryKeyReference
         if ($identifierValue instanceof ValueObjectInterface) {
             $this->identifierValue = (string) $identifierValue->toNative();
         } else {
-            $this->identifierValue = (string)$identifierValue;
+            $this->identifierValue = (string) $identifierValue;
         }
     }
 

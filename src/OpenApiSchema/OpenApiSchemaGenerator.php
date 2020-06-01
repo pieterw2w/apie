@@ -257,7 +257,7 @@ class OpenApiSchemaGenerator extends SchemaGenerator
         if ($type === null) {
             return new Schema(['type' => 'object', 'additionalProperties' => true]);
         }
-        if ($type && $type->getBuiltinType() === Type::BUILTIN_TYPE_OBJECT && $type->getClassName()) {
+        if ($type && $type->getBuiltinType() === Type::BUILTIN_TYPE_OBJECT && $type->getClassName() && !$type->isCollection()) {
             return $this->createSchemaRecursive($type->getClassName(), $operation, $groups, $recursion + 1);
         }
         $propertySchema = new Schema([

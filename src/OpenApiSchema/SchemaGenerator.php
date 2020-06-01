@@ -60,6 +60,11 @@ class SchemaGenerator
     private $building = [];
 
     /**
+     * @var int
+     */
+    private $oldRecursion = -1;
+
+    /**
      * @param ClassMetadataFactoryInterface $classMetadataFactory
      * @param PropertyInfoExtractor $propertyInfoExtractor
      * @param ClassResourceConverter $converter
@@ -227,6 +232,7 @@ class SchemaGenerator
             return null;
         }
         $this->building[$cacheKey] = true;
+        $oldValue = $this->oldRecursion;
         try {
             // specifically defined: just call it.
             if (isset($this->schemaCallbacks[$resourceClass])) {
@@ -242,6 +248,7 @@ class SchemaGenerator
             }
             return null;
         } finally {
+            $this->oldRecursion = $oldValue;
             unset($this->building[$cacheKey]);
         }
     }
@@ -281,7 +288,14 @@ class SchemaGenerator
             $arrayType = $type->getCollectionValueType();
             if ($arrayType) {
                 if ($arrayType->getClassName()) {
-                    $propertySchema->items = $this->createSchemaRecursive($arrayType->getClassName(), $operation, $groups, $recursion + 1);
+                    $this->oldRecursion++;
+                    try {
+                        $propertySchema->items = $this->createSchemaRecursive(
+                            $arrayType->getClassName(), $operation, $groups, $recursion + 1
+                        );
+                    } finally {
+                        $this->oldRecursion--;
+                    }
                 } elseif ($arrayType->getBuiltinType()) {
                     $type = $this->translateType($arrayType->getBuiltinType());
                     $propertySchema->items = new Schema([
@@ -297,7 +311,12 @@ class SchemaGenerator
         }
         $className = $type->getClassName();
         if ('object' === $type->getBuiltinType() && $recursion < self::MAX_RECURSION && !is_null($className)) {
-            return $this->createSchemaRecursive($className, $operation, $groups, $recursion + 1);
+            $this->oldRecursion++;
+            try {
+                return $this->createSchemaRecursive($className, $operation, $groups, $recursion + 1);
+            } finally {
+                $this->oldRecursion--;
+            }
         }
         return $propertySchema;
     }
@@ -342,7 +361,7 @@ class SchemaGenerator
      */
     public function createSchema(string $resourceClass, string $operation, array $groups): Schema
     {
-        return $this->createSchemaRecursive($resourceClass, $operation, $groups);
+        return $this->createSchemaRecursive($resourceClass, $operation, $groups, $this->oldRecursion + 1);
     }
 
     /**

@@ -3,10 +3,7 @@
 
 namespace W2w\Lib\Apie\Plugins\PrimaryKey;
 
-
 use erasys\OpenApi\Spec\v3\Schema;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use W2w\Lib\Apie\Core\Resources\ApiResources;
 use W2w\Lib\Apie\Exceptions\BadConfigurationException;
 use W2w\Lib\Apie\PluginInterfaces\ApieAwareInterface;
@@ -15,6 +12,7 @@ use W2w\Lib\Apie\PluginInterfaces\NormalizerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SchemaProviderInterface;
 use W2w\Lib\Apie\Plugins\PrimaryKey\Normalizers\ApiePrimaryKeyNormalizer;
 use W2w\Lib\Apie\Plugins\PrimaryKey\Normalizers\PrimaryKeyReferenceNormalizer;
+use W2w\Lib\Apie\Plugins\PrimaryKey\Schema\ApiResourceLinkSchemaBuilder;
 use W2w\Lib\Apie\Plugins\PrimaryKey\ValueObjects\PrimaryKeyReference;
 
 /**
@@ -25,7 +23,7 @@ class PrimaryKeyPlugin implements NormalizerProviderInterface, ApieAwareInterfac
     use ApieAwareTrait;
 
     /**
-     * @return NormalizerInterface[]|DenormalizerInterface[]
+     * {@inheritDoc}
      */
     public function getNormalizers(): array
     {
@@ -57,7 +55,7 @@ class PrimaryKeyPlugin implements NormalizerProviderInterface, ApieAwareInterfac
     }
 
     /**
-     * @return Schema[]
+     * {@inheritDoc}
      */
     public function getDefinedStaticData(): array
     {
@@ -70,10 +68,18 @@ class PrimaryKeyPlugin implements NormalizerProviderInterface, ApieAwareInterfac
     }
 
     /**
-     * @return callable[]
+     * {@inheritDoc}
      */
     public function getDynamicSchemaLogic(): array
     {
-        return [];
+        $res = [];
+        $identifierExtractor = $this->getApie()->getIdentifierExtractor();
+        $builder = new ApiResourceLinkSchemaBuilder();
+        foreach ($this->getApie()->getResources() as $resource) {
+            if (null !== $identifierExtractor->getIdentifierKeyOfClass($resource)) {
+                $res[$resource] = $builder;
+            }
+        }
+        return $res;
     }
 }
