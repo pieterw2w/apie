@@ -62,7 +62,7 @@ class SchemaGenerator
     /**
      * @var int
      */
-    private $oldRecursion = -1;
+    protected $oldRecursion = -1;
 
     /**
      * @param ClassMetadataFactoryInterface $classMetadataFactory

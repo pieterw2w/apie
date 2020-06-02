@@ -90,7 +90,7 @@ class OpenApiSchemaGenerator extends SchemaGenerator
 
     public function createSchema(string $resourceClass, string $operation, array $groups): Schema
     {
-        return $this->createSchemaRecursive($resourceClass, $operation, $groups);
+        return $this->createSchemaRecursive($resourceClass, $operation, $groups, $this->oldRecursion + 1);
     }
 
     /**
@@ -123,6 +123,7 @@ class OpenApiSchemaGenerator extends SchemaGenerator
             return null;
         }
         $this->building[$cacheKey] = true;
+        $oldValue = $this->oldRecursion;
         try {
             // specifically defined: just call it.
             if (isset($this->schemaGenerators[$resourceClass])) {
@@ -138,6 +139,7 @@ class OpenApiSchemaGenerator extends SchemaGenerator
             }
             return null;
         } finally {
+            $this->oldRecursion = $oldValue;
             unset($this->building[$cacheKey]);
         }
     }
@@ -258,7 +260,13 @@ class OpenApiSchemaGenerator extends SchemaGenerator
             return new Schema(['type' => 'object', 'additionalProperties' => true]);
         }
         if ($type && $type->getBuiltinType() === Type::BUILTIN_TYPE_OBJECT && $type->getClassName() && !$type->isCollection()) {
-            return $this->createSchemaRecursive($type->getClassName(), $operation, $groups, $recursion + 1);
+            $this->oldRecursion++;
+            try {
+                return $this->createSchemaRecursive($type->getClassName(), $operation, $groups, $recursion + 1);
+            } finally {
+                $this->oldRecursion--;
+            }
+
         }
         $propertySchema = new Schema([
             'type'        => 'string',
@@ -280,7 +288,17 @@ class OpenApiSchemaGenerator extends SchemaGenerator
             $arrayType = $type->getCollectionValueType();
             if ($arrayType) {
                 if ($arrayType->getClassName()) {
-                    $propertySchema->items = $this->createSchemaRecursive($arrayType->getClassName(), $operation, $groups, $recursion + 1);
+                    $this->oldRecursion++;
+                    try {
+                        $propertySchema->items = $this->createSchemaRecursive(
+                            $arrayType->getClassName(),
+                            $operation,
+                            $groups,
+                            $recursion + 1
+                        );
+                    } finally {
+                        $this->oldRecursion--;
+                    }
                 } elseif ($arrayType->getBuiltinType()) {
                     $schemaType = $this->translateType($arrayType->getBuiltinType());
                     $propertySchema->items = new Schema([
