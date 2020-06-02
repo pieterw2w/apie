@@ -494,8 +494,7 @@
                         "in": "query",
                         "description": "search filter uuid",
                         "schema": {
-                            "type": "string",
-                            "minimum": 1
+                            "type": "string"
                         }
                     },
                     {
@@ -503,8 +502,7 @@
                         "in": "query",
                         "description": "search filter stringValue",
                         "schema": {
-                            "type": "string",
-                            "minimum": 1
+                            "type": "string"
                         }
                     },
                     {
@@ -512,8 +510,7 @@
                         "in": "query",
                         "description": "search filter valueObject",
                         "schema": {
-                            "type": "string",
-                            "minimum": 1
+                            "type": "string"
                         }
                     }
                 ]
@@ -1905,8 +1902,7 @@
                         "in": "query",
                         "description": "search filter status",
                         "schema": {
-                            "type": "string",
-                            "minimum": 1
+                            "type": "string"
                         }
                     }
                 ]

@@ -57,7 +57,7 @@ class SubActionsFeatureTest extends TestCase
 
     public function testSubActionIsMadeInSchema()
     {
-         file_put_contents(__DIR__ . '/expected-specs.json', json_encode($this->testItem->getOpenApiSpecGenerator()->getOpenApiSpec()->toArray(), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+        // file_put_contents(__DIR__ . '/expected-specs.json', json_encode($this->testItem->getOpenApiSpecGenerator()->getOpenApiSpec()->toArray(), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
 
         $expected = json_decode(file_get_contents(__DIR__ . '/expected-specs.json'), true);
         $this->assertEquals(

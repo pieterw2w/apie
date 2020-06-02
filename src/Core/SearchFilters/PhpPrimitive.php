@@ -37,7 +37,7 @@ class PhpPrimitive implements ValueObjectInterface
                 return new Schema(['type' => 'number', 'format' => 'double']);
         }
 
-        return new Schema(['type' => 'string', 'minimum' => 1]);
+        return new Schema(['type' => 'string']);
     }
 
     /**
