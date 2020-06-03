@@ -15,7 +15,7 @@ use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccessInterface;
 
 class OpenApiSchemaGenerator extends SchemaGenerator
 {
-    private const MAX_RECURSION = 3;
+    private const MAX_RECURSION = 2;
 
     /**
      * @var DynamicSchemaInterface[]
@@ -26,11 +26,6 @@ class OpenApiSchemaGenerator extends SchemaGenerator
      * @var Schema[]
      */
     private $predefined = [];
-
-    /**
-     * @var Schema[]
-     */
-    private $alreadyDefined;
 
     /**
      * @var bool[]
@@ -169,7 +164,13 @@ class OpenApiSchemaGenerator extends SchemaGenerator
             'title' => $refl->getShortName(),
             'description' => $refl->getShortName() . ' ' . $operation . ' for groups ' . implode(', ', $groups),
         ]);
+        // if definition is an interface or abstract base class it is possible that it has additional properties.
+        if ($refl->isAbstract() || $refl->isInterface()) {
+            $schema->additionalProperties = true;
+        }
         if ($recursion > self::MAX_RECURSION) {
+            $schema->properties = null;
+            $schema->additionalProperties = true;
             return $this->alreadyDefined[$cacheKey] = $schema;
         }
         $objectAccess = $this->filterObjectAccess($this->objectAccess, $resourceClass, $groups);
@@ -211,6 +212,9 @@ class OpenApiSchemaGenerator extends SchemaGenerator
                 }
                 break;
         }
+        if (is_array($schema->properties) && empty($schema->properties)) {
+            $schema->properties = null;
+        }
         return $this->alreadyDefined[$cacheKey] = $schema;
     }
 
@@ -230,10 +234,10 @@ class OpenApiSchemaGenerator extends SchemaGenerator
     private function convertTypesToSchema(array $types, string $operation, array $groups, int $recursion = 0): Schema
     {
         if (empty($types)) {
-            return new Schema(['type' => 'object', 'additionalProperties' => true]);
+            return new Schema([]);
         }
         $type = reset($types);
-        return $this->convertTypeToSchema($type, $operation, $groups, $recursion + 1);
+        return $this->convertTypeToSchema($type, $operation, $groups, $recursion);
     }
 
     /**
@@ -257,7 +261,7 @@ class OpenApiSchemaGenerator extends SchemaGenerator
     protected function convertTypeToSchema(?Type $type, string $operation, array $groups, int $recursion): Schema
     {
         if ($type === null) {
-            return new Schema(['type' => 'object', 'additionalProperties' => true]);
+            return new Schema([]);
         }
         if ($type && $type->getBuiltinType() === Type::BUILTIN_TYPE_OBJECT && $type->getClassName() && !$type->isCollection()) {
             $this->oldRecursion++;
@@ -278,13 +282,7 @@ class OpenApiSchemaGenerator extends SchemaGenerator
         }
         if ($type->isCollection()) {
             $propertySchema->type = 'array';
-            $propertySchema->items = new Schema([
-                'oneOf' => [
-                    new Schema(['type' => 'string', 'nullable' => true]),
-                    new Schema(['type' => 'integer']),
-                    new Schema(['type' => 'boolean']),
-                ],
-            ]);
+            $propertySchema->items = new Schema([]);
             $arrayType = $type->getCollectionValueType();
             if ($arrayType) {
                 if ($arrayType->getClassName()) {

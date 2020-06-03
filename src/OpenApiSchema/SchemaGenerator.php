@@ -42,7 +42,7 @@ class SchemaGenerator
     /**
      * @var Schema[]
      */
-    private $alreadyDefined = [];
+    protected $alreadyDefined = [];
 
     /**
      * @var Schema[]
@@ -291,8 +291,12 @@ class SchemaGenerator
                     $this->oldRecursion++;
                     try {
                         $propertySchema->items = $this->createSchemaRecursive(
-                            $arrayType->getClassName(), $operation, $groups, $recursion + 1
+                            $arrayType->getClassName(),
+                            $operation,
+                            $groups,
+                            $recursion + 1
                         );
+                        $propertySchema->oneOf = null;
                     } finally {
                         $this->oldRecursion--;
                     }
