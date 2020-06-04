@@ -39,6 +39,7 @@ class PrimaryKeyPluginTest extends TestCase
                         [
                             'type' => 'string',
                             'format' => 'path',
+                            'nullable' => true,
                         ]
                     )
                 ]

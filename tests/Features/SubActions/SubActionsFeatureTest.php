@@ -5,14 +5,11 @@ namespace W2w\Test\Apie\Features\SubActions;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 use W2w\Lib\Apie\Apie;
 use W2w\Lib\Apie\DefaultApie;
-use W2w\Lib\Apie\Interfaces\SupportedAwareSubActionInterface;
 use W2w\Lib\Apie\PluginInterfaces\SubActionsProviderInterface;
 use W2w\Lib\Apie\Plugins\StaticConfig\StaticConfigPlugin;
 use W2w\Lib\Apie\Plugins\StaticConfig\StaticResourcesPlugin;
-use W2w\Lib\Apie\Plugins\StatusCheck\ApiResources\Status;
 use W2w\Test\Apie\Features\AnotherSimplePopo;
 use W2w\Test\Apie\Mocks\ApiResources\FullRestObject;
 use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
@@ -57,12 +54,11 @@ class SubActionsFeatureTest extends TestCase
 
     public function testSubActionIsMadeInSchema()
     {
-        // file_put_contents(__DIR__ . '/expected-specs.json', json_encode($this->testItem->getOpenApiSpecGenerator()->getOpenApiSpec()->toArray(), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+        // file_put_contents(__DIR__ . '/expected-specs.yml', $this->testItem->getOpenApiSpecGenerator()->getOpenApiSpec()->toYaml(20, 2));
 
-        $expected = json_decode(file_get_contents(__DIR__ . '/expected-specs.json'), true);
         $this->assertEquals(
-            $expected,
-            $this->testItem->getOpenApiSpecGenerator()->getOpenApiSpec()->toArray()
+            file_get_contents(__DIR__ . '/expected-specs.yml'),
+            $this->testItem->getOpenApiSpecGenerator()->getOpenApiSpec()->toYaml(20, 2)
         );
     }
 

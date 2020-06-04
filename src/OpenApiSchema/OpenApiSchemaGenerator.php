@@ -83,9 +83,17 @@ class OpenApiSchemaGenerator extends SchemaGenerator
         return $this;
     }
 
+    /**
+     * Creates a Schema for  specific resource class.
+     *
+     * @param string $resourceClass
+     * @param string $operation
+     * @param array $groups
+     * @return Schema
+     */
     public function createSchema(string $resourceClass, string $operation, array $groups): Schema
     {
-        return $this->createSchemaRecursive($resourceClass, $operation, $groups, $this->oldRecursion + 1);
+        return unserialize(serialize($this->createSchemaRecursive($resourceClass, $operation, $groups, $this->oldRecursion + 1)));
     }
 
     /**
@@ -237,6 +245,10 @@ class OpenApiSchemaGenerator extends SchemaGenerator
             return new Schema([]);
         }
         $type = reset($types);
+        // this is only because this serializer does not do a deep populate.
+        if ($operation === 'put') {
+            $operation = 'post';
+        }
         return $this->convertTypeToSchema($type, $operation, $groups, $recursion);
     }
 
@@ -277,6 +289,9 @@ class OpenApiSchemaGenerator extends SchemaGenerator
             'nullable'    => true,
         ]);
         $propertySchema->type = $this->translateType($type->getBuiltinType());
+        if ($propertySchema->type === 'array') {
+            $propertySchema->items = new Schema([]);
+        }
         if (!$type->isNullable()) {
             $propertySchema->nullable = false;
         }
@@ -303,6 +318,10 @@ class OpenApiSchemaGenerator extends SchemaGenerator
                         'type' => $schemaType,
                         'format' => ($schemaType === 'number') ? $arrayType->getBuiltinType() : null,
                     ]);
+                    //array[] typehint...
+                    if ($schemaType === 'array') {
+                        $propertySchema->items->items = new Schema([]);
+                    }
                 }
             }
             return $propertySchema;

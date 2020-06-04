@@ -29,6 +29,7 @@ class ApiResourceLinkSchemaBuilder implements DynamicSchemaInterface
             return new Schema([
                 'type' => 'string',
                 'format' => 'path',
+                'nullable' => true,
             ]);
         }
         return $generator->createSchema($resourceClass, $operation, $groups);

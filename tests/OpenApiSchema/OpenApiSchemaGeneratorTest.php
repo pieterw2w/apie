@@ -11,6 +11,7 @@ use W2w\Lib\Apie\Core\SearchFilters\PhpPrimitive;
 use W2w\Lib\Apie\DefaultApie;
 use W2w\Lib\Apie\Interfaces\ValueObjectInterface;
 use W2w\Lib\Apie\OpenApiSchema\OpenApiSchemaGenerator;
+use W2w\Lib\Apie\Plugins\StatusCheck\ApiResources\Status;
 use W2w\Lib\Apie\Plugins\ValueObject\Schema\ValueObjectSchemaBuilder;
 use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\GroupedObjectAccess;
 use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
@@ -134,6 +135,60 @@ class OpenApiSchemaGeneratorTest extends TestCase
         $this->assertEquals(
             $expected,
             $this->testItem->createSchema(SimplePopo::class, 'put', ['put', 'write']),
+            'asking again gives a cached result'
+        );
+    }
+
+    public function testCreateSchema_status()
+    {
+        $expected = new Schema(
+            [
+                'title'       => 'Status',
+                'description' => 'Status get for groups get, read',
+                'type'        => 'object',
+                'properties'  => [
+                    'id'              => new Schema(
+                        [
+                            'type' => 'string'
+                        ]
+                    ),
+                    'status'      => new Schema(
+                        [
+                            'type'   => 'string',
+                            'nullable' => false,
+                        ]
+                    ),
+                    'optional_reference' => new Schema(
+                        [
+                            'type' => 'string',
+                            'nullable' => true,
+                        ]
+                    ),
+                    'context' => new Schema(
+                        [
+                            'type' => 'array',
+                            'nullable' => true,
+                            'items' => new Schema([]),
+                        ]
+                    ),
+                    'no_errors' => new Schema(
+                        [
+                            'type' => 'boolean',
+                            'description' => "Returns true to tell the status check is 'healthy'.",
+                            'nullable' => false,
+                        ]
+                    ),
+                ]
+            ]
+        );
+
+        $this->assertEquals(
+            $expected,
+            $this->testItem->createSchema(Status::class, 'get', ['get', 'read'])
+        );
+        $this->assertEquals(
+            $expected,
+            $this->testItem->createSchema(Status::class, 'get', ['get', 'read']),
             'asking again gives a cached result'
         );
     }
@@ -355,6 +410,16 @@ class OpenApiSchemaGeneratorTest extends TestCase
             'title' => 'ClassC',
             'description' => 'ClassC get for groups get, read',
             'properties' => [
+                'type' => new Schema(['type' => 'string', 'nullable' => false, 'default' => 'C', 'example' => 'C']),
+                'required_in_interface' => new Schema(['type' => 'string', 'nullable' => false]),
+                'b_or_c' => new Schema(['type' => 'integer', 'nullable' => false]),
+            ],
+        ]);
+        $schemaD = new Schema([
+           'type' => 'object',
+           'title' => 'ClassC',
+           'description' => 'ClassC get for groups get, read',
+           'properties' => [
                 'type' => new Schema(['type' => 'string', 'nullable' => false, 'default' => 'D', 'example' => 'D']),
                 'required_in_interface' => new Schema(['type' => 'string', 'nullable' => false]),
                 'b_or_c' => new Schema(['type' => 'integer', 'nullable' => false]),
@@ -369,7 +434,7 @@ class OpenApiSchemaGeneratorTest extends TestCase
             'oneOf' => [
                 $schemaA,
                 $schemaB,
-                $schemaC,
+                $schemaD,
             ],
             'discriminator' => new Discriminator(
                 'type',
@@ -377,7 +442,7 @@ class OpenApiSchemaGeneratorTest extends TestCase
                     'A' => $schemaA,
                     'B' => $schemaB,
                     'C' => $schemaC,
-                    'D' => $schemaC
+                    'D' => $schemaD
                 ]
             )
         ]);
@@ -452,6 +517,27 @@ class OpenApiSchemaGeneratorTest extends TestCase
             ],
         ]);
         $this->assertEquals($expected, $this->testItem->createSchema(ObjectWithCollection::class, 'get', ['get', 'read']));
+
+        $sumExampleSchema = $this->testItem->createSchema(SumExample::class, 'post', ['post', 'write']);
+        $sumExampleSchema->description = 'SumExample post for groups put, write';
+        $expected = new Schema([
+            'type' => 'object',
+            'title' => 'ObjectWithCollection',
+            'description' => 'ObjectWithCollection put for groups put, write',
+            'properties' => [
+                'collection' => new Schema([
+                    'type' => 'array',
+                    'items' => $sumExampleSchema,
+                    'nullable' => false,
+                ]),
+                'optional_collection' => new Schema([
+                    'type' => 'array',
+                    'items' => $sumExampleSchema,
+                    'nullable' => true,
+                ]),
+            ],
+        ]);
+        $this->assertEquals($expected, $this->testItem->createSchema(ObjectWithCollection::class, 'put', ['put', 'write']));
     }
 }
 

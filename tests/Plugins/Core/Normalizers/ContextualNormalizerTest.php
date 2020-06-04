@@ -58,7 +58,7 @@ class ContextualNormalizerTest extends TestCase
         $this->serializer->normalize($input);
     }
 
-     public function testDenormalize()
+    public function testDenormalize()
     {
         $input = [
             'id' => '123',
@@ -83,7 +83,7 @@ class ContextualNormalizerTest extends TestCase
         $this->serializer->denormalize($input, SimplePopo::class);
     }
 
-     private function hackCleanContextualNormalizer()
+    private function hackCleanContextualNormalizer()
     {
         $reflClass = new ReflectionClass(ContextualNormalizer::class);
         $prop = $reflClass->getProperty('globalDisabledNormalizers');

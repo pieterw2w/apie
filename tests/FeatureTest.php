@@ -239,12 +239,11 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
         $testItem = DefaultApie::createDefaultApie(true, $plugins);
         $testItem->getSchemaGenerator()->defineSchemaForResource(DateTimeInterface::class, new Schema(['type' => 'string', 'format' => 'date-time']));
         $testItem->getSchemaGenerator()->defineSchemaForResource(Uuid::class, new Schema(['format' => 'uuid', 'type' => 'string']));
-        // file_put_contents(__DIR__ . '/expected-specs.json', json_encode($testItem->getOpenApiSpecGenerator('/test-url')->getOpenApiSpec()->toArray(), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+        // file_put_contents(__DIR__ . '/expected-specs.yml',$testItem->getOpenApiSpecGenerator('/test-url')->getOpenApiSpec()->toYaml(20, 2));
 
-        $expected = json_decode(file_get_contents(__DIR__ . '/expected-specs.json'), true);
         $this->assertEquals(
-            $expected,
-            $testItem->getOpenApiSpecGenerator()->getOpenApiSpec()->toArray()
+            file_get_contents(__DIR__ . '/expected-specs.yml'),
+            $testItem->getOpenApiSpecGenerator()->getOpenApiSpec()->toYaml(20, 2)
         );
     }
 
