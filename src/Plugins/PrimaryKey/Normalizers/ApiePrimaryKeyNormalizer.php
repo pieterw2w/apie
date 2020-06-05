@@ -9,6 +9,8 @@ use W2w\Lib\Apie\Core\ApiResourceMetadataFactory;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Core\Resources\ApiResourcesInterface;
+use W2w\Lib\Apie\Plugins\Core\Normalizers\ApieObjectNormalizer;
+use W2w\Lib\Apie\Plugins\Core\Normalizers\ContextualNormalizer;
 use W2w\Lib\Apie\Plugins\PrimaryKey\ValueObjects\PrimaryKeyReference;
 
 /**
@@ -61,7 +63,7 @@ class ApiePrimaryKeyNormalizer implements ContextAwareNormalizerInterface, Seria
      */
     public function supportsNormalization($data, string $format = null, array $context = [])
     {
-        if (empty($context['object_hierarchy']) || !empty($context['disable_pk_normalize'])) {
+        if (ContextualNormalizer::isNormalizerEnabled(ApieObjectNormalizer::class) || empty($context['object_hierarchy']) || !empty($context['disable_pk_normalize'])) {
             return false;
         }
         foreach ($this->apiResources->getApiResources() as $apiResource) {

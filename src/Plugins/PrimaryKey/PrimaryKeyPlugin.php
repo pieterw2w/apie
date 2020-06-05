@@ -74,7 +74,7 @@ class PrimaryKeyPlugin implements NormalizerProviderInterface, ApieAwareInterfac
     {
         $res = [];
         $identifierExtractor = $this->getApie()->getIdentifierExtractor();
-        $builder = new ApiResourceLinkSchemaBuilder();
+        $builder = new ApiResourceLinkSchemaBuilder($this->getApie()->getClassResourceConverter());
         foreach ($this->getApie()->getResources() as $resource) {
             if (null !== $identifierExtractor->getIdentifierKeyOfClass($resource)) {
                 $res[$resource] = $builder;

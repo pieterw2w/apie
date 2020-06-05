@@ -4,13 +4,13 @@
 namespace W2w\Test\Apie\Plugins\PrimaryKey;
 
 use erasys\OpenApi\Spec\v3\Schema;
-use PHPUnit\Framework\TestCase;
 use W2w\Lib\Apie\DefaultApie;
 use W2w\Lib\Apie\Plugins\PrimaryKey\PrimaryKeyPlugin;
 use W2w\Lib\Apie\Plugins\StaticConfig\StaticResourcesPlugin;
+use W2w\Test\Apie\ForwardsCompatibleTestCase;
 use W2w\Test\Apie\OpenApiSchema\Data\RecursiveObjectWithId;
 
-class PrimaryKeyPluginTest extends TestCase
+class PrimaryKeyPluginTest extends ForwardsCompatibleTestCase
 {
     public function testSchemaIsProperlyCreated()
     {
@@ -25,8 +25,8 @@ class PrimaryKeyPluginTest extends TestCase
         );
         $expected = new Schema(
             [
-                'title' => 'recursive_object_with_id',
-                'description' => 'recursive_object_with_id get for groups get, read',
+                'title' => 'RecursiveObjectWithId',
+                'description' => 'RecursiveObjectWithId get for groups get, read',
                 'type' => 'object',
                 'properties' => [
                     'id' => new Schema(
@@ -40,6 +40,7 @@ class PrimaryKeyPluginTest extends TestCase
                             'type' => 'string',
                             'format' => 'path',
                             'nullable' => true,
+                            'example' => '/recursive_object_with_id/12345',
                         ]
                     )
                 ]

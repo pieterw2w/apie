@@ -853,9 +853,24 @@ paths:
                       type: string
                       format: uuid
                     child:
-                      type: string
-                      format: path
-                      nullable: true
+                      title: recursive_object_with_id
+                      description: 'recursive_object_with_id get for groups get, read'
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        child:
+                          title: recursive_object_with_id
+                          description: 'recursive_object_with_id get for groups get, read'
+                          type: object
+                          properties:
+                            id:
+                              type: object
+                              nullable: false
+                            child:
+                              type: object
+                              nullable: false
                   xml:
                     name: item
             application/xml:
@@ -870,9 +885,24 @@ paths:
                       type: string
                       format: uuid
                     child:
-                      type: string
-                      format: path
-                      nullable: true
+                      title: recursive_object_with_id
+                      description: 'recursive_object_with_id get for groups get, read'
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        child:
+                          title: recursive_object_with_id
+                          description: 'recursive_object_with_id get for groups get, read'
+                          type: object
+                          properties:
+                            id:
+                              type: object
+                              nullable: false
+                            child:
+                              type: object
+                              nullable: false
                   xml:
                     name: item
                 xml:
@@ -924,9 +954,24 @@ paths:
                     type: string
                     format: uuid
                   child:
-                    type: string
-                    format: path
-                    nullable: true
+                    title: recursive_object_with_id
+                    description: 'recursive_object_with_id get for groups get, read'
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      child:
+                        title: recursive_object_with_id
+                        description: 'recursive_object_with_id get for groups get, read'
+                        type: object
+                        properties:
+                          id:
+                            type: object
+                            nullable: false
+                          child:
+                            type: object
+                            nullable: false
                 xml:
                   name: item
             application/xml:
@@ -939,9 +984,24 @@ paths:
                     type: string
                     format: uuid
                   child:
-                    type: string
-                    format: path
-                    nullable: true
+                    title: recursive_object_with_id
+                    description: 'recursive_object_with_id get for groups get, read'
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      child:
+                        title: recursive_object_with_id
+                        description: 'recursive_object_with_id get for groups get, read'
+                        type: object
+                        properties:
+                          id:
+                            type: object
+                            nullable: false
+                          child:
+                            type: object
+                            nullable: false
                 xml:
                   name: item
         401:
@@ -1025,9 +1085,24 @@ paths:
                     type: string
                     format: uuid
                   child:
-                    type: string
-                    format: path
-                    nullable: true
+                    title: recursive_object_with_id
+                    description: 'recursive_object_with_id get for groups get, read'
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      child:
+                        title: recursive_object_with_id
+                        description: 'recursive_object_with_id get for groups get, read'
+                        type: object
+                        properties:
+                          id:
+                            type: object
+                            nullable: false
+                          child:
+                            type: object
+                            nullable: false
                 xml:
                   name: item
             application/xml:
@@ -1040,9 +1115,24 @@ paths:
                     type: string
                     format: uuid
                   child:
-                    type: string
-                    format: path
-                    nullable: true
+                    title: recursive_object_with_id
+                    description: 'recursive_object_with_id get for groups get, read'
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      child:
+                        title: recursive_object_with_id
+                        description: 'recursive_object_with_id get for groups get, read'
+                        type: object
+                        properties:
+                          id:
+                            type: object
+                            nullable: false
+                          child:
+                            type: object
+                            nullable: false
                 xml:
                   name: item
         401:
@@ -1079,9 +1169,24 @@ paths:
                     type: string
                     format: uuid
                   child:
-                    type: string
-                    format: path
-                    nullable: true
+                    title: recursive_object_with_id
+                    description: 'recursive_object_with_id get for groups get, read'
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      child:
+                        title: recursive_object_with_id
+                        description: 'recursive_object_with_id get for groups get, read'
+                        type: object
+                        properties:
+                          id:
+                            type: object
+                            nullable: false
+                          child:
+                            type: object
+                            nullable: false
                 xml:
                   name: item
             application/xml:
@@ -1094,9 +1199,24 @@ paths:
                     type: string
                     format: uuid
                   child:
-                    type: string
-                    format: path
-                    nullable: true
+                    title: recursive_object_with_id
+                    description: 'recursive_object_with_id get for groups get, read'
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      child:
+                        title: recursive_object_with_id
+                        description: 'recursive_object_with_id get for groups get, read'
+                        type: object
+                        properties:
+                          id:
+                            type: object
+                            nullable: false
+                          child:
+                            type: object
+                            nullable: false
                 xml:
                   name: item
         401:

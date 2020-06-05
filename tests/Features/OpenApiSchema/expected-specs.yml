@@ -838,6 +838,7 @@ paths:
                       type: string
                       format: path
                       nullable: true
+                      example: /recursive_object_with_id/12345
             application/xml:
               schema:
                 type: array
@@ -853,6 +854,7 @@ paths:
                       type: string
                       format: path
                       nullable: true
+                      example: /recursive_object_with_id/12345
                   xml:
                     name: item
                 xml:
@@ -907,6 +909,7 @@ paths:
                     type: string
                     format: path
                     nullable: true
+                    example: /recursive_object_with_id/12345
             application/xml:
               schema:
                 title: RecursiveObjectWithId
@@ -920,6 +923,7 @@ paths:
                     type: string
                     format: path
                     nullable: true
+                    example: /recursive_object_with_id/12345
                 xml:
                   name: item
         401:
@@ -1010,6 +1014,7 @@ paths:
                     type: string
                     format: path
                     nullable: true
+                    example: /recursive_object_with_id/12345
             application/xml:
               schema:
                 title: RecursiveObjectWithId
@@ -1023,6 +1028,7 @@ paths:
                     type: string
                     format: path
                     nullable: true
+                    example: /recursive_object_with_id/12345
                 xml:
                   name: item
         401:
@@ -1062,6 +1068,7 @@ paths:
                     type: string
                     format: path
                     nullable: true
+                    example: /recursive_object_with_id/12345
             application/xml:
               schema:
                 title: RecursiveObjectWithId
@@ -1075,6 +1082,7 @@ paths:
                     type: string
                     format: path
                     nullable: true
+                    example: /recursive_object_with_id/12345
                 xml:
                   name: item
         401:
