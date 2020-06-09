@@ -13,25 +13,25 @@ use W2w\Lib\Apie\Plugins\PrimaryKey\ValueObjects\PrimaryKeyReference;
  */
 class PrimaryKeyReferenceNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    public function denormalize($data, string $type, string $format = null, array $context = [])
+    public function denormalize($data, $type, $format = null, array $context = [])
     {
         throw new LogicException('Not implemented yet');
     }
 
 
-    public function supportsDenormalization($data, string $type, string $format = null)
+    public function supportsDenormalization($data, $type, $format = null)
     {
         return $type === PrimaryKeyReference::class;
     }
 
 
-    public function normalize($object, string $format = null, array $context = [])
+    public function normalize($object, $format = null, array $context = [])
     {
         /** @var PrimaryKeyReference $object */
         return $object->getUrl();
     }
 
-    public function supportsNormalization($data, string $format = null)
+    public function supportsNormalization($data, $format = null)
     {
         return $data instanceof PrimaryKeyReference;
     }

@@ -61,7 +61,7 @@ class ApiePrimaryKeyNormalizer implements ContextAwareNormalizerInterface, Seria
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, string $format = null, array $context = [])
+    public function supportsNormalization($data, $format = null, array $context = [])
     {
         if (ContextualNormalizer::isNormalizerEnabled(ApieObjectNormalizer::class) || empty($context['object_hierarchy']) || !empty($context['disable_pk_normalize'])) {
             return false;
@@ -83,7 +83,7 @@ class ApiePrimaryKeyNormalizer implements ContextAwareNormalizerInterface, Seria
     /**
      * {@inheritdoc}
      */
-    public function normalize($object, string $format = null, array $context = [])
+    public function normalize($object, $format = null, array $context = [])
     {
         $metadata = $this->metadataFactory->getMetadata($object);
         $resourceContext = $this->metadataFactory->getMetadata($object)->getContext();
