@@ -66,6 +66,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
+      summary: 'get/search all instances of full_rest_object'
+      operationId: resourceGetAllFullRestObject
       parameters:
         -
           name: page
@@ -159,6 +161,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
+      summary: 'create a new single instance of full_rest_object'
+      operationId: resourcePostSingleFullRestObject
       requestBody:
         content:
           application/json:
@@ -254,6 +258,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
+      summary: 'retrieve a single instance of full_rest_object'
+      operationId: resourceGetSingleFullRestObject
     put:
       responses:
         200:
@@ -316,6 +322,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
+      summary: 'modify a single instance of full_rest_object'
+      operationId: resourcePutSingleFullRestObject
       requestBody:
         content:
           application/json:
@@ -369,6 +377,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
+      summary: 'delete a single instance of full_rest_object'
+      operationId: resourceDeleteSingleFullRestObject
     parameters:
       -
         name: uuid
@@ -401,6 +411,7 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
+      operationId: resourcePostSubActionFullRestObjectMd5
       requestBody:
         content:
           application/json:
@@ -447,6 +458,7 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
+      operationId: resourcePostSubActionFullRestObjectReflection
       requestBody:
         content:
           application/json:
@@ -493,6 +505,7 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
+      operationId: resourcePostSubActionFullRestObjectOther
       requestBody:
         content:
           application/json:
@@ -578,6 +591,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - simple_popo
+      summary: 'get/search all instances of simple_popo'
+      operationId: resourceGetAllSimplePopo
       parameters:
         -
           name: page
@@ -653,6 +668,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - simple_popo
+      summary: 'create a new single instance of simple_popo'
+      operationId: resourcePostSingleSimplePopo
       requestBody:
         content:
           application/json:
@@ -710,6 +727,7 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - simple_popo
+      operationId: resourcePostSubActionSimplePopoMd5
       requestBody:
         content:
           application/json:
@@ -756,6 +774,7 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - simple_popo
+      operationId: resourcePostSubActionSimplePopoReflection
       requestBody:
         content:
           application/json:
@@ -802,6 +821,7 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - simple_popo
+      operationId: resourcePostSubActionSimplePopoOther
       requestBody:
         content:
           application/json:
@@ -873,6 +893,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - sum_example
+      summary: 'create a new single instance of sum_example'
+      operationId: resourcePostSingleSumExample
       requestBody:
         content:
           application/json:
@@ -970,6 +992,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
+      summary: 'get/search all instances of another_simple_popo'
+      operationId: resourceGetAllAnotherSimplePopo
       parameters:
         -
           name: page
@@ -1045,6 +1069,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
+      summary: 'create a new single instance of another_simple_popo'
+      operationId: resourcePostSingleAnotherSimplePopo
       requestBody:
         content:
           application/json:
@@ -1128,6 +1154,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
+      summary: 'retrieve a single instance of another_simple_popo'
+      operationId: resourceGetSingleAnotherSimplePopo
     put:
       responses:
         200:
@@ -1190,6 +1218,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
+      summary: 'modify a single instance of another_simple_popo'
+      operationId: resourcePutSingleAnotherSimplePopo
       requestBody:
         content:
           application/json:
@@ -1237,6 +1267,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
+      summary: 'delete a single instance of another_simple_popo'
+      operationId: resourceDeleteSingleAnotherSimplePopo
     parameters:
       -
         name: id
@@ -1269,6 +1301,7 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
+      operationId: resourcePostSubActionAnotherSimplePopoMd5
       requestBody:
         content:
           application/json:
@@ -1315,6 +1348,7 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
+      operationId: resourcePostSubActionAnotherSimplePopoReflection
       requestBody:
         content:
           application/json:
@@ -1361,6 +1395,7 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
+      operationId: resourcePostSubActionAnotherSimplePopoOther
       requestBody:
         content:
           application/json:
@@ -1430,6 +1465,7 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
+      operationId: resourcePostSubActionAnotherSimplePopoSub
       requestBody:
         content:
           application/json:
@@ -1533,6 +1569,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - application_info
+      summary: 'get/search all instances of application_info'
+      operationId: resourceGetAllApplicationInfo
       parameters:
         -
           name: page
@@ -1643,6 +1681,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - status
+      summary: 'get/search all instances of status'
+      operationId: resourceGetAllStatus
       parameters:
         -
           name: page
@@ -1755,6 +1795,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - status
+      summary: 'retrieve a single instance of status'
+      operationId: resourceGetSingleStatus
     parameters:
       -
         name: id
@@ -1787,6 +1829,7 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - status
+      operationId: resourcePostSubActionStatusMd5
       requestBody:
         content:
           application/json:
@@ -1833,6 +1876,7 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - status
+      operationId: resourcePostSubActionStatusReflection
       requestBody:
         content:
           application/json:
@@ -1879,6 +1923,7 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - status
+      operationId: resourcePostSubActionStatusOther
       requestBody:
         content:
           application/json:

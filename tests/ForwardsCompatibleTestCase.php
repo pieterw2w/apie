@@ -9,6 +9,9 @@ use ReflectionClass;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\ApieObjectNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\ContextualNormalizer;
 
+/**
+ * @deprecated no longer needed in 4.0
+ */
 abstract class ForwardsCompatibleTestCase extends TestCase
 {
     protected function setUp(): void

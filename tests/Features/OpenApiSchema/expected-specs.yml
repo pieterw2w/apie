@@ -70,6 +70,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - application_info
+      summary: 'get/search all instances of application_info'
+      operationId: resourceGetAllApplicationInfo
       parameters:
         -
           name: page
@@ -142,6 +144,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - simple_popo
+      summary: 'get/search all instances of simple_popo'
+      operationId: resourceGetAllSimplePopo
       parameters:
         -
           name: page
@@ -211,6 +215,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - simple_popo
+      summary: 'create a new single instance of simple_popo'
+      operationId: resourcePostSingleSimplePopo
       requestBody:
         content:
           application/json:
@@ -301,6 +307,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
+      summary: 'get/search all instances of full_rest_object'
+      operationId: resourceGetAllFullRestObject
       parameters:
         -
           name: page
@@ -392,6 +400,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
+      summary: 'create a new single instance of full_rest_object'
+      operationId: resourcePostSingleFullRestObject
       requestBody:
         content:
           application/json:
@@ -485,6 +495,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
+      summary: 'retrieve a single instance of full_rest_object'
+      operationId: resourceGetSingleFullRestObject
     put:
       responses:
         200:
@@ -545,6 +557,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
+      summary: 'modify a single instance of full_rest_object'
+      operationId: resourcePutSingleFullRestObject
       requestBody:
         content:
           application/json:
@@ -598,6 +612,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
+      summary: 'delete a single instance of full_rest_object'
+      operationId: resourceDeleteSingleFullRestObject
     parameters:
       -
         name: uuid
@@ -679,6 +695,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - recursive_object
+      summary: 'get/search all instances of recursive_object'
+      operationId: resourceGetAllRecursiveObject
       parameters:
         -
           name: page
@@ -764,6 +782,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - recursive_object
+      summary: 'create a new single instance of recursive_object'
+      operationId: resourcePostSingleRecursiveObject
       requestBody:
         content:
           application/json:
@@ -871,6 +891,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - recursive_object_with_id
+      summary: 'get/search all instances of recursive_object_with_id'
+      operationId: resourceGetAllRecursiveObjectWithId
       parameters:
         -
           name: page
@@ -942,6 +964,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - recursive_object_with_id
+      summary: 'create a new single instance of recursive_object_with_id'
+      operationId: resourcePostSingleRecursiveObjectWithId
       requestBody:
         content:
           application/json:
@@ -1045,6 +1069,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - recursive_object_with_id
+      summary: 'retrieve a single instance of recursive_object_with_id'
+      operationId: resourceGetSingleRecursiveObjectWithId
     put:
       responses:
         200:
@@ -1103,6 +1129,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - recursive_object_with_id
+      summary: 'modify a single instance of recursive_object_with_id'
+      operationId: resourcePutSingleRecursiveObjectWithId
       requestBody:
         content:
           application/json:
@@ -1174,6 +1202,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - recursive_object_with_id
+      summary: 'delete a single instance of recursive_object_with_id'
+      operationId: resourceDeleteSingleRecursiveObjectWithId
     parameters:
       -
         name: id
@@ -1259,6 +1289,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - status
+      summary: 'get/search all instances of status'
+      operationId: resourceGetAllStatus
       parameters:
         -
           name: page
@@ -1353,6 +1385,8 @@ paths:
           $ref: '#/components/responses/MaintenanceMode'
       tags:
         - status
+      summary: 'retrieve a single instance of status'
+      operationId: resourceGetSingleStatus
     parameters:
       -
         name: id

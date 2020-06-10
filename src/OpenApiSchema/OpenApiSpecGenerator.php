@@ -3,6 +3,7 @@
 namespace W2w\Lib\Apie\OpenApiSchema;
 
 use erasys\OpenApi\Spec\v3 as OASv3;
+use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 use W2w\Lib\Apie\Core\ApiResourceMetadataFactory;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
@@ -411,6 +412,17 @@ class OpenApiSpecGenerator
     }
 
     /**
+     * Sluggify resource name for the operation id.
+     *
+     * @param string $resourceName
+     * @return string|string[]|\Symfony\Component\Serializer\NameConverter\string|null
+     */
+    private function sluggify(string $resourceName)
+    {
+        return (new CamelCaseToSnakeCaseNameConverter(null, false))->denormalize($resourceName);
+    }
+
+    /**
      * Returns all paths of an api resource without an id in the url.
      *
      * @param string $apiResourceClass
@@ -435,8 +447,8 @@ class OpenApiSpecGenerator
                     '502' => new OASv3\Reference('#/components/responses/ServerDependencyError'),
                     '503' => new OASv3\Reference('#/components/responses/MaintenanceMode'),
                 ],
-                null,
-                null,
+                'resourceGetAll' . $this->sluggify($resourceName),
+                'get/search all instances of ' . $resourceName,
                 [
                     'tags'       => [$resourceName],
                     'parameters' => [
@@ -476,8 +488,8 @@ class OpenApiSpecGenerator
                     '502' => new OASv3\Reference('#/components/responses/ServerDependencyError'),
                     '503' => new OASv3\Reference('#/components/responses/MaintenanceMode'),
                 ],
-                null,
-                null,
+                'resourcePostSingle' . $this->sluggify($resourceName),
+                'create a new single instance of ' . $resourceName,
                 [
                     'tags'        => [$resourceName],
                     'requestBody' => new OASv3\RequestBody(
@@ -521,7 +533,7 @@ class OpenApiSpecGenerator
                 '502' => new OASv3\Reference('#/components/responses/ServerDependencyError'),
                 '503' => new OASv3\Reference('#/components/responses/MaintenanceMode'),
             ],
-            null,
+            'resourcePostSubAction' . $this->sluggify($resourceName . '_' . $subAction->getName()),
             null,
             [
                 'tags' => [$resourceName],
@@ -559,8 +571,8 @@ class OpenApiSpecGenerator
                     '502' => new OASv3\Reference('#/components/responses/ServerDependencyError'),
                     '503' => new OASv3\Reference('#/components/responses/MaintenanceMode'),
                 ],
-                null,
-                null,
+                'resourceGetSingle' . $this->sluggify($resourceName),
+                'retrieve a single instance of ' . $resourceName,
                 [
                     'tags' => [$resourceName],
                 ]
@@ -581,8 +593,8 @@ class OpenApiSpecGenerator
                     '502' => new OASv3\Reference('#/components/responses/ServerDependencyError'),
                     '503' => new OASv3\Reference('#/components/responses/MaintenanceMode'),
                 ],
-                null,
-                null,
+                'resourceDeleteSingle' . $this->sluggify($resourceName),
+                'delete a single instance of ' . $resourceName,
                 [
                     'tags' => [$resourceName],
                 ]
@@ -605,8 +617,8 @@ class OpenApiSpecGenerator
                     '502' => new OASv3\Reference('#/components/responses/ServerDependencyError'),
                     '503' => new OASv3\Reference('#/components/responses/MaintenanceMode'),
                 ],
-                null,
-                null,
+                'resourcePutSingle' . $this->sluggify($resourceName),
+                'modify a single instance of ' . $resourceName,
                 [
                     'tags'        => [$resourceName],
                     'requestBody' => new OASv3\RequestBody(
