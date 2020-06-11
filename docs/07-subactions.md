@@ -12,10 +12,12 @@ For example a checksum subaction class would be something like this:
 <?php
 use W2w\Lib\Apie\Interfaces\ResourceSerializerInterface;
 
-class Checksum {
+class Checksum 
+{
     private $serializer;
     
-    public function __construct(ResourceSerializerInterface $serializer) {
+    public function __construct(ResourceSerializerInterface $serializer)
+    {
         $this->serializer = $serializer;
     }
     
@@ -37,10 +39,12 @@ use W2w\Lib\Apie\PluginInterfaces\ApieAwareInterface;
 use W2w\Lib\Apie\PluginInterfaces\ApieAwareTrait;
 use W2w\Lib\Apie\PluginInterfaces\SubActionsProviderInterface;
 
-class ChecksumPlugin implements SubActionsProviderInterface, ApieAwareInterface {
+class ChecksumPlugin implements SubActionsProviderInterface, ApieAwareInterface
+ {
     use ApieAwareTrait;
     
-    public function getSubActions(){
+    public function getSubActions()
+    {
         return [
             'checksum' => new Checksum($this->getApie()->getResourceSerializer()),
         ];
@@ -58,13 +62,15 @@ We could filter who gets the action for example like this:
 <?php
 use W2w\Lib\Apie\Interfaces\ResourceSerializerInterface;
 
-interface Checksummable {
+interface Checksummable
+{
 }
 
 class Checksum {
     private $serializer;
     
-    public function __construct(ResourceSerializerInterface $serializer) {
+    public function __construct(ResourceSerializerInterface $serializer)
+    {
         $this->serializer = $serializer;
     }
     
@@ -85,9 +91,11 @@ Another solution would be to let the sub action implement SupportedAwareSubActio
 <?php
 use W2w\Lib\Apie\Interfaces\SupportedAwareSubActionInterface;
 
-class Checksum implements SupportedAwareSubActionInterface {
+class Checksum implements SupportedAwareSubActionInterface
+{
     
-    public function isSupported(string $resourceClass) : bool{
+    public function isSupported(string $resourceClass) : bool
+    {
         $reflectionClass = new ReflectionClass($resourceClass);
         return $reflectionClass->hasMethod('getId') && $reflectionClass->getMethod('getId')->isPublic();
     }
@@ -108,7 +116,8 @@ use W2w\Lib\Apie\Interfaces\SupportedAwareSubActionInterface;
 use W2w\Lib\Apie\Plugins\ValueObject\ValueObjects\StringEnumTrait;
 use W2w\Lib\Apie\Interfaces\ValueObjectInterface;
 
-class ChecksumMethod implements ValueObjectInterface {
+class ChecksumMethod implements ValueObjectInterface
+{
     use StringEnumTrait;
     
     const MD5 = 'MD5';
@@ -116,9 +125,11 @@ class ChecksumMethod implements ValueObjectInterface {
     const CRC32 = 'CRC32';
 }
 
-class Checksum implements SupportedAwareSubActionInterface {
+class Checksum implements SupportedAwareSubActionInterface
+{
     
-    public function isSupported(string $resourceClass) : bool{
+    public function isSupported(string $resourceClass) : bool
+    {
         $reflectionClass = new ReflectionClass($resourceClass);
         return $reflectionClass->hasMethod('getId') && $reflectionClass->getMethod('getId')->isPublic();
     }

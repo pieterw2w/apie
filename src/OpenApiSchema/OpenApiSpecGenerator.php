@@ -415,7 +415,7 @@ class OpenApiSpecGenerator
      * Sluggify resource name for the operation id.
      *
      * @param string $resourceName
-     * @return string|string[]|\Symfony\Component\Serializer\NameConverter\string|null
+     * @return string|string[]|null
      */
     private function sluggify(string $resourceName)
     {
