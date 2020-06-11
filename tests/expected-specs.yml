@@ -1,0 +1,1711 @@
+openapi: 3.0.1
+info:
+  title: Apie
+  version: '3.0'
+paths:
+  /application_info:
+    get:
+      responses:
+        200:
+          description: 'Retrieves all instances of application_info'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  title: application_info
+                  description: 'application_info get for groups get, read'
+                  type: object
+                  properties:
+                    app_name:
+                      type: string
+                      nullable: false
+                    environment:
+                      type: string
+                      nullable: false
+                    hash:
+                      type: string
+                      nullable: false
+                    debug:
+                      type: boolean
+                      nullable: false
+                  xml:
+                    name: item
+            application/xml:
+              schema:
+                type: array
+                items:
+                  title: application_info
+                  description: 'application_info get for groups get, read'
+                  type: object
+                  properties:
+                    app_name:
+                      type: string
+                      nullable: false
+                    environment:
+                      type: string
+                      nullable: false
+                    hash:
+                      type: string
+                      nullable: false
+                    debug:
+                      type: boolean
+                      nullable: false
+                  xml:
+                    name: item
+                xml:
+                  name: response
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - application_info
+      summary: 'get/search all instances of application_info'
+      operationId: resourceGetAllApplicationInfo
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'pagination index counting from 0'
+          schema:
+            type: integer
+            minimum: 0
+        -
+          name: limit
+          in: query
+          description: 'number of results'
+          schema:
+            type: integer
+            minimum: 1
+  /simple_popo:
+    get:
+      responses:
+        200:
+          description: 'Retrieves all instances of simple_popo'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  title: simple_popo
+                  description: 'simple_popo get for groups get, read'
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      nullable: false
+                    created_at:
+                      type: string
+                      format: date-time
+                    arbitrary_field:
+                      type: string
+                      nullable: true
+                  xml:
+                    name: item
+            application/xml:
+              schema:
+                type: array
+                items:
+                  title: simple_popo
+                  description: 'simple_popo get for groups get, read'
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      nullable: false
+                    created_at:
+                      type: string
+                      format: date-time
+                    arbitrary_field:
+                      type: string
+                      nullable: true
+                  xml:
+                    name: item
+                xml:
+                  name: response
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - simple_popo
+      summary: 'get/search all instances of simple_popo'
+      operationId: resourceGetAllSimplePopo
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'pagination index counting from 0'
+          schema:
+            type: integer
+            minimum: 0
+        -
+          name: limit
+          in: query
+          description: 'number of results'
+          schema:
+            type: integer
+            minimum: 1
+    post:
+      responses:
+        200:
+          description: 'Creates a new instance of simple_popo'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+          content:
+            application/json:
+              schema:
+                title: simple_popo
+                description: 'simple_popo get for groups get, read'
+                type: object
+                properties:
+                  id:
+                    type: string
+                    nullable: false
+                  created_at:
+                    type: string
+                    format: date-time
+                  arbitrary_field:
+                    type: string
+                    nullable: true
+                xml:
+                  name: item
+            application/xml:
+              schema:
+                title: simple_popo
+                description: 'simple_popo get for groups get, read'
+                type: object
+                properties:
+                  id:
+                    type: string
+                    nullable: false
+                  created_at:
+                    type: string
+                    format: date-time
+                  arbitrary_field:
+                    type: string
+                    nullable: true
+                xml:
+                  name: item
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        415:
+          $ref: '#/components/responses/InvalidFormat'
+        422:
+          $ref: '#/components/responses/ValidationError'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - simple_popo
+      summary: 'create a new single instance of simple_popo'
+      operationId: resourcePostSingleSimplePopo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: simple_popo
+              description: 'simple_popo post for groups post, write'
+              type: object
+              properties:
+                arbitrary_field:
+                  type: string
+                  nullable: true
+          application/xml:
+            schema:
+              title: simple_popo
+              description: 'simple_popo post for groups post, write'
+              type: object
+              properties:
+                arbitrary_field:
+                  type: string
+                  nullable: true
+              xml:
+                name: item
+        description: 'the resource as JSON to persist'
+        required: true
+  '/simple_popo/{id}':
+    parameters:
+      -
+        name: id
+        in: path
+        description: 'the id of the resource'
+        required: true
+        schema:
+          type: string
+  /full_rest_object:
+    get:
+      responses:
+        200:
+          description: 'Retrieves all instances of full_rest_object'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  title: full_rest_object
+                  description: 'full_rest_object get for groups get, read'
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      format: uuid
+                    string_value:
+                      type: string
+                      nullable: false
+                    value_object:
+                      type: string
+                      format: value_object
+                  xml:
+                    name: item
+            application/xml:
+              schema:
+                type: array
+                items:
+                  title: full_rest_object
+                  description: 'full_rest_object get for groups get, read'
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      format: uuid
+                    string_value:
+                      type: string
+                      nullable: false
+                    value_object:
+                      type: string
+                      format: value_object
+                  xml:
+                    name: item
+                xml:
+                  name: response
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - full_rest_object
+      summary: 'get/search all instances of full_rest_object'
+      operationId: resourceGetAllFullRestObject
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'pagination index counting from 0'
+          schema:
+            type: integer
+            minimum: 0
+        -
+          name: limit
+          in: query
+          description: 'number of results'
+          schema:
+            type: integer
+            minimum: 1
+        -
+          name: uuid
+          in: query
+          description: 'search filter uuid'
+          schema:
+            type: string
+        -
+          name: stringValue
+          in: query
+          description: 'search filter stringValue'
+          schema:
+            type: string
+        -
+          name: valueObject
+          in: query
+          description: 'search filter valueObject'
+          schema:
+            type: string
+    post:
+      responses:
+        200:
+          description: 'Creates a new instance of full_rest_object'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+          content:
+            application/json:
+              schema:
+                title: full_rest_object
+                description: 'full_rest_object get for groups get, read'
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                  string_value:
+                    type: string
+                    nullable: false
+                  value_object:
+                    type: string
+                    format: value_object
+                xml:
+                  name: item
+            application/xml:
+              schema:
+                title: full_rest_object
+                description: 'full_rest_object get for groups get, read'
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                  string_value:
+                    type: string
+                    nullable: false
+                  value_object:
+                    type: string
+                    format: value_object
+                xml:
+                  name: item
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        415:
+          $ref: '#/components/responses/InvalidFormat'
+        422:
+          $ref: '#/components/responses/ValidationError'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - full_rest_object
+      summary: 'create a new single instance of full_rest_object'
+      operationId: resourcePostSingleFullRestObject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: full_rest_object
+              description: 'full_rest_object post for groups post, write'
+              type: object
+              properties:
+                uuid:
+                  type: string
+                  format: uuid
+                string_value:
+                  type: string
+                  nullable: false
+                value_object:
+                  type: string
+                  format: value_object
+          application/xml:
+            schema:
+              title: full_rest_object
+              description: 'full_rest_object post for groups post, write'
+              type: object
+              properties:
+                uuid:
+                  type: string
+                  format: uuid
+                string_value:
+                  type: string
+                  nullable: false
+                value_object:
+                  type: string
+                  format: value_object
+              xml:
+                name: item
+        description: 'the resource as JSON to persist'
+        required: true
+  '/full_rest_object/{uuid}':
+    get:
+      responses:
+        200:
+          description: 'Retrieves a single instance of full_rest_object'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+          content:
+            application/json:
+              schema:
+                title: full_rest_object
+                description: 'full_rest_object get for groups get, read'
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                  string_value:
+                    type: string
+                    nullable: false
+                  value_object:
+                    type: string
+                    format: value_object
+                xml:
+                  name: item
+            application/xml:
+              schema:
+                title: full_rest_object
+                description: 'full_rest_object get for groups get, read'
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                  string_value:
+                    type: string
+                    nullable: false
+                  value_object:
+                    type: string
+                    format: value_object
+                xml:
+                  name: item
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - full_rest_object
+      summary: 'retrieve a single instance of full_rest_object'
+      operationId: resourceGetSingleFullRestObject
+    put:
+      responses:
+        200:
+          description: 'Retrieves and update a single instance of full_rest_object'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+          content:
+            application/json:
+              schema:
+                title: full_rest_object
+                description: 'full_rest_object get for groups get, read'
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                  string_value:
+                    type: string
+                    nullable: false
+                  value_object:
+                    type: string
+                    format: value_object
+                xml:
+                  name: item
+            application/xml:
+              schema:
+                title: full_rest_object
+                description: 'full_rest_object get for groups get, read'
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                  string_value:
+                    type: string
+                    nullable: false
+                  value_object:
+                    type: string
+                    format: value_object
+                xml:
+                  name: item
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        415:
+          $ref: '#/components/responses/InvalidFormat'
+        422:
+          $ref: '#/components/responses/ValidationError'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - full_rest_object
+      summary: 'modify a single instance of full_rest_object'
+      operationId: resourcePutSingleFullRestObject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: full_rest_object
+              description: 'full_rest_object put for groups put, write'
+              type: object
+              properties:
+                string_value:
+                  type: string
+                  nullable: false
+                value_object:
+                  type: string
+                  format: value_object
+          application/xml:
+            schema:
+              title: full_rest_object
+              description: 'full_rest_object put for groups put, write'
+              type: object
+              properties:
+                string_value:
+                  type: string
+                  nullable: false
+                value_object:
+                  type: string
+                  format: value_object
+              xml:
+                name: item
+        description: 'the resource as JSON to persist'
+        required: true
+    delete:
+      responses:
+        204:
+          description: 'Deletes a single instance of full_rest_object'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - full_rest_object
+      summary: 'delete a single instance of full_rest_object'
+      operationId: resourceDeleteSingleFullRestObject
+    parameters:
+      -
+        name: uuid
+        in: path
+        description: 'the id of the resource'
+        required: true
+        schema:
+          type: string
+  /recursive_object:
+    get:
+      responses:
+        200:
+          description: 'Retrieves all instances of recursive_object'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  title: recursive_object
+                  description: 'recursive_object get for groups get, read'
+                  type: object
+                  properties:
+                    child:
+                      title: recursive_object
+                      description: 'recursive_object get for groups get, read'
+                      type: object
+                      properties:
+                        child:
+                          title: recursive_object
+                          description: 'recursive_object get for groups get, read'
+                          type: object
+                          properties:
+                            child:
+                              type: object
+                              nullable: false
+                  xml:
+                    name: item
+            application/xml:
+              schema:
+                type: array
+                items:
+                  title: recursive_object
+                  description: 'recursive_object get for groups get, read'
+                  type: object
+                  properties:
+                    child:
+                      title: recursive_object
+                      description: 'recursive_object get for groups get, read'
+                      type: object
+                      properties:
+                        child:
+                          title: recursive_object
+                          description: 'recursive_object get for groups get, read'
+                          type: object
+                          properties:
+                            child:
+                              type: object
+                              nullable: false
+                  xml:
+                    name: item
+                xml:
+                  name: response
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - recursive_object
+      summary: 'get/search all instances of recursive_object'
+      operationId: resourceGetAllRecursiveObject
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'pagination index counting from 0'
+          schema:
+            type: integer
+            minimum: 0
+        -
+          name: limit
+          in: query
+          description: 'number of results'
+          schema:
+            type: integer
+            minimum: 1
+    post:
+      responses:
+        200:
+          description: 'Creates a new instance of recursive_object'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+          content:
+            application/json:
+              schema:
+                title: recursive_object
+                description: 'recursive_object get for groups get, read'
+                type: object
+                properties:
+                  child:
+                    title: recursive_object
+                    description: 'recursive_object get for groups get, read'
+                    type: object
+                    properties:
+                      child:
+                        title: recursive_object
+                        description: 'recursive_object get for groups get, read'
+                        type: object
+                        properties:
+                          child:
+                            type: object
+                            nullable: false
+                xml:
+                  name: item
+            application/xml:
+              schema:
+                title: recursive_object
+                description: 'recursive_object get for groups get, read'
+                type: object
+                properties:
+                  child:
+                    title: recursive_object
+                    description: 'recursive_object get for groups get, read'
+                    type: object
+                    properties:
+                      child:
+                        title: recursive_object
+                        description: 'recursive_object get for groups get, read'
+                        type: object
+                        properties:
+                          child:
+                            type: object
+                            nullable: false
+                xml:
+                  name: item
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        415:
+          $ref: '#/components/responses/InvalidFormat'
+        422:
+          $ref: '#/components/responses/ValidationError'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - recursive_object
+      summary: 'create a new single instance of recursive_object'
+      operationId: resourcePostSingleRecursiveObject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: recursive_object
+              description: 'recursive_object post for groups post, write'
+              type: object
+              properties:
+                child:
+                  title: recursive_object
+                  description: 'recursive_object post for groups post, write'
+                  type: object
+                  properties:
+                    child:
+                      title: recursive_object
+                      description: 'recursive_object post for groups post, write'
+                      type: object
+                      properties:
+                        child:
+                          type: object
+                          nullable: false
+          application/xml:
+            schema:
+              title: recursive_object
+              description: 'recursive_object post for groups post, write'
+              type: object
+              properties:
+                child:
+                  title: recursive_object
+                  description: 'recursive_object post for groups post, write'
+                  type: object
+                  properties:
+                    child:
+                      title: recursive_object
+                      description: 'recursive_object post for groups post, write'
+                      type: object
+                      properties:
+                        child:
+                          type: object
+                          nullable: false
+              xml:
+                name: item
+        description: 'the resource as JSON to persist'
+        required: true
+  /recursive_object_with_id:
+    get:
+      responses:
+        200:
+          description: 'Retrieves all instances of recursive_object_with_id'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  title: recursive_object_with_id
+                  description: 'recursive_object_with_id get for groups get, read'
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    child:
+                      title: recursive_object_with_id
+                      description: 'recursive_object_with_id get for groups get, read'
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        child:
+                          title: recursive_object_with_id
+                          description: 'recursive_object_with_id get for groups get, read'
+                          type: object
+                          properties:
+                            id:
+                              type: object
+                              nullable: false
+                            child:
+                              type: object
+                              nullable: false
+                  xml:
+                    name: item
+            application/xml:
+              schema:
+                type: array
+                items:
+                  title: recursive_object_with_id
+                  description: 'recursive_object_with_id get for groups get, read'
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    child:
+                      title: recursive_object_with_id
+                      description: 'recursive_object_with_id get for groups get, read'
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        child:
+                          title: recursive_object_with_id
+                          description: 'recursive_object_with_id get for groups get, read'
+                          type: object
+                          properties:
+                            id:
+                              type: object
+                              nullable: false
+                            child:
+                              type: object
+                              nullable: false
+                  xml:
+                    name: item
+                xml:
+                  name: response
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - recursive_object_with_id
+      summary: 'get/search all instances of recursive_object_with_id'
+      operationId: resourceGetAllRecursiveObjectWithId
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'pagination index counting from 0'
+          schema:
+            type: integer
+            minimum: 0
+        -
+          name: limit
+          in: query
+          description: 'number of results'
+          schema:
+            type: integer
+            minimum: 1
+    post:
+      responses:
+        200:
+          description: 'Creates a new instance of recursive_object_with_id'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+          content:
+            application/json:
+              schema:
+                title: recursive_object_with_id
+                description: 'recursive_object_with_id get for groups get, read'
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  child:
+                    title: recursive_object_with_id
+                    description: 'recursive_object_with_id get for groups get, read'
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      child:
+                        title: recursive_object_with_id
+                        description: 'recursive_object_with_id get for groups get, read'
+                        type: object
+                        properties:
+                          id:
+                            type: object
+                            nullable: false
+                          child:
+                            type: object
+                            nullable: false
+                xml:
+                  name: item
+            application/xml:
+              schema:
+                title: recursive_object_with_id
+                description: 'recursive_object_with_id get for groups get, read'
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  child:
+                    title: recursive_object_with_id
+                    description: 'recursive_object_with_id get for groups get, read'
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      child:
+                        title: recursive_object_with_id
+                        description: 'recursive_object_with_id get for groups get, read'
+                        type: object
+                        properties:
+                          id:
+                            type: object
+                            nullable: false
+                          child:
+                            type: object
+                            nullable: false
+                xml:
+                  name: item
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        415:
+          $ref: '#/components/responses/InvalidFormat'
+        422:
+          $ref: '#/components/responses/ValidationError'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - recursive_object_with_id
+      summary: 'create a new single instance of recursive_object_with_id'
+      operationId: resourcePostSingleRecursiveObjectWithId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: recursive_object_with_id
+              description: 'recursive_object_with_id post for groups post, write'
+              type: object
+              properties:
+                child:
+                  title: recursive_object_with_id
+                  description: 'recursive_object_with_id post for groups post, write'
+                  type: object
+                  properties:
+                    child:
+                      title: recursive_object_with_id
+                      description: 'recursive_object_with_id post for groups post, write'
+                      type: object
+                      properties:
+                        child:
+                          type: object
+                          nullable: false
+          application/xml:
+            schema:
+              title: recursive_object_with_id
+              description: 'recursive_object_with_id post for groups post, write'
+              type: object
+              properties:
+                child:
+                  title: recursive_object_with_id
+                  description: 'recursive_object_with_id post for groups post, write'
+                  type: object
+                  properties:
+                    child:
+                      title: recursive_object_with_id
+                      description: 'recursive_object_with_id post for groups post, write'
+                      type: object
+                      properties:
+                        child:
+                          type: object
+                          nullable: false
+              xml:
+                name: item
+        description: 'the resource as JSON to persist'
+        required: true
+  '/recursive_object_with_id/{id}':
+    get:
+      responses:
+        200:
+          description: 'Retrieves a single instance of recursive_object_with_id'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+          content:
+            application/json:
+              schema:
+                title: recursive_object_with_id
+                description: 'recursive_object_with_id get for groups get, read'
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  child:
+                    title: recursive_object_with_id
+                    description: 'recursive_object_with_id get for groups get, read'
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      child:
+                        title: recursive_object_with_id
+                        description: 'recursive_object_with_id get for groups get, read'
+                        type: object
+                        properties:
+                          id:
+                            type: object
+                            nullable: false
+                          child:
+                            type: object
+                            nullable: false
+                xml:
+                  name: item
+            application/xml:
+              schema:
+                title: recursive_object_with_id
+                description: 'recursive_object_with_id get for groups get, read'
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  child:
+                    title: recursive_object_with_id
+                    description: 'recursive_object_with_id get for groups get, read'
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      child:
+                        title: recursive_object_with_id
+                        description: 'recursive_object_with_id get for groups get, read'
+                        type: object
+                        properties:
+                          id:
+                            type: object
+                            nullable: false
+                          child:
+                            type: object
+                            nullable: false
+                xml:
+                  name: item
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - recursive_object_with_id
+      summary: 'retrieve a single instance of recursive_object_with_id'
+      operationId: resourceGetSingleRecursiveObjectWithId
+    put:
+      responses:
+        200:
+          description: 'Retrieves and update a single instance of recursive_object_with_id'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+          content:
+            application/json:
+              schema:
+                title: recursive_object_with_id
+                description: 'recursive_object_with_id get for groups get, read'
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  child:
+                    title: recursive_object_with_id
+                    description: 'recursive_object_with_id get for groups get, read'
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      child:
+                        title: recursive_object_with_id
+                        description: 'recursive_object_with_id get for groups get, read'
+                        type: object
+                        properties:
+                          id:
+                            type: object
+                            nullable: false
+                          child:
+                            type: object
+                            nullable: false
+                xml:
+                  name: item
+            application/xml:
+              schema:
+                title: recursive_object_with_id
+                description: 'recursive_object_with_id get for groups get, read'
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  child:
+                    title: recursive_object_with_id
+                    description: 'recursive_object_with_id get for groups get, read'
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      child:
+                        title: recursive_object_with_id
+                        description: 'recursive_object_with_id get for groups get, read'
+                        type: object
+                        properties:
+                          id:
+                            type: object
+                            nullable: false
+                          child:
+                            type: object
+                            nullable: false
+                xml:
+                  name: item
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        415:
+          $ref: '#/components/responses/InvalidFormat'
+        422:
+          $ref: '#/components/responses/ValidationError'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - recursive_object_with_id
+      summary: 'modify a single instance of recursive_object_with_id'
+      operationId: resourcePutSingleRecursiveObjectWithId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: recursive_object_with_id
+              description: 'recursive_object_with_id put for groups put, write'
+              type: object
+              properties:
+                child:
+                  title: recursive_object_with_id
+                  description: 'recursive_object_with_id put for groups put, write'
+                  type: object
+                  properties:
+                    child:
+                      title: recursive_object_with_id
+                      description: 'recursive_object_with_id put for groups put, write'
+                      type: object
+                      properties:
+                        child:
+                          type: object
+                          nullable: false
+          application/xml:
+            schema:
+              title: recursive_object_with_id
+              description: 'recursive_object_with_id put for groups put, write'
+              type: object
+              properties:
+                child:
+                  title: recursive_object_with_id
+                  description: 'recursive_object_with_id put for groups put, write'
+                  type: object
+                  properties:
+                    child:
+                      title: recursive_object_with_id
+                      description: 'recursive_object_with_id put for groups put, write'
+                      type: object
+                      properties:
+                        child:
+                          type: object
+                          nullable: false
+              xml:
+                name: item
+        description: 'the resource as JSON to persist'
+        required: true
+    delete:
+      responses:
+        204:
+          description: 'Deletes a single instance of recursive_object_with_id'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - recursive_object_with_id
+      summary: 'delete a single instance of recursive_object_with_id'
+      operationId: resourceDeleteSingleRecursiveObjectWithId
+    parameters:
+      -
+        name: id
+        in: path
+        description: 'the id of the resource'
+        required: true
+        schema:
+          type: string
+  /status:
+    get:
+      responses:
+        200:
+          description: 'Retrieves all instances of status'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  title: status
+                  description: 'status get for groups get, read'
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      nullable: false
+                    status:
+                      type: string
+                      nullable: false
+                    optional_reference:
+                      type: string
+                      nullable: true
+                    context:
+                      type: array
+                      items:
+                        oneOf:
+                          -
+                            type: string
+                            nullable: true
+                          -
+                            type: integer
+                          -
+                            type: boolean
+                      nullable: true
+                    no_errors:
+                      description: 'Returns true to tell the status check is ''healthy''.'
+                      type: boolean
+                      nullable: false
+                  xml:
+                    name: item
+            application/xml:
+              schema:
+                type: array
+                items:
+                  title: status
+                  description: 'status get for groups get, read'
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      nullable: false
+                    status:
+                      type: string
+                      nullable: false
+                    optional_reference:
+                      type: string
+                      nullable: true
+                    context:
+                      type: array
+                      items:
+                        oneOf:
+                          -
+                            type: string
+                            nullable: true
+                          -
+                            type: integer
+                          -
+                            type: boolean
+                      nullable: true
+                    no_errors:
+                      description: 'Returns true to tell the status check is ''healthy''.'
+                      type: boolean
+                      nullable: false
+                  xml:
+                    name: item
+                xml:
+                  name: response
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - status
+      summary: 'get/search all instances of status'
+      operationId: resourceGetAllStatus
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'pagination index counting from 0'
+          schema:
+            type: integer
+            minimum: 0
+        -
+          name: limit
+          in: query
+          description: 'number of results'
+          schema:
+            type: integer
+            minimum: 1
+        -
+          name: status
+          in: query
+          description: 'search filter status'
+          schema:
+            type: string
+  '/status/{id}':
+    get:
+      responses:
+        200:
+          description: 'Retrieves a single instance of status'
+          headers:
+            x-ratelimit-limit:
+              $ref: '#/components/headers/x-ratelimit-limit'
+            x-ratelimit-remaining:
+              $ref: '#/components/headers/x-ratelimit-remaining'
+          content:
+            application/json:
+              schema:
+                title: status
+                description: 'status get for groups get, read'
+                type: object
+                properties:
+                  id:
+                    type: string
+                    nullable: false
+                  status:
+                    type: string
+                    nullable: false
+                  optional_reference:
+                    type: string
+                    nullable: true
+                  context:
+                    type: array
+                    items:
+                      oneOf:
+                        -
+                          type: string
+                          nullable: true
+                        -
+                          type: integer
+                        -
+                          type: boolean
+                    nullable: true
+                  no_errors:
+                    description: 'Returns true to tell the status check is ''healthy''.'
+                    type: boolean
+                    nullable: false
+                xml:
+                  name: item
+            application/xml:
+              schema:
+                title: status
+                description: 'status get for groups get, read'
+                type: object
+                properties:
+                  id:
+                    type: string
+                    nullable: false
+                  status:
+                    type: string
+                    nullable: false
+                  optional_reference:
+                    type: string
+                    nullable: true
+                  context:
+                    type: array
+                    items:
+                      oneOf:
+                        -
+                          type: string
+                          nullable: true
+                        -
+                          type: integer
+                        -
+                          type: boolean
+                    nullable: true
+                  no_errors:
+                    description: 'Returns true to tell the status check is ''healthy''.'
+                    type: boolean
+                    nullable: false
+                xml:
+                  name: item
+        401:
+          $ref: '#/components/responses/NotAuthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/InternalError'
+        502:
+          $ref: '#/components/responses/ServerDependencyError'
+        503:
+          $ref: '#/components/responses/MaintenanceMode'
+      tags:
+        - status
+      summary: 'retrieve a single instance of status'
+      operationId: resourceGetSingleStatus
+    parameters:
+      -
+        name: id
+        in: path
+        description: 'the id of the resource'
+        required: true
+        schema:
+          type: string
+servers:
+  -
+    url: /test-url
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+        code:
+          oneOf:
+            -
+              type: string
+            -
+              type: integer
+        trace:
+          type: string
+      xml:
+        name: response
+  responses:
+    InvalidFormat:
+      description: 'The body input could not be parsed'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: 'The body input was in a proper format, but the input values were not valid'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              type:
+                type: string
+              message:
+                type: string
+              code:
+                oneOf:
+                  -
+                    type: string
+                  -
+                    type: integer
+              trace:
+                type: string
+              errors:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+            xml:
+              name: response
+        application/xml:
+          schema:
+            type: object
+            properties:
+              type:
+                type: string
+              message:
+                type: string
+              code:
+                oneOf:
+                  -
+                    type: string
+                  -
+                    type: integer
+              trace:
+                type: string
+              errors:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+            xml:
+              name: response
+    TooManyRequests:
+      description: 'Too many requests per seconds were sent'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+    MaintenanceMode:
+      description: 'App is in maintenance mode'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: 'Response when resource could not be found'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotAuthorized:
+      description: 'You have no permission to do this call'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalError:
+      description: 'An internal error occured'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServerDependencyError:
+      description: 'The server required an external response which threw an error'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+  headers:
+    x-ratelimit-limit:
+      description: 'Request limit per hour'
+      schema:
+        type: integer
+      example: 100
+    x-ratelimit-remaining:
+      description: 'Request limit per hour'
+      schema:
+        type: integer
+      example: 94

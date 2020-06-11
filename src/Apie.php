@@ -7,10 +7,6 @@ use erasys\OpenApi\Spec\v3\Document;
 use erasys\OpenApi\Spec\v3\Info;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyInfo\PropertyAccessExtractorInterface;
-use Symfony\Component\PropertyInfo\PropertyDescriptionExtractorInterface;
-use Symfony\Component\PropertyInfo\PropertyInitializableExtractorInterface;
-use Symfony\Component\PropertyInfo\PropertyListExtractorInterface;
 use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
@@ -20,12 +16,13 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use W2w\Lib\Apie\Core\ApieCore;
 use W2w\Lib\Apie\Core\ApiResourceFacade;
+use W2w\Lib\Apie\Core\ApiResourceMetadataFactory;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\Encodings\ChainableFormatRetriever;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
+use W2w\Lib\Apie\Core\PluginContainer;
 use W2w\Lib\Apie\Core\ResourceFactories\ChainableFactory;
 use W2w\Lib\Apie\Exceptions\BadConfigurationException;
-use W2w\Lib\Apie\Exceptions\NotAnApiePluginException;
 use W2w\Lib\Apie\Interfaces\ApiResourceFactoryInterface;
 use W2w\Lib\Apie\Interfaces\FormatRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\ResourceSerializerInterface;
@@ -38,14 +35,21 @@ use W2w\Lib\Apie\PluginInterfaces\ApiResourceFactoryProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\CacheItemPoolProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\EncoderProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\NormalizerProviderInterface;
+use W2w\Lib\Apie\PluginInterfaces\ObjectAccessProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\OpenApiEventProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\OpenApiInfoProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\PropertyInfoExtractorProviderInterface;
+use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
 use W2w\Lib\Apie\PluginInterfaces\ResourceProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SchemaProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SerializerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SymfonyComponentProviderInterface;
 use W2w\Lib\Apie\Plugins\Core\CorePlugin;
+use W2w\Lib\Apie\Plugins\PrimaryKey\PrimaryKeyPlugin;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\CachedObjectAccess;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\GroupedObjectAccess;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccessInterface;
 
 final class Apie implements SerializerProviderInterface,
     ResourceProviderInterface,
@@ -74,64 +78,9 @@ final class Apie implements SerializerProviderInterface,
     private $cacheFolder;
 
     /**
-     * @var SerializerProviderInterface[]
+     * @var PluginContainer
      */
-    private $serializers = [];
-
-    /**
-     * @var ResourceProviderInterface[]
-     */
-    private $resources = [];
-
-    /**
-     * @var NormalizerProviderInterface[]
-     */
-    private $normalizers = [];
-
-    /**
-     * @var EncoderProviderInterface[]
-     */
-    private $encoders = [];
-
-    /**
-     * @var SymfonyComponentProviderInterface[]
-     */
-    private $symfonyComponents = [];
-
-    /**
-     * @var CacheItemPoolProviderInterface[]
-     */
-    private $cacheItemPools = [];
-
-    /**
-     * @var object[]
-     */
-    private $plugins = [];
-
-    /**
-     * @var AnnotationReaderProviderInterface[]
-     */
-    private $annotationReaders = [];
-
-    /**
-     * @var ApiResourceFactoryProviderInterface[]
-     */
-    private $apiResourceFactories = [];
-
-    /**
-     * @var OpenApiInfoProviderInterface[]
-     */
-    private $openApiInfoProviders = [];
-
-    /**
-     * @var ApieConfigInterface[]
-     */
-    private $configs = [];
-
-    /**
-     * @var SchemaProviderInterface[]
-     */
-    private $schemaDefinitions = [];
+    private $pluginContainer;
 
     /**
      * @var ApieCore
@@ -149,16 +98,6 @@ final class Apie implements SerializerProviderInterface,
     private $chainableFormatRetriever;
 
     /**
-     * @var OpenApiEventProviderInterface[]
-     */
-    private $openApiEventProviders = [];
-
-    /**
-     * @var PropertyInfoExtractorProviderInterface[]
-     */
-    private $propertyInfoExtractors = [];
-
-    /**
 
      * @param object[] $plugins
      * @param bool $debug
@@ -169,41 +108,18 @@ final class Apie implements SerializerProviderInterface,
     {
         $this->debug = $debug;
         $this->cacheFolder = $cacheFolder;
-        static $mapping = [
-            SerializerProviderInterface::class => 'serializers',
-            ResourceProviderInterface::class => 'resources',
-            NormalizerProviderInterface::class => 'normalizers',
-            EncoderProviderInterface::class => 'encoders',
-            SymfonyComponentProviderInterface::class => 'symfonyComponents',
-            CacheItemPoolProviderInterface::class => 'cacheItemPools',
-            AnnotationReaderProviderInterface::class => 'annotationReaders',
-            ApiResourceFactoryProviderInterface::class => 'apiResourceFactories',
-            OpenApiInfoProviderInterface::class => 'openApiInfoProviders',
-            ApieConfigInterface::class => 'configs',
-            SchemaProviderInterface::class => 'schemaDefinitions',
-            OpenApiEventProviderInterface::class => 'openApiEventProviders',
-            PropertyInfoExtractorProviderInterface::class => 'propertyInfoExtractors',
-        ];
         if ($addCorePlugin) {
+            $plugins[] = new PrimaryKeyPlugin();
             $plugins[] = new CorePlugin();
         }
-        $this->plugins = $plugins;
-        foreach ($plugins as $plugin) {
-            $isUsed = false;
-            foreach ($mapping as $className => $propertyName) {
-                if ($plugin instanceof $className) {
-                    $this->$propertyName[] = $plugin;
-                    if (!$isUsed && $plugin instanceof ApieAwareInterface) {
-                        $plugin->setApie($this);
-                    }
-                    $isUsed = true;
-                }
+        $this->pluginContainer = new PluginContainer($plugins);
+        $this->pluginContainer->each(
+            ApieAwareInterface::class,
+            function (ApieAwareInterface $plugin) {
+                $plugin->setApie($this);
             }
-            if (!$isUsed) {
-                throw new NotAnApiePluginException($plugin);
-            }
-        }
-        $this->apieCore = new ApieCore($this);
+        );
+        $this->apieCore = new ApieCore($this, $this->pluginContainer);
     }
 
     /**
@@ -214,6 +130,7 @@ final class Apie implements SerializerProviderInterface,
      */
     public function createContext(array $plugins = []): self
     {
+        $plugins[] = new PrimaryKeyPlugin();
         $plugins[] = $this;
         return new Apie($plugins, $this->debug, $this->cacheFolder, false);
     }
@@ -236,17 +153,7 @@ final class Apie implements SerializerProviderInterface,
 
     public function getPlugin(string $pluginClass): object
     {
-        $last = null;
-        foreach ($this->plugins as $plugin) {
-            if ($plugin instanceof $pluginClass) {
-                return $plugin;
-            }
-            $last = $plugin;
-        }
-        if ($last instanceof self) {
-            return $last->getPlugin($pluginClass);
-        }
-        throw new BadConfigurationException('Plugin ' . $pluginClass . ' not found!');
+        return $this->pluginContainer->getPlugin($pluginClass);
     }
 
     /**
@@ -254,10 +161,27 @@ final class Apie implements SerializerProviderInterface,
      */
     public function getResourceSerializer(): ResourceSerializerInterface
     {
-        if (empty($this->serializers)) {
-            throw new BadConfigurationException('I have no resource serializer set up');
+        $serializer = $this->pluginContainer->first(
+            SerializerProviderInterface::class,
+            new BadConfigurationException('I have no resource serializer set up')
+        )->getResourceSerializer();
+        if (!is_callable([$serializer, 'decodeRequestBody'])) {
+            @trigger_error(
+                'Class ' . get_class($serializer) . ' has no method decodeRequestBody and this will be required in Apie version 4',
+                E_USER_DEPRECATED
+            );
         }
-        return reset($this->serializers)->getResourceSerializer();
+        return $serializer;
+    }
+
+    /**
+     * @internal
+     * @deprecated is only added in CorePlugin, will be removed in 4.0.
+     * @return iterable
+     */
+    public function getResourceLifecycles(): iterable
+    {
+        return $this->pluginContainer->getPluginsWithInterface(ResourceLifeCycleInterface::class);
     }
 
     /**
@@ -267,11 +191,7 @@ final class Apie implements SerializerProviderInterface,
      */
     public function getResources(): array
     {
-        $resources = [];
-        foreach ($this->resources as $resourceProvider) {
-            $resources = array_merge($resources, $resourceProvider->getResources());
-        }
-        return array_values(array_unique($resources));
+        return array_values(array_unique($this->pluginContainer->merge(ResourceProviderInterface::class, 'getResources')));
     }
 
     /**
@@ -279,11 +199,7 @@ final class Apie implements SerializerProviderInterface,
      */
     public function getNormalizers(): array
     {
-        $normalizers = [];
-        foreach ($this->normalizers as $normalizerProvider) {
-            $normalizers = array_merge($normalizers, $normalizerProvider->getNormalizers());
-        }
-        return $normalizers;
+        return $this->pluginContainer->merge(NormalizerProviderInterface::class, 'getNormalizers');
     }
 
     /**
@@ -291,71 +207,62 @@ final class Apie implements SerializerProviderInterface,
      */
     public function getEncoders(): array
     {
-        $encoders = [];
-        foreach ($this->encoders as $encoderProvider) {
-            $encoders = array_merge($encoders, $encoderProvider->getEncoders());
-        }
-        return $encoders;
+        return $this->pluginContainer->merge(EncoderProviderInterface::class, 'getEncoders');
     }
 
     public function getClassMetadataFactory(): ClassMetadataFactoryInterface
     {
-        if (empty($this->symfonyComponents)) {
-            throw new BadConfigurationException('I have no symfony component provider set up');
-        }
-        return reset($this->symfonyComponents)->getClassMetadataFactory();
+        return $this->pluginContainer->first(
+            SymfonyComponentProviderInterface::class,
+            new BadConfigurationException('I have no symfony component provider set up')
+        )->getClassMetadataFactory();
     }
 
     public function getPropertyConverter(): NameConverterInterface
     {
-        if (empty($this->symfonyComponents)) {
-            throw new BadConfigurationException('I have no symfony component provider set up');
-        }
-        return reset($this->symfonyComponents)->getPropertyConverter();
+        return $this->pluginContainer->first(
+            SymfonyComponentProviderInterface::class,
+            new BadConfigurationException('I have no symfony component provider set up')
+        )->getPropertyConverter();
     }
 
     public function getPropertyAccessor(): PropertyAccessor
     {
-        if (empty($this->symfonyComponents)) {
-            throw new BadConfigurationException('I have no symfony component provider set up');
-        }
-        return reset($this->symfonyComponents)->getPropertyAccessor();
+        return $this->pluginContainer->first(
+            SymfonyComponentProviderInterface::class,
+            new BadConfigurationException('I have no symfony component provider set up')
+        )->getPropertyAccessor();
     }
 
     public function getPropertyTypeExtractor(): PropertyTypeExtractorInterface
     {
-        if (empty($this->symfonyComponents)) {
-            throw new BadConfigurationException('I have no symfony component provider set up');
-        }
-        return reset($this->symfonyComponents)->getPropertyTypeExtractor();
+        return $this->pluginContainer->first(
+            SymfonyComponentProviderInterface::class,
+            new BadConfigurationException('I have no symfony component provider set up')
+        )->getPropertyTypeExtractor();
     }
 
     public function getCacheItemPool(): CacheItemPoolInterface
     {
-        if (empty($this->cacheItemPools)) {
-            throw new BadConfigurationException('I have no cache item pool provider set up');
-        }
-        return reset($this->cacheItemPools)->getCacheItemPool();
+        return $this->pluginContainer->first(
+            CacheItemPoolProviderInterface::class,
+            new BadConfigurationException('I have no cache item pool provider set up')
+        )->getCacheItemPool();
     }
 
     public function getAnnotationReader(): Reader
     {
-        if (empty($this->annotationReaders)) {
-            throw new BadConfigurationException('I have no annotation reader set up');
-        }
-        return reset($this->annotationReaders)->getAnnotationReader();
+        return $this->pluginContainer->first(
+            AnnotationReaderProviderInterface::class,
+            new BadConfigurationException('I have no annotation reader set up')
+        )->getAnnotationReader();
     }
 
     public function getFormatRetriever(): FormatRetrieverInterface
     {
         if (!$this->chainableFormatRetriever) {
             $this->chainableFormatRetriever = new ChainableFormatRetriever(
-                array_map(
-                    function (EncoderProviderInterface $encoderProvider) {
-                        return $encoderProvider->getFormatRetriever();
-                    },
-                    $this->encoders
-                )
+                iterator_to_array($this->pluginContainer->combine(EncoderProviderInterface::class, 'getFormatRetriever'))
             );
         }
         return $this->chainableFormatRetriever;
@@ -364,6 +271,11 @@ final class Apie implements SerializerProviderInterface,
     public function getIdentifierExtractor(): IdentifierExtractor
     {
         return $this->apieCore->getIdentifierExtractor();
+    }
+
+    public function getApiResourceMetadataFactory(): ApiResourceMetadataFactory
+    {
+        return $this->apieCore->getApiResourceMetadataFactory();
     }
 
     public function getApiResourceFacade(): ApiResourceFacade
@@ -385,12 +297,7 @@ final class Apie implements SerializerProviderInterface,
     {
         if (!$this->chainableFactory) {
             $this->chainableFactory = new ChainableFactory(
-                array_map(
-                    function (ApiResourceFactoryProviderInterface $factoryProvider) {
-                        return $factoryProvider->getApiResourceFactory();
-                    },
-                    $this->apiResourceFactories
-                )
+                iterator_to_array($this->pluginContainer->combine(ApiResourceFactoryProviderInterface::class, 'getApiResourceFactory'))
             );
         }
         return $this->chainableFactory;
@@ -398,24 +305,23 @@ final class Apie implements SerializerProviderInterface,
 
     public function createInfo(): Info
     {
-        if (empty($this->openApiInfoProviders)) {
+        $res = $this->pluginContainer->first(OpenApiInfoProviderInterface::class, null);
+
+        if (empty($res)) {
             return new Info('Apie', Apie::VERSION);
         }
-        return reset($this->openApiInfoProviders)->createInfo();
+        return $res->createInfo();
     }
 
     public function getBaseUrl(): string
     {
-        if (empty($this->configs)) {
-            throw new BadConfigurationException('I have no config set up');
-        }
-        return reset($this->configs)->getBaseUrl();
+        return $this->pluginContainer->first(ApieConfigInterface::class, new BadConfigurationException('I have no config set up'))->getBaseUrl();
     }
 
     public function getDefinedStaticData(): array
     {
         $result = [];
-        foreach (array_reverse($this->schemaDefinitions) as $schemaDefinition) {
+        foreach (array_reverse($this->pluginContainer->getPluginsWithInterface(SchemaProviderInterface::class)) as $schemaDefinition) {
             foreach ($schemaDefinition->getDefinedStaticData() as $className => $schema) {
                 $result[$className] = $schema;
             }
@@ -426,7 +332,7 @@ final class Apie implements SerializerProviderInterface,
     public function getDynamicSchemaLogic(): array
     {
         $result = [];
-        foreach (array_reverse($this->schemaDefinitions) as $schemaDefinition) {
+        foreach (array_reverse($this->pluginContainer->getPluginsWithInterface(SchemaProviderInterface::class)) as $schemaDefinition) {
             foreach ($schemaDefinition->getDynamicSchemaLogic() as $className => $callable) {
                 $result[$className] = $callable;
             }
@@ -441,54 +347,66 @@ final class Apie implements SerializerProviderInterface,
 
     public function onOpenApiDocGenerated(Document $document): Document
     {
-        foreach ($this->openApiEventProviders as $openApiEventProvider) {
-            $document = $openApiEventProvider->onOpenApiDocGenerated($document);
-        }
+        $this->pluginContainer->each(OpenApiEventProviderInterface::class, function (OpenApiEventProviderInterface $plugin) use (&$document) {
+            $document = $plugin->onOpenApiDocGenerated($document);
+        });
         return $document;
     }
 
+    /**
+     * @deprecated  use getObjectAccess instead
+     */
     public function getListExtractors(): array
     {
-        $result = [];
-        foreach ($this->propertyInfoExtractors as $extractor) {
-            $result  = $result + $extractor->getListExtractors();
-        }
-        return $result;
+        return $this->pluginContainer->merge(PropertyInfoExtractorProviderInterface::class, 'getListExtractors');
     }
 
+    /**
+     * @deprecated  use getObjectAccess instead
+     */
     public function getTypeExtractors(): array
     {
-        $result = [];
-        foreach ($this->propertyInfoExtractors as $extractor) {
-            $result  = $result + $extractor->getTypeExtractors();
-        }
-        return $result;
+        return $this->pluginContainer->merge(PropertyInfoExtractorProviderInterface::class, 'getTypeExtractors');
     }
 
+    /**
+     * @deprecated  use getObjectAccess instead
+     */
     public function getDescriptionExtractors(): array
     {
-        $result = [];
-        foreach ($this->propertyInfoExtractors as $extractor) {
-            $result  = $result + $extractor->getDescriptionExtractors();
-        }
-        return $result;
+        return $this->pluginContainer->merge(PropertyInfoExtractorProviderInterface::class, 'getDescriptionExtractors');
     }
 
+    /**
+     * @deprecated  use getObjectAccess instead
+     */
     public function getAccessExtractors(): array
     {
-        $result = [];
-        foreach ($this->propertyInfoExtractors as $extractor) {
-            $result  = $result + $extractor->getAccessExtractors();
-        }
-        return $result;
+        return $this->pluginContainer->merge(PropertyInfoExtractorProviderInterface::class, 'getAccessExtractors');
     }
 
+    /**
+     * @deprecated  use getObjectAccess instead
+     */
     public function getInitializableExtractors(): array
     {
-        $result = [];
-        foreach ($this->propertyInfoExtractors as $extractor) {
-            $result  = $result + $extractor->getInitializableExtractors();
+        return $this->pluginContainer->merge(PropertyInfoExtractorProviderInterface::class, 'getInitializableExtractors');
+    }
+
+    public function getObjectAccess(): ObjectAccessInterface
+    {
+        $objectAccess = new ObjectAccess();
+        $objectAccesses = $this->pluginContainer->getPluginsWithInterface(ObjectAccessProviderInterface::class);
+        if (!empty($objectAccesses)) {
+            $list = [];
+            foreach ($objectAccesses as $objectAccessPlugin) {
+                $list = array_merge($list, $objectAccessPlugin->getObjectAccesses());
+            }
+            $objectAccess = new GroupedObjectAccess($objectAccess, $list);
         }
-        return $result;
+        if (!$this->debug && $this->cacheFolder) {
+            return new CachedObjectAccess($objectAccess, $this->getCacheItemPool());
+        }
+        return $objectAccess;
     }
 }

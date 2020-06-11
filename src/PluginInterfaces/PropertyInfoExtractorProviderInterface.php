@@ -9,6 +9,9 @@ use Symfony\Component\PropertyInfo\PropertyInitializableExtractorInterface;
 use Symfony\Component\PropertyInfo\PropertyListExtractorInterface;
 use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 
+/**
+ * @deprecated use ObjectAccessProviderInterface instead
+ */
 interface PropertyInfoExtractorProviderInterface
 {
     /**

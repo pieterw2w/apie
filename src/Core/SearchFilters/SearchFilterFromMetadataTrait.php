@@ -3,7 +3,13 @@
 namespace W2w\Lib\Apie\Core\SearchFilters;
 
 use W2w\Lib\Apie\Core\Models\ApiResourceClassMetadata;
+use W2w\Lib\Apie\Interfaces\SearchFilterProviderInterface;
 
+/**
+ * Implementation for SearchFilterProviderInterface to get the search result fields from the api resource metadata.
+ *
+ * @see SearchFilterProviderInterface
+ */
 trait SearchFilterFromMetadataTrait
 {
     /**

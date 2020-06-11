@@ -13,7 +13,7 @@ use Throwable;
 use W2w\Lib\Apie\Exceptions\ValidationException;
 
 /**
- * Class overriding ObjectNormalizer to workaround https://github.com/symfony/symfony/issues/33622
+ * @deprecated use ApieObjectAccessNormalizer instead.
  */
 class ApieObjectNormalizer extends ObjectNormalizer
 {

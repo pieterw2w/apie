@@ -8,10 +8,19 @@ use W2w\Lib\Apie\Exceptions\BadConfigurationException;
  */
 class ChainedResources implements ApiResourcesInterface
 {
+    /**
+     * @var string[]
+     */
     private $static = [];
 
+    /**
+     * @var ApiResourcesInterface[]
+     */
     private $chainedResources = [];
 
+    /**
+     * @param (string|ApiResourcesInterface)[] $resources
+     */
     public function __construct(array $resources)
     {
         foreach ($resources as $resource)
@@ -28,6 +37,9 @@ class ChainedResources implements ApiResourcesInterface
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getApiResources(): array
     {
         $res = $this->static;

@@ -22,7 +22,7 @@ class PhpPrimitiveTest extends TestCase
         $boolean = new Schema(['type' => 'boolean']);
         $int = new Schema(['type' => 'number', 'format' => 'int32']);
         $float = new Schema(['type' => 'number', 'format' => 'double']);
-        $string = new Schema(['type' => 'string', 'minimum' => 1]);
+        $string = new Schema(['type' => 'string']);
 
         yield [$string, PhpPrimitive::STRING];
         yield [$boolean, PhpPrimitive::BOOL];

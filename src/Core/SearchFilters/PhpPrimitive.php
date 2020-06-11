@@ -6,6 +6,9 @@ use W2w\Lib\Apie\Exceptions\InvalidReturnTypeOfApiResourceException;
 use W2w\Lib\Apie\Interfaces\ValueObjectInterface;
 use W2w\Lib\Apie\Plugins\ValueObject\ValueObjects\StringEnumTrait;
 
+/**
+ * Enum that represents a php primitive typehint.
+ */
 class PhpPrimitive implements ValueObjectInterface
 {
     const STRING = 'STRING';
@@ -34,7 +37,7 @@ class PhpPrimitive implements ValueObjectInterface
                 return new Schema(['type' => 'number', 'format' => 'double']);
         }
 
-        return new Schema(['type' => 'string', 'minimum' => 1]);
+        return new Schema(['type' => 'string']);
     }
 
     /**

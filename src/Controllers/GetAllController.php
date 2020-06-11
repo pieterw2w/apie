@@ -12,10 +12,20 @@ use W2w\Lib\Apie\Core\ClassResourceConverter;
  */
 class GetAllController
 {
+    /**
+     * @var ApiResourceFacade
+     */
     private $apiResourceFacade;
 
+    /**
+     * @var ClassResourceConverter
+     */
     private $converter;
 
+    /**
+     * @param ApiResourceFacade $apiResourceFacade
+     * @param ClassResourceConverter $converter
+     */
     public function __construct(
         ApiResourceFacade $apiResourceFacade,
         ClassResourceConverter $converter

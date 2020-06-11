@@ -7,6 +7,7 @@ use W2w\Lib\Apie\Plugins\ApplicationInfo\ApiResources\ApplicationInfo;
 use W2w\Lib\Apie\Plugins\StatusCheck\ApiResources\Status;
 use W2w\Test\Apie\OpenApiSchema\Data\MultipleTypesObject;
 use W2w\Test\Apie\OpenApiSchema\Data\RecursiveObject;
+use W2w\Test\Apie\OpenApiSchema\Data\RecursiveObjectWithId;
 
 class ApiResourcesFromNamespaceTest extends TestCase
 {
@@ -19,11 +20,11 @@ class ApiResourcesFromNamespaceTest extends TestCase
     public function testCreateApiResources()
     {
         $this->assertEquals(
-            [MultipleTypesObject::class, RecursiveObject::class, ApplicationInfo::class, Status::class],
+            [MultipleTypesObject::class, RecursiveObject::class, RecursiveObjectWithId::class, ApplicationInfo::class, Status::class],
             ApiResourcesFromNamespace::createApiResources('W2w\Test\Apie\OpenApiSchema\Data')
         );
         $this->assertEquals(
-            [MultipleTypesObject::class, RecursiveObject::class],
+            [MultipleTypesObject::class, RecursiveObject::class, RecursiveObjectWithId::class],
             ApiResourcesFromNamespace::createApiResources('W2w\Test\Apie\OpenApiSchema\Data', false)
         );
 

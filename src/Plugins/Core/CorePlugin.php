@@ -41,6 +41,7 @@ use W2w\Lib\Apie\PluginInterfaces\ApiResourceFactoryProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\CacheItemPoolProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\EncoderProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\NormalizerProviderInterface;
+use W2w\Lib\Apie\PluginInterfaces\ObjectAccessProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SerializerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SymfonyComponentProviderInterface;
 use W2w\Lib\Apie\Plugins\Core\Encodings\FormatRetriever;
@@ -51,6 +52,11 @@ use W2w\Lib\Apie\Plugins\Core\Normalizers\ContextualNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\EvilReflectionPropertyNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\ExceptionNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Serializers\SymfonySerializerAdapter;
+use W2w\Lib\ApieObjectAccessNormalizer\Normalizers\ApieObjectAccessNormalizer;
+use W2w\Lib\ApieObjectAccessNormalizer\Normalizers\MethodCallDenormalizer;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccessInterface;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\SelfObjectAccess;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\SelfObjectAccessInterface;
 
 /**
  * Plugin with most default functionality.
@@ -62,7 +68,8 @@ class CorePlugin implements SerializerProviderInterface,
     SymfonyComponentProviderInterface,
     CacheItemPoolProviderInterface,
     AnnotationReaderProviderInterface,
-    ApiResourceFactoryProviderInterface
+    ApiResourceFactoryProviderInterface,
+    ObjectAccessProviderInterface
 {
     use ApieAwareTrait;
 
@@ -84,7 +91,7 @@ class CorePlugin implements SerializerProviderInterface,
         $normalizers = $this->getApie()->getNormalizers();
         $encoders = $this->getApie()->getEncoders();
         $serializer = new Serializer($normalizers, $encoders);
-        return new SymfonySerializerAdapter($serializer, $this->getApie()->getFormatRetriever());
+        return new SymfonySerializerAdapter($serializer, $this->getApie()->getFormatRetriever(), $this->getApie()->getResourceLifecycles());
     }
 
     /**
@@ -117,12 +124,19 @@ class CorePlugin implements SerializerProviderInterface,
         ContextualNormalizer::disableDenormalizer(EvilReflectionPropertyNormalizer::class);
         ContextualNormalizer::disableNormalizer(EvilReflectionPropertyNormalizer::class);
 
+        $apieObjectAccessNormalizer = new ApieObjectAccessNormalizer(
+            $this->getApie()->getObjectAccess(),
+            $this->getApie()->getPropertyConverter(),
+            $classMetadataFactory
+        );
+
         return [
             new ExceptionNormalizer($this->getApie()->isDebug()),
             new JsonSerializableNormalizer(),
             new ArrayDenormalizer(),
-            new ContextualNormalizer([$evilObjectNormalizer]),
-            $objectNormalizer
+            new MethodCallDenormalizer($this->getApie()->getObjectAccess(), $apieObjectAccessNormalizer, $this->getApie()->getPropertyConverter()),
+            new ContextualNormalizer([$objectNormalizer, $evilObjectNormalizer]),
+            $apieObjectAccessNormalizer,
         ];
 
     }
@@ -266,5 +280,15 @@ class CorePlugin implements SerializerProviderInterface,
             $this->getApie()->getPropertyAccessor(),
             $this->getApie()->getIdentifierExtractor()
         );
+    }
+
+    /**
+     * @return ObjectAccessInterface[]
+     */
+    public function getObjectAccesses(): array
+    {
+        return [
+            SelfObjectAccessInterface::class => new SelfObjectAccess()
+        ];
     }
 }

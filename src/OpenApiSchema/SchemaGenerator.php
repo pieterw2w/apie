@@ -7,19 +7,20 @@ use erasys\OpenApi\Spec\v3\Schema;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\Type;
 use Symfony\Component\Serializer\Mapping\AttributeMetadataInterface;
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 
 /**
  * Class that uses symfony/property-info and reflection to create a Schema instance of a class.
+ * @deprecated use OpenApiSchemaGenerator
  */
 class SchemaGenerator
 {
     private const MAX_RECURSION = 2;
 
     /**
-     * @var ClassMetadataFactory
+     * @var ClassMetadataFactoryInterface
      */
     private $classMetadataFactory;
 
@@ -41,7 +42,7 @@ class SchemaGenerator
     /**
      * @var Schema[]
      */
-    private $alreadyDefined = [];
+    protected $alreadyDefined = [];
 
     /**
      * @var Schema[]
@@ -59,14 +60,19 @@ class SchemaGenerator
     private $building = [];
 
     /**
-     * @param ClassMetadataFactory $classMetadataFactory
+     * @var int
+     */
+    protected $oldRecursion = -1;
+
+    /**
+     * @param ClassMetadataFactoryInterface $classMetadataFactory
      * @param PropertyInfoExtractor $propertyInfoExtractor
      * @param ClassResourceConverter $converter
      * @param NameConverterInterface $nameConverter
      * @param callable[] $schemaCallbacks
      */
     public function __construct(
-        ClassMetadataFactory $classMetadataFactory,
+        ClassMetadataFactoryInterface $classMetadataFactory,
         PropertyInfoExtractor $propertyInfoExtractor,
         ClassResourceConverter $converter,
         NameConverterInterface $nameConverter,
@@ -85,7 +91,7 @@ class SchemaGenerator
      * @param Schema $schema
      * @return SchemaGenerator
      */
-    public function defineSchemaForResource(string $resourceClass, Schema $schema): self
+    public function defineSchemaForResource(string $resourceClass, Schema $schema)
     {
         $this->predefined[$resourceClass] = $schema;
         $this->alreadyDefined = [];
@@ -226,6 +232,7 @@ class SchemaGenerator
             return null;
         }
         $this->building[$cacheKey] = true;
+        $oldValue = $this->oldRecursion;
         try {
             // specifically defined: just call it.
             if (isset($this->schemaCallbacks[$resourceClass])) {
@@ -241,6 +248,7 @@ class SchemaGenerator
             }
             return null;
         } finally {
+            $this->oldRecursion = $oldValue;
             unset($this->building[$cacheKey]);
         }
     }
@@ -255,8 +263,11 @@ class SchemaGenerator
      *
      * @return Schema
      */
-    private function convertTypeToSchema(Type $type, string $operation, array $groups, int $recursion): Schema
+    protected function convertTypeToSchema(?Type $type, string $operation, array $groups, int $recursion): Schema
     {
+        if ($type === null) {
+            return new Schema(['type' => 'object', 'additionalProperties' => true]);
+        }
         $propertySchema = new Schema([
             'type'        => 'string',
             'nullable'    => true,
@@ -277,7 +288,18 @@ class SchemaGenerator
             $arrayType = $type->getCollectionValueType();
             if ($arrayType) {
                 if ($arrayType->getClassName()) {
-                    $propertySchema->items = $this->createSchemaRecursive($arrayType->getClassName(), $operation, $groups, $recursion + 1);
+                    $this->oldRecursion++;
+                    try {
+                        $propertySchema->items = $this->createSchemaRecursive(
+                            $arrayType->getClassName(),
+                            $operation,
+                            $groups,
+                            $recursion + 1
+                        );
+                        $propertySchema->oneOf = null;
+                    } finally {
+                        $this->oldRecursion--;
+                    }
                 } elseif ($arrayType->getBuiltinType()) {
                     $type = $this->translateType($arrayType->getBuiltinType());
                     $propertySchema->items = new Schema([
@@ -293,7 +315,12 @@ class SchemaGenerator
         }
         $className = $type->getClassName();
         if ('object' === $type->getBuiltinType() && $recursion < self::MAX_RECURSION && !is_null($className)) {
-            return $this->createSchemaRecursive($className, $operation, $groups, $recursion + 1);
+            $this->oldRecursion++;
+            try {
+                return $this->createSchemaRecursive($className, $operation, $groups, $recursion + 1);
+            } finally {
+                $this->oldRecursion--;
+            }
         }
         return $propertySchema;
     }
@@ -338,7 +365,7 @@ class SchemaGenerator
      */
     public function createSchema(string $resourceClass, string $operation, array $groups): Schema
     {
-        return $this->createSchemaRecursive($resourceClass, $operation, $groups);
+        return $this->createSchemaRecursive($resourceClass, $operation, $groups, $this->oldRecursion + 1);
     }
 
     /**

@@ -12,6 +12,8 @@ use Symfony\Component\Serializer\SerializerInterface;
  * Normalizer for the symfony serializer to enable/disable a normalizer by context. This can be done globally with
  * ContextualNormalizer::enableNormalizer and ContextualNormalizer::disableNormalizer or by providing it in the
  * context of the serializer.
+ *
+ * @deprecated use ObjectAccess instead
  */
 class ContextualNormalizer implements NormalizerInterface, DenormalizerInterface, SerializerAwareInterface, NormalizerAwareInterface, DenormalizerAwareInterface
 {
@@ -48,7 +50,7 @@ class ContextualNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         foreach ($this->normalizers as $normalizer) {
             if ($normalizer instanceof NormalizerInterface
-                && $this->isNormalizerEnabled($normalizer)
+                && $this->isThisNormalizerEnabled($normalizer)
                 && $normalizer->supportsNormalization($object, $format)) {
                 return $normalizer->normalize($object, $format, $context);
             }
@@ -65,7 +67,7 @@ class ContextualNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         foreach ($this->normalizers as $normalizer) {
             if ($normalizer instanceof NormalizerInterface
-                && $this->isNormalizerEnabled($normalizer)
+                && $this->isThisNormalizerEnabled($normalizer)
                 && $normalizer->supportsNormalization($data, $format)) {
                 return true;
             }
@@ -154,17 +156,20 @@ class ContextualNormalizer implements NormalizerInterface, DenormalizerInterface
         unset(self::$globalDisabledDenormalizers[$className]);
     }
 
+    public static function isNormalizerEnabled(string $className): bool
+    {
+        return empty(self::$globalDisabledNormalizers[$className]);
+    }
+
     /**
      * Returns true if the normalizer is enabled.
      *
      * @param NormalizerInterface $normalizer
      * @return bool
      */
-    private function isNormalizerEnabled(NormalizerInterface $normalizer): bool
+    private function isThisNormalizerEnabled(NormalizerInterface $normalizer): bool
     {
-        $className = get_class($normalizer);
-
-        return empty(self::$globalDisabledNormalizers[$className]);
+        return self::isNormalizerEnabled(get_class($normalizer));
     }
 
     /**
