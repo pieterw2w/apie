@@ -4,7 +4,7 @@ namespace W2w\Lib\Apie\Plugins\Core\Normalizers;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use ReflectionClass;
 use Throwable;
-use W2w\Lib\Apie\Exceptions\ValidationException;
+use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ValidationException;
 
 /**
  * Class that normalizes a throwable class.
