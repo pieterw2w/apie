@@ -270,7 +270,18 @@ class OpenApiSchemaGenerator extends SchemaGenerator
         return $type;
     }
 
-    protected function convertTypeToSchema(?Type $type, string $operation, array $groups, int $recursion): Schema
+    /**
+     * Convert Type into Schema.
+     *
+     * @param Type $type
+     * @param string $operation
+     * @param string[] $groups
+     * @param int $recursion
+     * @internal
+     *
+     * @return Schema
+     */
+    public function convertTypeToSchema(?Type $type, string $operation, array $groups, int $recursion): Schema
     {
         if ($type === null) {
             return new Schema([]);

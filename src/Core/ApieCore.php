@@ -83,6 +83,7 @@ class ApieCore
             $this->getIdentifierExtractor(),
             $this->apie->getBaseUrl(),
             $this->getSubActionContainer(),
+            $this->apie->getPropertyConverter(),
             function (Document $doc) {
                 $this->apie->onOpenApiDocGenerated($doc);
             }

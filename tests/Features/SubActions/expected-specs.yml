@@ -1473,21 +1473,21 @@ paths:
               type: object
               properties:
                 one:
-                  type: object
-                  additionalProperties: true
+                  type: integer
+                  nullable: false
                 two:
-                  type: object
-                  additionalProperties: true
+                  type: integer
+                  nullable: false
           application/xml:
             schema:
               type: object
               properties:
                 one:
-                  type: object
-                  additionalProperties: true
+                  type: integer
+                  nullable: false
                 two:
-                  type: object
-                  additionalProperties: true
+                  type: integer
+                  nullable: false
               xml:
                 name: item
         description: 'the resource as JSON to persist'

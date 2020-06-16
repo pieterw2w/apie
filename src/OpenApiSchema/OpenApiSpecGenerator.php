@@ -4,6 +4,7 @@ namespace W2w\Lib\Apie\OpenApiSchema;
 
 use erasys\OpenApi\Spec\v3 as OASv3;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
+use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use W2w\Lib\Apie\Core\ApiResourceMetadataFactory;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
@@ -36,6 +37,8 @@ class OpenApiSpecGenerator
 
     private $addSpecsHook;
 
+    private $nameConverter;
+
     public function __construct(
         ApiResourcesInterface $apiResources,
         ClassResourceConverter $converter,
@@ -45,6 +48,7 @@ class OpenApiSpecGenerator
         IdentifierExtractor $identifierExtractor,
         string $baseUrl,
         SubActionContainer $subActionContainer,
+        NameConverterInterface $nameConverter,
         ?callable $addSpecsHook = null
     ) {
         $this->apiResources = $apiResources;
@@ -55,6 +59,7 @@ class OpenApiSpecGenerator
         $this->identifierExtractor = $identifierExtractor;
         $this->baseUrl = $baseUrl;
         $this->subActionContainer = $subActionContainer;
+        $this->nameConverter = $nameConverter;
         $this->addSpecsHook = $addSpecsHook;
     }
 
@@ -298,15 +303,12 @@ class OpenApiSpecGenerator
     {
         $properties = [];
         foreach ($subAction->getArguments() as $fieldName => $type) {
-            //TODO typehint string etc.
+            $denormalizedFieldName = $this->nameConverter->denormalize($fieldName);
             if ($type === null || !$type->getClassName()) {
-                $properties[$fieldName] = new OASv3\Schema([
-                    'type' => 'object',
-                    'additionalProperties' => true,
-                ]);
+                $properties[$denormalizedFieldName] = $this->schemaGenerator->convertTypeToSchema($type, 'post', ['write', 'post'], 0);
                 continue;
             }
-            $properties[$fieldName] = $this->schemaGenerator->createSchema($type->getClassName(), 'post', ['write', 'post']);
+            $properties[$denormalizedFieldName] = $this->schemaGenerator->createSchema($type->getClassName(), 'post', ['write', 'post']);
         }
         $jsonSchema = new OASv3\Schema([
             'type' => 'object',

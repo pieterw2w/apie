@@ -260,10 +260,11 @@ class SchemaGenerator
      * @param string $operation
      * @param string[] $groups
      * @param int $recursion
+     * @internal
      *
      * @return Schema
      */
-    protected function convertTypeToSchema(?Type $type, string $operation, array $groups, int $recursion): Schema
+    public function convertTypeToSchema(?Type $type, string $operation, array $groups, int $recursion): Schema
     {
         if ($type === null) {
             return new Schema(['type' => 'object', 'additionalProperties' => true]);
