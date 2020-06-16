@@ -135,7 +135,7 @@ class CorePlugin implements SerializerProviderInterface,
             new JsonSerializableNormalizer(),
             new ArrayDenormalizer(),
             new MethodCallDenormalizer($this->getApie()->getObjectAccess(), $apieObjectAccessNormalizer, $this->getApie()->getPropertyConverter()),
-            new ContextualNormalizer([$objectNormalizer, $evilObjectNormalizer]),
+            new ContextualNormalizer([$evilObjectNormalizer, $objectNormalizer]),
             $apieObjectAccessNormalizer,
         ];
 
