@@ -536,7 +536,7 @@ class OpenApiSpecGenerator
                 '503' => new OASv3\Reference('#/components/responses/MaintenanceMode'),
             ],
             'resourcePostSubAction' . $this->sluggify($resourceName . '_' . $subAction->getName()),
-            null,
+            $subAction->getSummary(),
             [
                 'tags' => [$resourceName],
                 'requestBody' => $this->convertSubActionToRequestBody($subAction),

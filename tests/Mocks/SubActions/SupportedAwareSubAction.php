@@ -13,6 +13,12 @@ class SupportedAwareSubAction implements SupportedAwareSubActionInterface
         return $resourceClass === FullRestObject::class;
     }
 
+    /**
+     * Calculates a md5 checksum of the id.
+     *
+     * @param $status
+     * @return string
+     */
     public function handle($status): string {
         return md5(json_encode($status->getUuid()));
     }

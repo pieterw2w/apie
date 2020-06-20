@@ -2,6 +2,7 @@
 
 namespace W2w\Lib\Apie\OpenApiSchema\SubActions;
 
+use phpDocumentor\Reflection\DocBlockFactory;
 use ReflectionMethod;
 use Symfony\Component\PropertyInfo\Type;
 
@@ -53,6 +54,18 @@ class SubAction
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getSummary(): ?string
+    {
+        $factory  = DocBlockFactory::createInstance();
+        $docComment = $this->reflectionMethod->getDocComment();
+        var_dump($docComment);
+        if (!$docComment) {
+            return null;
+        }
+        $docblock = $factory->create($docComment);
+        return $docblock->getDescription() ? : null;
     }
 
     /**

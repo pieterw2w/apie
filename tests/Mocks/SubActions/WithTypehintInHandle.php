@@ -3,7 +3,6 @@
 
 namespace W2w\Test\Apie\Mocks\SubActions;
 
-
 use ReflectionClass;
 use W2w\Lib\Apie\Plugins\StatusCheck\ApiResources\Status;
 
