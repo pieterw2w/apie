@@ -17,6 +17,7 @@ abstract class ForwardsCompatibleTestCase extends TestCase
     protected function setUp(): void
     {
         ContextualNormalizer::disableNormalizer(ApieObjectNormalizer::class);
+        ContextualNormalizer::disableDenormalizer(ApieObjectNormalizer::class);
     }
 
     protected function tearDown(): void

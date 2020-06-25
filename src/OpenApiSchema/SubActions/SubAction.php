@@ -60,7 +60,6 @@ class SubAction
     {
         $factory  = DocBlockFactory::createInstance();
         $docComment = $this->reflectionMethod->getDocComment();
-        var_dump($docComment);
         if (!$docComment) {
             return null;
         }

@@ -8,8 +8,10 @@ use W2w\Lib\Apie\Events\DecodeEvent;
 use W2w\Lib\Apie\Interfaces\FormatRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\ResourceSerializerInterface;
 use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
+use W2w\Lib\Apie\Plugins\Core\Normalizers\ApieObjectNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\ContextualNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\EvilReflectionPropertyNormalizer;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
 use Zend\Diactoros\Response\TextResponse;
 
 /**
@@ -151,6 +153,14 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
      */
     public function hydrateWithReflection(array $data, string $resourceClass)
     {
+        if (!ContextualNormalizer::isNormalizerEnabled(ApieObjectNormalizer::class)) {
+            return $this->serializer->denormalize(
+                $data,
+                $resourceClass,
+                null,
+                ['object_access' => new ObjectAccess(false, true)]
+            );
+        }
         ContextualNormalizer::enableDenormalizer(EvilReflectionPropertyNormalizer::class);
         try {
             return $this->serializer->denormalize(
