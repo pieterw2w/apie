@@ -55,9 +55,6 @@
         "jangregor/phpstan-prophecy": "0.5.1",
         "tightenco/collect": "^7.12"
     },
-    "conflict": {
-        "phpspec/prophecy": "1.10.*"
-    },
     "archive": {
         "exclude": ["/tests"]
     }
