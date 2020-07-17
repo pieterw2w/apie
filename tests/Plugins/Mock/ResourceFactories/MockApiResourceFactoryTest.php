@@ -2,6 +2,7 @@
 namespace W2w\Test\Apie\Plugins\Mock\ResourceFactories;
 
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
 use W2w\Lib\Apie\Interfaces\ApiResourceFactoryInterface;
 use W2w\Lib\Apie\Interfaces\ApiResourcePersisterInterface;
@@ -28,29 +29,29 @@ class MockApiResourceFactoryTest extends TestCase
         {
             public function retrieve(string $resourceClass, $id, array $context)
             {
-                // TODO: Implement retrieve() method.
+                throw new RuntimeException('This should not be called');
             }
 
             public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest
             ): iterable {
-                // TODO: Implement retrieveAll() method.
+                throw new RuntimeException('This should not be called');
             }
         };
         $this->skippedPersister = new class implements ApiResourcePersisterInterface
         {
             public function persistNew($resource, array $context = [])
             {
-                // TODO: Implement persistNew() method.
+                throw new RuntimeException('This should not be called');
             }
 
             public function persistExisting($resource, $int, array $context = [])
             {
-                // TODO: Implement persistExisting() method.
+                throw new RuntimeException('This should not be called');
             }
 
             public function remove(string $resourceClass, $id, array $context)
             {
-                // TODO: Implement remove() method.
+                throw new RuntimeException('This should not be called');
             }
         };
 
