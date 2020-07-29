@@ -46,4 +46,24 @@ class ResponseEvent
     {
         $this->response = $response;
     }
+
+    /**
+     * Get the accept header.
+     *
+     * @return string
+     */
+    public function getAcceptHeader(): string
+    {
+        return $this->acceptHeader;
+    }
+
+    /**
+     * Get the resource.
+     *
+     * @return mixed
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
 }
