@@ -2,6 +2,7 @@
 
 namespace W2w\Lib\Apie\OpenApiSchema;
 
+use erasys\OpenApi\Spec\v3\Discriminator;
 use erasys\OpenApi\Spec\v3\Schema;
 use ReflectionClass;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
@@ -13,7 +14,7 @@ use W2w\Lib\Apie\PluginInterfaces\DynamicSchemaInterface;
 use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\FilteredObjectAccess;
 use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccessInterface;
 
-class OpenApiSchemaGenerator extends SchemaGenerator
+class OpenApiSchemaGenerator
 {
     private const MAX_RECURSION = 2;
 
@@ -47,26 +48,31 @@ class OpenApiSchemaGenerator extends SchemaGenerator
     private $classMetadataFactory;
 
     /**
+     * @var Schema[]
+     */
+    protected $alreadyDefined = [];
+
+    /**
+     * @var int
+     */
+    protected $oldRecursion = -1;
+
+    /**
      * @param DynamicSchemaInterface[] $schemaGenerators
      * @param ObjectAccessInterface $objectAccess
      * @param ClassMetadataFactoryInterface $classMetadataFactory
-     * @param PropertyInfoExtractor $propertyInfoExtractor
-     * @param ClassResourceConverter $converter
      * @param NameConverterInterface $nameConverter
      */
     public function __construct(
         array $schemaGenerators,
         ObjectAccessInterface $objectAccess,
         ClassMetadataFactoryInterface $classMetadataFactory,
-        PropertyInfoExtractor $propertyInfoExtractor,
-        ClassResourceConverter $converter,
         NameConverterInterface $nameConverter
     ) {
         $this->schemaGenerators = $schemaGenerators;
         $this->objectAccess = $objectAccess;
         $this->nameConverter = $nameConverter;
         $this->classMetadataFactory = $classMetadataFactory;
-        parent::__construct($classMetadataFactory, $propertyInfoExtractor, $converter, $nameConverter, $schemaGenerators);
     }
 
     /**
@@ -345,5 +351,55 @@ class OpenApiSchemaGenerator extends SchemaGenerator
             return $this->createSchemaRecursive($className, $operation, $groups, $recursion + 1);
         }
         return $propertySchema;
+    }
+
+    /**
+     * Define an OpenAPI discriminator spec for an interface or base class that have a discriminator column.
+     *
+     * @param string $resourceInterface
+     * @param string $discriminatorColumn
+     * @param array $subclasses
+     * @param string $operation
+     * @param string[] $groups
+     * @return Schema
+     */
+    public function defineSchemaForPolymorphicObject(
+        string $resourceInterface,
+        string $discriminatorColumn,
+        array $subclasses,
+        string $operation = 'get',
+        array $groups = ['get', 'read']
+    ): Schema {
+        $cacheKey = $this->getCacheKey($resourceInterface, $operation, $groups);
+        /** @var Schema[] $subschemas */
+        $subschemas = [];
+        $discriminatorMapping = [];
+        foreach ($subclasses as $keyValue => $subclass) {
+            $subschemas[$subclass] = $discriminatorMapping[$keyValue] = $this->createSchema($subclass, $operation, $groups);
+            $properties = $subschemas[$subclass]->properties;
+            if (isset($properties[$discriminatorColumn])) {
+                $properties[$discriminatorColumn]->default = $keyValue;
+                $properties[$discriminatorColumn]->example = $keyValue;
+            } else {
+                $properties[$discriminatorColumn] = new Schema([
+                    'type' => 'string',
+                    'default' => $keyValue,
+                    'example' => $keyValue
+                ]);
+            }
+            $subschemas[$subclass]->properties = $properties;
+        }
+        $this->alreadyDefined[$cacheKey . ',0'] = new Schema([
+            'type' => 'object',
+            'properties' => [
+                $discriminatorColumn => new Schema(['type' => 'string']),
+            ],
+            'oneOf' => array_values($subschemas),
+            'discriminator' => new Discriminator($discriminatorColumn, $discriminatorMapping)
+        ]);
+        for ($i = 1; $i < self::MAX_RECURSION; $i++) {
+            $this->alreadyDefined[$cacheKey . ',' . $i] = $this->alreadyDefined[$cacheKey . ',0'];
+        }
+        return $this->alreadyDefined[$cacheKey . ',0'];
     }
 }

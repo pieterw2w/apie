@@ -2,6 +2,7 @@
 namespace W2w\Lib\Apie\Exceptions;
 
 use ReflectionClass;
+use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ApieException;
 use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\LocalizationableException;
 use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\LocalizationInfo;
 

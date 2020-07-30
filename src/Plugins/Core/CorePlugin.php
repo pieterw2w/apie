@@ -20,7 +20,6 @@ use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Serializer\Encoder\JsonEncode;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Mapping\ClassDiscriminatorFromClassMetadata;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
@@ -42,14 +41,12 @@ use W2w\Lib\Apie\PluginInterfaces\CacheItemPoolProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\EncoderProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\NormalizerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\ObjectAccessProviderInterface;
+use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
 use W2w\Lib\Apie\PluginInterfaces\SerializerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SymfonyComponentProviderInterface;
 use W2w\Lib\Apie\Plugins\Core\Encodings\FormatRetriever;
 use W2w\Lib\Apie\Plugins\Core\ResourceFactories\FallbackFactory;
 use W2w\Lib\Apie\Plugins\Core\Serializers\Mapping\BaseGroupLoader;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\ApieObjectNormalizer;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\ContextualNormalizer;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\EvilReflectionPropertyNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\ExceptionNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Serializers\SymfonySerializerAdapter;
 use W2w\Lib\ApieObjectAccessNormalizer\Normalizers\ApieObjectAccessNormalizer;
@@ -91,7 +88,8 @@ class CorePlugin implements SerializerProviderInterface,
         $normalizers = $this->getApie()->getNormalizers();
         $encoders = $this->getApie()->getEncoders();
         $serializer = new Serializer($normalizers, $encoders);
-        return new SymfonySerializerAdapter($serializer, $this->getApie()->getFormatRetriever(), $this->getApie()->getResourceLifecycles());
+        $lifecycles = $this->apie->getPluginsWithInterface(ResourceLifeCycleInterface::class);
+        return new SymfonySerializerAdapter($serializer, $this->getApie()->getFormatRetriever(), $lifecycles);
     }
 
     /**
@@ -99,35 +97,10 @@ class CorePlugin implements SerializerProviderInterface,
      */
     public function getNormalizers(): array
     {
-        $classMetadataFactory = $this->getApie()->getClassMetadataFactory();
-
-        $classDiscriminator = new ClassDiscriminatorFromClassMetadata($classMetadataFactory);
-
-        $objectNormalizer = new ApieObjectNormalizer(
-            $classMetadataFactory,
-            $this->getApie()->getPropertyConverter(),
-            $this->getApie()->getPropertyAccessor(),
-            $this->getApie()->getPropertyTypeExtractor(),
-            $classDiscriminator,
-            null,
-            []
-        );
-        $evilObjectNormalizer = new EvilReflectionPropertyNormalizer(
-            $classMetadataFactory,
-            $this->getApie()->getPropertyConverter(),
-            $this->getApie()->getPropertyAccessor(),
-            $this->getApie()->getPropertyTypeExtractor(),
-            $classDiscriminator,
-            null,
-            []
-        );
-        ContextualNormalizer::disableDenormalizer(EvilReflectionPropertyNormalizer::class);
-        ContextualNormalizer::disableNormalizer(EvilReflectionPropertyNormalizer::class);
-
         $apieObjectAccessNormalizer = new ApieObjectAccessNormalizer(
             $this->getApie()->getObjectAccess(),
             $this->getApie()->getPropertyConverter(),
-            $classMetadataFactory
+            $this->getApie()->getClassMetadataFactory()
         );
 
         return [
@@ -135,7 +108,6 @@ class CorePlugin implements SerializerProviderInterface,
             new JsonSerializableNormalizer(),
             new ArrayDenormalizer(),
             new MethodCallDenormalizer($this->getApie()->getObjectAccess(), $apieObjectAccessNormalizer, $this->getApie()->getPropertyConverter()),
-            new ContextualNormalizer([$evilObjectNormalizer, $objectNormalizer]),
             $apieObjectAccessNormalizer,
         ];
 

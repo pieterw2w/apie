@@ -2,7 +2,7 @@
 
 namespace W2w\Lib\Apie\PluginInterfaces;
 
-use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
+use W2w\Lib\Apie\OpenApiSchema\OpenApiSchemaGenerator;
 
 /**
  * Can be used instead of a closure for SchemaProviderInterface::getDynamicSchemaLogic() to get better typehinting.
@@ -14,6 +14,6 @@ interface DynamicSchemaInterface
         string $operation,
         array $groups,
         int $recursion,
-        SchemaGenerator $generator
+        OpenApiSchemaGenerator $generator
     );
 }

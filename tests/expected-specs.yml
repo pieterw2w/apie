@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Apie
-  version: '3.0'
+  version: '4.0'
 paths:
   /application_info:
     get:
@@ -18,8 +18,8 @@ paths:
               schema:
                 type: array
                 items:
-                  title: application_info
-                  description: 'application_info get for groups get, read'
+                  title: ApplicationInfo
+                  description: 'ApplicationInfo get for groups get, read'
                   type: object
                   properties:
                     app_name:
@@ -34,14 +34,12 @@ paths:
                     debug:
                       type: boolean
                       nullable: false
-                  xml:
-                    name: item
             application/xml:
               schema:
                 type: array
                 items:
-                  title: application_info
-                  description: 'application_info get for groups get, read'
+                  title: ApplicationInfo
+                  description: 'ApplicationInfo get for groups get, read'
                   type: object
                   properties:
                     app_name:
@@ -104,8 +102,8 @@ paths:
               schema:
                 type: array
                 items:
-                  title: simple_popo
-                  description: 'simple_popo get for groups get, read'
+                  title: SimplePopo
+                  description: 'SimplePopo get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -114,17 +112,13 @@ paths:
                     created_at:
                       type: string
                       format: date-time
-                    arbitrary_field:
-                      type: string
-                      nullable: true
-                  xml:
-                    name: item
+                    arbitrary_field: {  }
             application/xml:
               schema:
                 type: array
                 items:
-                  title: simple_popo
-                  description: 'simple_popo get for groups get, read'
+                  title: SimplePopo
+                  description: 'SimplePopo get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -133,9 +127,7 @@ paths:
                     created_at:
                       type: string
                       format: date-time
-                    arbitrary_field:
-                      type: string
-                      nullable: true
+                    arbitrary_field: {  }
                   xml:
                     name: item
                 xml:
@@ -181,8 +173,8 @@ paths:
           content:
             application/json:
               schema:
-                title: simple_popo
-                description: 'simple_popo get for groups get, read'
+                title: SimplePopo
+                description: 'SimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -191,15 +183,11 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
-                xml:
-                  name: item
+                  arbitrary_field: {  }
             application/xml:
               schema:
-                title: simple_popo
-                description: 'simple_popo get for groups get, read'
+                title: SimplePopo
+                description: 'SimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -208,9 +196,7 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
+                  arbitrary_field: {  }
                 xml:
                   name: item
         401:
@@ -235,22 +221,18 @@ paths:
         content:
           application/json:
             schema:
-              title: simple_popo
-              description: 'simple_popo post for groups post, write'
+              title: SimplePopo
+              description: 'SimplePopo post for groups post, write'
               type: object
               properties:
-                arbitrary_field:
-                  type: string
-                  nullable: true
+                arbitrary_field: {  }
           application/xml:
             schema:
-              title: simple_popo
-              description: 'simple_popo post for groups post, write'
+              title: SimplePopo
+              description: 'SimplePopo post for groups post, write'
               type: object
               properties:
-                arbitrary_field:
-                  type: string
-                  nullable: true
+                arbitrary_field: {  }
               xml:
                 name: item
         description: 'the resource as JSON to persist'
@@ -279,8 +261,8 @@ paths:
               schema:
                 type: array
                 items:
-                  title: full_rest_object
-                  description: 'full_rest_object get for groups get, read'
+                  title: FullRestObject
+                  description: 'FullRestObject get for groups get, read'
                   type: object
                   properties:
                     uuid:
@@ -292,14 +274,12 @@ paths:
                     value_object:
                       type: string
                       format: value_object
-                  xml:
-                    name: item
             application/xml:
               schema:
                 type: array
                 items:
-                  title: full_rest_object
-                  description: 'full_rest_object get for groups get, read'
+                  title: FullRestObject
+                  description: 'FullRestObject get for groups get, read'
                   type: object
                   properties:
                     uuid:
@@ -374,8 +354,8 @@ paths:
           content:
             application/json:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -387,12 +367,10 @@ paths:
                   value_object:
                     type: string
                     format: value_object
-                xml:
-                  name: item
             application/xml:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -428,8 +406,8 @@ paths:
         content:
           application/json:
             schema:
-              title: full_rest_object
-              description: 'full_rest_object post for groups post, write'
+              title: FullRestObject
+              description: 'FullRestObject post for groups post, write'
               type: object
               properties:
                 uuid:
@@ -443,8 +421,8 @@ paths:
                   format: value_object
           application/xml:
             schema:
-              title: full_rest_object
-              description: 'full_rest_object post for groups post, write'
+              title: FullRestObject
+              description: 'FullRestObject post for groups post, write'
               type: object
               properties:
                 uuid:
@@ -473,8 +451,8 @@ paths:
           content:
             application/json:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -486,12 +464,10 @@ paths:
                   value_object:
                     type: string
                     format: value_object
-                xml:
-                  name: item
             application/xml:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -533,8 +509,8 @@ paths:
           content:
             application/json:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -546,12 +522,10 @@ paths:
                   value_object:
                     type: string
                     format: value_object
-                xml:
-                  name: item
             application/xml:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -589,8 +563,8 @@ paths:
         content:
           application/json:
             schema:
-              title: full_rest_object
-              description: 'full_rest_object put for groups put, write'
+              title: FullRestObject
+              description: 'FullRestObject put for groups put, write'
               type: object
               properties:
                 string_value:
@@ -601,8 +575,8 @@ paths:
                   format: value_object
           application/xml:
             schema:
-              title: full_rest_object
-              description: 'full_rest_object put for groups put, write'
+              title: FullRestObject
+              description: 'FullRestObject put for groups put, write'
               type: object
               properties:
                 string_value:
@@ -663,46 +637,48 @@ paths:
               schema:
                 type: array
                 items:
-                  title: recursive_object
-                  description: 'recursive_object get for groups get, read'
+                  title: RecursiveObject
+                  description: 'RecursiveObject get for groups get, read'
                   type: object
                   properties:
                     child:
-                      title: recursive_object
-                      description: 'recursive_object get for groups get, read'
+                      title: RecursiveObject
+                      description: 'RecursiveObject get for groups get, read'
                       type: object
                       properties:
                         child:
-                          title: recursive_object
-                          description: 'recursive_object get for groups get, read'
+                          title: RecursiveObject
+                          description: 'RecursiveObject get for groups get, read'
                           type: object
                           properties:
                             child:
+                              title: RecursiveObject
+                              description: 'RecursiveObject get for groups get, read'
                               type: object
-                              nullable: false
-                  xml:
-                    name: item
+                              additionalProperties: true
             application/xml:
               schema:
                 type: array
                 items:
-                  title: recursive_object
-                  description: 'recursive_object get for groups get, read'
+                  title: RecursiveObject
+                  description: 'RecursiveObject get for groups get, read'
                   type: object
                   properties:
                     child:
-                      title: recursive_object
-                      description: 'recursive_object get for groups get, read'
+                      title: RecursiveObject
+                      description: 'RecursiveObject get for groups get, read'
                       type: object
                       properties:
                         child:
-                          title: recursive_object
-                          description: 'recursive_object get for groups get, read'
+                          title: RecursiveObject
+                          description: 'RecursiveObject get for groups get, read'
                           type: object
                           properties:
                             child:
+                              title: RecursiveObject
+                              description: 'RecursiveObject get for groups get, read'
                               type: object
-                              nullable: false
+                              additionalProperties: true
                   xml:
                     name: item
                 xml:
@@ -748,44 +724,46 @@ paths:
           content:
             application/json:
               schema:
-                title: recursive_object
-                description: 'recursive_object get for groups get, read'
+                title: RecursiveObject
+                description: 'RecursiveObject get for groups get, read'
                 type: object
                 properties:
                   child:
-                    title: recursive_object
-                    description: 'recursive_object get for groups get, read'
+                    title: RecursiveObject
+                    description: 'RecursiveObject get for groups get, read'
                     type: object
                     properties:
                       child:
-                        title: recursive_object
-                        description: 'recursive_object get for groups get, read'
+                        title: RecursiveObject
+                        description: 'RecursiveObject get for groups get, read'
                         type: object
                         properties:
                           child:
+                            title: RecursiveObject
+                            description: 'RecursiveObject get for groups get, read'
                             type: object
-                            nullable: false
-                xml:
-                  name: item
+                            additionalProperties: true
             application/xml:
               schema:
-                title: recursive_object
-                description: 'recursive_object get for groups get, read'
+                title: RecursiveObject
+                description: 'RecursiveObject get for groups get, read'
                 type: object
                 properties:
                   child:
-                    title: recursive_object
-                    description: 'recursive_object get for groups get, read'
+                    title: RecursiveObject
+                    description: 'RecursiveObject get for groups get, read'
                     type: object
                     properties:
                       child:
-                        title: recursive_object
-                        description: 'recursive_object get for groups get, read'
+                        title: RecursiveObject
+                        description: 'RecursiveObject get for groups get, read'
                         type: object
                         properties:
                           child:
+                            title: RecursiveObject
+                            description: 'RecursiveObject get for groups get, read'
                             type: object
-                            nullable: false
+                            additionalProperties: true
                 xml:
                   name: item
         401:
@@ -810,42 +788,46 @@ paths:
         content:
           application/json:
             schema:
-              title: recursive_object
-              description: 'recursive_object post for groups post, write'
+              title: RecursiveObject
+              description: 'RecursiveObject post for groups post, write'
               type: object
               properties:
                 child:
-                  title: recursive_object
-                  description: 'recursive_object post for groups post, write'
+                  title: RecursiveObject
+                  description: 'RecursiveObject post for groups post, write'
                   type: object
                   properties:
                     child:
-                      title: recursive_object
-                      description: 'recursive_object post for groups post, write'
+                      title: RecursiveObject
+                      description: 'RecursiveObject post for groups post, write'
                       type: object
                       properties:
                         child:
+                          title: RecursiveObject
+                          description: 'RecursiveObject post for groups post, write'
                           type: object
-                          nullable: false
+                          additionalProperties: true
           application/xml:
             schema:
-              title: recursive_object
-              description: 'recursive_object post for groups post, write'
+              title: RecursiveObject
+              description: 'RecursiveObject post for groups post, write'
               type: object
               properties:
                 child:
-                  title: recursive_object
-                  description: 'recursive_object post for groups post, write'
+                  title: RecursiveObject
+                  description: 'RecursiveObject post for groups post, write'
                   type: object
                   properties:
                     child:
-                      title: recursive_object
-                      description: 'recursive_object post for groups post, write'
+                      title: RecursiveObject
+                      description: 'RecursiveObject post for groups post, write'
                       type: object
                       properties:
                         child:
+                          title: RecursiveObject
+                          description: 'RecursiveObject post for groups post, write'
                           type: object
-                          nullable: false
+                          additionalProperties: true
               xml:
                 name: item
         description: 'the resource as JSON to persist'
@@ -865,64 +847,34 @@ paths:
               schema:
                 type: array
                 items:
-                  title: recursive_object_with_id
-                  description: 'recursive_object_with_id get for groups get, read'
+                  title: RecursiveObjectWithId
+                  description: 'RecursiveObjectWithId get for groups get, read'
                   type: object
                   properties:
                     id:
                       type: string
                       format: uuid
                     child:
-                      title: recursive_object_with_id
-                      description: 'recursive_object_with_id get for groups get, read'
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          format: uuid
-                        child:
-                          title: recursive_object_with_id
-                          description: 'recursive_object_with_id get for groups get, read'
-                          type: object
-                          properties:
-                            id:
-                              type: object
-                              nullable: false
-                            child:
-                              type: object
-                              nullable: false
-                  xml:
-                    name: item
+                      type: string
+                      format: path
+                      nullable: true
+                      example: /recursive_object_with_id/12345
             application/xml:
               schema:
                 type: array
                 items:
-                  title: recursive_object_with_id
-                  description: 'recursive_object_with_id get for groups get, read'
+                  title: RecursiveObjectWithId
+                  description: 'RecursiveObjectWithId get for groups get, read'
                   type: object
                   properties:
                     id:
                       type: string
                       format: uuid
                     child:
-                      title: recursive_object_with_id
-                      description: 'recursive_object_with_id get for groups get, read'
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          format: uuid
-                        child:
-                          title: recursive_object_with_id
-                          description: 'recursive_object_with_id get for groups get, read'
-                          type: object
-                          properties:
-                            id:
-                              type: object
-                              nullable: false
-                            child:
-                              type: object
-                              nullable: false
+                      type: string
+                      format: path
+                      nullable: true
+                      example: /recursive_object_with_id/12345
                   xml:
                     name: item
                 xml:
@@ -968,62 +920,32 @@ paths:
           content:
             application/json:
               schema:
-                title: recursive_object_with_id
-                description: 'recursive_object_with_id get for groups get, read'
+                title: RecursiveObjectWithId
+                description: 'RecursiveObjectWithId get for groups get, read'
                 type: object
                 properties:
                   id:
                     type: string
                     format: uuid
                   child:
-                    title: recursive_object_with_id
-                    description: 'recursive_object_with_id get for groups get, read'
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        format: uuid
-                      child:
-                        title: recursive_object_with_id
-                        description: 'recursive_object_with_id get for groups get, read'
-                        type: object
-                        properties:
-                          id:
-                            type: object
-                            nullable: false
-                          child:
-                            type: object
-                            nullable: false
-                xml:
-                  name: item
+                    type: string
+                    format: path
+                    nullable: true
+                    example: /recursive_object_with_id/12345
             application/xml:
               schema:
-                title: recursive_object_with_id
-                description: 'recursive_object_with_id get for groups get, read'
+                title: RecursiveObjectWithId
+                description: 'RecursiveObjectWithId get for groups get, read'
                 type: object
                 properties:
                   id:
                     type: string
                     format: uuid
                   child:
-                    title: recursive_object_with_id
-                    description: 'recursive_object_with_id get for groups get, read'
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        format: uuid
-                      child:
-                        title: recursive_object_with_id
-                        description: 'recursive_object_with_id get for groups get, read'
-                        type: object
-                        properties:
-                          id:
-                            type: object
-                            nullable: false
-                          child:
-                            type: object
-                            nullable: false
+                    type: string
+                    format: path
+                    nullable: true
+                    example: /recursive_object_with_id/12345
                 xml:
                   name: item
         401:
@@ -1048,42 +970,46 @@ paths:
         content:
           application/json:
             schema:
-              title: recursive_object_with_id
-              description: 'recursive_object_with_id post for groups post, write'
+              title: RecursiveObjectWithId
+              description: 'RecursiveObjectWithId post for groups post, write'
               type: object
               properties:
                 child:
-                  title: recursive_object_with_id
-                  description: 'recursive_object_with_id post for groups post, write'
+                  title: RecursiveObjectWithId
+                  description: 'RecursiveObjectWithId post for groups post, write'
                   type: object
                   properties:
                     child:
-                      title: recursive_object_with_id
-                      description: 'recursive_object_with_id post for groups post, write'
+                      title: RecursiveObjectWithId
+                      description: 'RecursiveObjectWithId post for groups post, write'
                       type: object
                       properties:
                         child:
+                          title: RecursiveObjectWithId
+                          description: 'RecursiveObjectWithId post for groups post, write'
                           type: object
-                          nullable: false
+                          additionalProperties: true
           application/xml:
             schema:
-              title: recursive_object_with_id
-              description: 'recursive_object_with_id post for groups post, write'
+              title: RecursiveObjectWithId
+              description: 'RecursiveObjectWithId post for groups post, write'
               type: object
               properties:
                 child:
-                  title: recursive_object_with_id
-                  description: 'recursive_object_with_id post for groups post, write'
+                  title: RecursiveObjectWithId
+                  description: 'RecursiveObjectWithId post for groups post, write'
                   type: object
                   properties:
                     child:
-                      title: recursive_object_with_id
-                      description: 'recursive_object_with_id post for groups post, write'
+                      title: RecursiveObjectWithId
+                      description: 'RecursiveObjectWithId post for groups post, write'
                       type: object
                       properties:
                         child:
+                          title: RecursiveObjectWithId
+                          description: 'RecursiveObjectWithId post for groups post, write'
                           type: object
-                          nullable: false
+                          additionalProperties: true
               xml:
                 name: item
         description: 'the resource as JSON to persist'
@@ -1101,62 +1027,32 @@ paths:
           content:
             application/json:
               schema:
-                title: recursive_object_with_id
-                description: 'recursive_object_with_id get for groups get, read'
+                title: RecursiveObjectWithId
+                description: 'RecursiveObjectWithId get for groups get, read'
                 type: object
                 properties:
                   id:
                     type: string
                     format: uuid
                   child:
-                    title: recursive_object_with_id
-                    description: 'recursive_object_with_id get for groups get, read'
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        format: uuid
-                      child:
-                        title: recursive_object_with_id
-                        description: 'recursive_object_with_id get for groups get, read'
-                        type: object
-                        properties:
-                          id:
-                            type: object
-                            nullable: false
-                          child:
-                            type: object
-                            nullable: false
-                xml:
-                  name: item
+                    type: string
+                    format: path
+                    nullable: true
+                    example: /recursive_object_with_id/12345
             application/xml:
               schema:
-                title: recursive_object_with_id
-                description: 'recursive_object_with_id get for groups get, read'
+                title: RecursiveObjectWithId
+                description: 'RecursiveObjectWithId get for groups get, read'
                 type: object
                 properties:
                   id:
                     type: string
                     format: uuid
                   child:
-                    title: recursive_object_with_id
-                    description: 'recursive_object_with_id get for groups get, read'
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        format: uuid
-                      child:
-                        title: recursive_object_with_id
-                        description: 'recursive_object_with_id get for groups get, read'
-                        type: object
-                        properties:
-                          id:
-                            type: object
-                            nullable: false
-                          child:
-                            type: object
-                            nullable: false
+                    type: string
+                    format: path
+                    nullable: true
+                    example: /recursive_object_with_id/12345
                 xml:
                   name: item
         401:
@@ -1187,62 +1083,32 @@ paths:
           content:
             application/json:
               schema:
-                title: recursive_object_with_id
-                description: 'recursive_object_with_id get for groups get, read'
+                title: RecursiveObjectWithId
+                description: 'RecursiveObjectWithId get for groups get, read'
                 type: object
                 properties:
                   id:
                     type: string
                     format: uuid
                   child:
-                    title: recursive_object_with_id
-                    description: 'recursive_object_with_id get for groups get, read'
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        format: uuid
-                      child:
-                        title: recursive_object_with_id
-                        description: 'recursive_object_with_id get for groups get, read'
-                        type: object
-                        properties:
-                          id:
-                            type: object
-                            nullable: false
-                          child:
-                            type: object
-                            nullable: false
-                xml:
-                  name: item
+                    type: string
+                    format: path
+                    nullable: true
+                    example: /recursive_object_with_id/12345
             application/xml:
               schema:
-                title: recursive_object_with_id
-                description: 'recursive_object_with_id get for groups get, read'
+                title: RecursiveObjectWithId
+                description: 'RecursiveObjectWithId get for groups get, read'
                 type: object
                 properties:
                   id:
                     type: string
                     format: uuid
                   child:
-                    title: recursive_object_with_id
-                    description: 'recursive_object_with_id get for groups get, read'
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        format: uuid
-                      child:
-                        title: recursive_object_with_id
-                        description: 'recursive_object_with_id get for groups get, read'
-                        type: object
-                        properties:
-                          id:
-                            type: object
-                            nullable: false
-                          child:
-                            type: object
-                            nullable: false
+                    type: string
+                    format: path
+                    nullable: true
+                    example: /recursive_object_with_id/12345
                 xml:
                   name: item
         401:
@@ -1269,42 +1135,46 @@ paths:
         content:
           application/json:
             schema:
-              title: recursive_object_with_id
-              description: 'recursive_object_with_id put for groups put, write'
+              title: RecursiveObjectWithId
+              description: 'RecursiveObjectWithId put for groups put, write'
               type: object
               properties:
                 child:
-                  title: recursive_object_with_id
-                  description: 'recursive_object_with_id put for groups put, write'
+                  title: RecursiveObjectWithId
+                  description: 'RecursiveObjectWithId post for groups put, write'
                   type: object
                   properties:
                     child:
-                      title: recursive_object_with_id
-                      description: 'recursive_object_with_id put for groups put, write'
+                      title: RecursiveObjectWithId
+                      description: 'RecursiveObjectWithId post for groups put, write'
                       type: object
                       properties:
                         child:
+                          title: RecursiveObjectWithId
+                          description: 'RecursiveObjectWithId post for groups put, write'
                           type: object
-                          nullable: false
+                          additionalProperties: true
           application/xml:
             schema:
-              title: recursive_object_with_id
-              description: 'recursive_object_with_id put for groups put, write'
+              title: RecursiveObjectWithId
+              description: 'RecursiveObjectWithId put for groups put, write'
               type: object
               properties:
                 child:
-                  title: recursive_object_with_id
-                  description: 'recursive_object_with_id put for groups put, write'
+                  title: RecursiveObjectWithId
+                  description: 'RecursiveObjectWithId post for groups put, write'
                   type: object
                   properties:
                     child:
-                      title: recursive_object_with_id
-                      description: 'recursive_object_with_id put for groups put, write'
+                      title: RecursiveObjectWithId
+                      description: 'RecursiveObjectWithId post for groups put, write'
                       type: object
                       properties:
                         child:
+                          title: RecursiveObjectWithId
+                          description: 'RecursiveObjectWithId post for groups put, write'
                           type: object
-                          nullable: false
+                          additionalProperties: true
               xml:
                 name: item
         description: 'the resource as JSON to persist'
@@ -1357,8 +1227,8 @@ paths:
               schema:
                 type: array
                 items:
-                  title: status
-                  description: 'status get for groups get, read'
+                  title: Status
+                  description: 'Status get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -1372,28 +1242,18 @@ paths:
                       nullable: true
                     context:
                       type: array
-                      items:
-                        oneOf:
-                          -
-                            type: string
-                            nullable: true
-                          -
-                            type: integer
-                          -
-                            type: boolean
+                      items: {  }
                       nullable: true
                     no_errors:
                       description: 'Returns true to tell the status check is ''healthy''.'
                       type: boolean
                       nullable: false
-                  xml:
-                    name: item
             application/xml:
               schema:
                 type: array
                 items:
-                  title: status
-                  description: 'status get for groups get, read'
+                  title: Status
+                  description: 'Status get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -1407,15 +1267,7 @@ paths:
                       nullable: true
                     context:
                       type: array
-                      items:
-                        oneOf:
-                          -
-                            type: string
-                            nullable: true
-                          -
-                            type: integer
-                          -
-                            type: boolean
+                      items: {  }
                       nullable: true
                     no_errors:
                       description: 'Returns true to tell the status check is ''healthy''.'
@@ -1473,8 +1325,8 @@ paths:
           content:
             application/json:
               schema:
-                title: status
-                description: 'status get for groups get, read'
+                title: Status
+                description: 'Status get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1488,26 +1340,16 @@ paths:
                     nullable: true
                   context:
                     type: array
-                    items:
-                      oneOf:
-                        -
-                          type: string
-                          nullable: true
-                        -
-                          type: integer
-                        -
-                          type: boolean
+                    items: {  }
                     nullable: true
                   no_errors:
                     description: 'Returns true to tell the status check is ''healthy''.'
                     type: boolean
                     nullable: false
-                xml:
-                  name: item
             application/xml:
               schema:
-                title: status
-                description: 'status get for groups get, read'
+                title: Status
+                description: 'Status get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1521,15 +1363,7 @@ paths:
                     nullable: true
                   context:
                     type: array
-                    items:
-                      oneOf:
-                        -
-                          type: string
-                          nullable: true
-                        -
-                          type: integer
-                        -
-                          type: boolean
+                    items: {  }
                     nullable: true
                   no_errors:
                     description: 'Returns true to tell the status check is ''healthy''.'

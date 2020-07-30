@@ -5,9 +5,6 @@ namespace W2w\Lib\Apie\Interfaces;
 
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * @TODO add method decodeRequestBody and make $requestBody accept array in version 4.
- */
 interface ResourceSerializerInterface
 {
     /**
@@ -56,4 +53,13 @@ interface ResourceSerializerInterface
      * @return object|array
      */
     public function hydrateWithReflection(array $data, string $resourceClass);
+
+    /**
+     * Decodes a request body to primitives.
+     *
+     * @param string $requestBody
+     * @param string $contentType
+     * @return string|int|bool|float|array
+     */
+    public function decodeRequestBody(string $requestBody, string $contentType);
 }

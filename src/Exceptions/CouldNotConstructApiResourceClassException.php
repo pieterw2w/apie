@@ -2,6 +2,7 @@
 namespace W2w\Lib\Apie\Exceptions;
 
 use Throwable;
+use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ApieException;
 
 /**
  * Thrown by ApiResourceFactory to tell it can not instantiate a class.

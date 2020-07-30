@@ -52,8 +52,6 @@ class OpenApiSchemaGeneratorTest extends TestCase
             ],
             $objectAccess,
             $apie->getClassMetadataFactory(),
-            $apie->getPropertyTypeExtractor(),
-            $apie->getClassResourceConverter(),
             $apie->getPropertyConverter()
         );
         $this->testItem->defineSchemaForResource(

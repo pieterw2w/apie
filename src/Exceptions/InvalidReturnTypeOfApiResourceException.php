@@ -3,6 +3,7 @@
 
 namespace W2w\Lib\Apie\Exceptions;
 
+use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ApieException;
 use W2w\Lib\Apie\Interfaces\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Interfaces\ApiResourceRetrieverInterface;
 

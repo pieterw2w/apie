@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Apie
-  version: '3.0'
+  version: '4.0'
 paths:
   /application_info:
     get:

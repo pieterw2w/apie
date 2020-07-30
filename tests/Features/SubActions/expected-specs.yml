@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Apie
-  version: '3.0'
+  version: '4.0'
 paths:
   /full_rest_object:
     get:
@@ -18,8 +18,8 @@ paths:
               schema:
                 type: array
                 items:
-                  title: full_rest_object
-                  description: 'full_rest_object get for groups get, read'
+                  title: FullRestObject
+                  description: 'FullRestObject get for groups get, read'
                   type: object
                   properties:
                     uuid:
@@ -31,14 +31,12 @@ paths:
                     value_object:
                       type: string
                       format: value_object
-                  xml:
-                    name: item
             application/xml:
               schema:
                 type: array
                 items:
-                  title: full_rest_object
-                  description: 'full_rest_object get for groups get, read'
+                  title: FullRestObject
+                  description: 'FullRestObject get for groups get, read'
                   type: object
                   properties:
                     uuid:
@@ -113,8 +111,8 @@ paths:
           content:
             application/json:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -126,12 +124,10 @@ paths:
                   value_object:
                     type: string
                     format: value_object
-                xml:
-                  name: item
             application/xml:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -167,8 +163,8 @@ paths:
         content:
           application/json:
             schema:
-              title: full_rest_object
-              description: 'full_rest_object post for groups post, write'
+              title: FullRestObject
+              description: 'FullRestObject post for groups post, write'
               type: object
               properties:
                 uuid:
@@ -182,8 +178,8 @@ paths:
                   format: value_object
           application/xml:
             schema:
-              title: full_rest_object
-              description: 'full_rest_object post for groups post, write'
+              title: FullRestObject
+              description: 'FullRestObject post for groups post, write'
               type: object
               properties:
                 uuid:
@@ -212,8 +208,8 @@ paths:
           content:
             application/json:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -225,12 +221,10 @@ paths:
                   value_object:
                     type: string
                     format: value_object
-                xml:
-                  name: item
             application/xml:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -272,8 +266,8 @@ paths:
           content:
             application/json:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -285,12 +279,10 @@ paths:
                   value_object:
                     type: string
                     format: value_object
-                xml:
-                  name: item
             application/xml:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -328,8 +320,8 @@ paths:
         content:
           application/json:
             schema:
-              title: full_rest_object
-              description: 'full_rest_object put for groups put, write'
+              title: FullRestObject
+              description: 'FullRestObject put for groups put, write'
               type: object
               properties:
                 string_value:
@@ -340,8 +332,8 @@ paths:
                   format: value_object
           application/xml:
             schema:
-              title: full_rest_object
-              description: 'full_rest_object put for groups put, write'
+              title: FullRestObject
+              description: 'FullRestObject put for groups put, write'
               type: object
               properties:
                 string_value:
@@ -546,8 +538,8 @@ paths:
               schema:
                 type: array
                 items:
-                  title: simple_popo
-                  description: 'simple_popo get for groups get, read'
+                  title: SimplePopo
+                  description: 'SimplePopo get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -556,17 +548,13 @@ paths:
                     created_at:
                       type: string
                       format: date-time
-                    arbitrary_field:
-                      type: string
-                      nullable: true
-                  xml:
-                    name: item
+                    arbitrary_field: {  }
             application/xml:
               schema:
                 type: array
                 items:
-                  title: simple_popo
-                  description: 'simple_popo get for groups get, read'
+                  title: SimplePopo
+                  description: 'SimplePopo get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -575,9 +563,7 @@ paths:
                     created_at:
                       type: string
                       format: date-time
-                    arbitrary_field:
-                      type: string
-                      nullable: true
+                    arbitrary_field: {  }
                   xml:
                     name: item
                 xml:
@@ -623,8 +609,8 @@ paths:
           content:
             application/json:
               schema:
-                title: simple_popo
-                description: 'simple_popo get for groups get, read'
+                title: SimplePopo
+                description: 'SimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -633,15 +619,11 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
-                xml:
-                  name: item
+                  arbitrary_field: {  }
             application/xml:
               schema:
-                title: simple_popo
-                description: 'simple_popo get for groups get, read'
+                title: SimplePopo
+                description: 'SimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -650,9 +632,7 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
+                  arbitrary_field: {  }
                 xml:
                   name: item
         401:
@@ -677,22 +657,18 @@ paths:
         content:
           application/json:
             schema:
-              title: simple_popo
-              description: 'simple_popo post for groups post, write'
+              title: SimplePopo
+              description: 'SimplePopo post for groups post, write'
               type: object
               properties:
-                arbitrary_field:
-                  type: string
-                  nullable: true
+                arbitrary_field: {  }
           application/xml:
             schema:
-              title: simple_popo
-              description: 'simple_popo post for groups post, write'
+              title: SimplePopo
+              description: 'SimplePopo post for groups post, write'
               type: object
               properties:
-                arbitrary_field:
-                  type: string
-                  nullable: true
+                arbitrary_field: {  }
               xml:
                 name: item
         description: 'the resource as JSON to persist'
@@ -863,8 +839,8 @@ paths:
           content:
             application/json:
               schema:
-                title: sum_example
-                description: 'sum_example get for groups get, read'
+                title: SumExample
+                description: 'SumExample get for groups get, read'
                 type: object
                 properties:
                   addition:
@@ -873,8 +849,8 @@ paths:
                     nullable: false
             application/xml:
               schema:
-                title: sum_example
-                description: 'sum_example get for groups get, read'
+                title: SumExample
+                description: 'SumExample get for groups get, read'
                 type: object
                 properties:
                   addition:
@@ -905,8 +881,8 @@ paths:
         content:
           application/json:
             schema:
-              title: sum_example
-              description: 'sum_example post for groups post, write'
+              title: SumExample
+              description: 'SumExample post for groups post, write'
               type: object
               properties:
                 one:
@@ -919,8 +895,8 @@ paths:
                   nullable: false
           application/xml:
             schema:
-              title: sum_example
-              description: 'sum_example post for groups post, write'
+              title: SumExample
+              description: 'SumExample post for groups post, write'
               type: object
               properties:
                 one:
@@ -950,8 +926,8 @@ paths:
               schema:
                 type: array
                 items:
-                  title: another_simple_popo
-                  description: 'another_simple_popo get for groups get, read'
+                  title: AnotherSimplePopo
+                  description: 'AnotherSimplePopo get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -960,17 +936,13 @@ paths:
                     created_at:
                       type: string
                       format: date-time
-                    arbitrary_field:
-                      type: string
-                      nullable: true
-                  xml:
-                    name: item
+                    arbitrary_field: {  }
             application/xml:
               schema:
                 type: array
                 items:
-                  title: another_simple_popo
-                  description: 'another_simple_popo get for groups get, read'
+                  title: AnotherSimplePopo
+                  description: 'AnotherSimplePopo get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -979,9 +951,7 @@ paths:
                     created_at:
                       type: string
                       format: date-time
-                    arbitrary_field:
-                      type: string
-                      nullable: true
+                    arbitrary_field: {  }
                   xml:
                     name: item
                 xml:
@@ -1027,8 +997,8 @@ paths:
           content:
             application/json:
               schema:
-                title: another_simple_popo
-                description: 'another_simple_popo get for groups get, read'
+                title: AnotherSimplePopo
+                description: 'AnotherSimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1037,15 +1007,11 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
-                xml:
-                  name: item
+                  arbitrary_field: {  }
             application/xml:
               schema:
-                title: another_simple_popo
-                description: 'another_simple_popo get for groups get, read'
+                title: AnotherSimplePopo
+                description: 'AnotherSimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1054,9 +1020,7 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
+                  arbitrary_field: {  }
                 xml:
                   name: item
         401:
@@ -1081,22 +1045,18 @@ paths:
         content:
           application/json:
             schema:
-              title: another_simple_popo
-              description: 'another_simple_popo post for groups post, write'
+              title: AnotherSimplePopo
+              description: 'AnotherSimplePopo post for groups post, write'
               type: object
               properties:
-                arbitrary_field:
-                  type: string
-                  nullable: true
+                arbitrary_field: {  }
           application/xml:
             schema:
-              title: another_simple_popo
-              description: 'another_simple_popo post for groups post, write'
+              title: AnotherSimplePopo
+              description: 'AnotherSimplePopo post for groups post, write'
               type: object
               properties:
-                arbitrary_field:
-                  type: string
-                  nullable: true
+                arbitrary_field: {  }
               xml:
                 name: item
         description: 'the resource as JSON to persist'
@@ -1114,8 +1074,8 @@ paths:
           content:
             application/json:
               schema:
-                title: another_simple_popo
-                description: 'another_simple_popo get for groups get, read'
+                title: AnotherSimplePopo
+                description: 'AnotherSimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1124,15 +1084,11 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
-                xml:
-                  name: item
+                  arbitrary_field: {  }
             application/xml:
               schema:
-                title: another_simple_popo
-                description: 'another_simple_popo get for groups get, read'
+                title: AnotherSimplePopo
+                description: 'AnotherSimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1141,9 +1097,7 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
+                  arbitrary_field: {  }
                 xml:
                   name: item
         401:
@@ -1174,8 +1128,8 @@ paths:
           content:
             application/json:
               schema:
-                title: another_simple_popo
-                description: 'another_simple_popo get for groups get, read'
+                title: AnotherSimplePopo
+                description: 'AnotherSimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1184,15 +1138,11 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
-                xml:
-                  name: item
+                  arbitrary_field: {  }
             application/xml:
               schema:
-                title: another_simple_popo
-                description: 'another_simple_popo get for groups get, read'
+                title: AnotherSimplePopo
+                description: 'AnotherSimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1201,9 +1151,7 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
+                  arbitrary_field: {  }
                 xml:
                   name: item
         401:
@@ -1230,22 +1178,18 @@ paths:
         content:
           application/json:
             schema:
-              title: another_simple_popo
-              description: 'another_simple_popo put for groups put, write'
+              title: AnotherSimplePopo
+              description: 'AnotherSimplePopo put for groups put, write'
               type: object
               properties:
-                arbitrary_field:
-                  type: string
-                  nullable: true
+                arbitrary_field: {  }
           application/xml:
             schema:
-              title: another_simple_popo
-              description: 'another_simple_popo put for groups put, write'
+              title: AnotherSimplePopo
+              description: 'AnotherSimplePopo put for groups put, write'
               type: object
               properties:
-                arbitrary_field:
-                  type: string
-                  nullable: true
+                arbitrary_field: {  }
               xml:
                 name: item
         description: 'the resource as JSON to persist'
@@ -1440,8 +1384,8 @@ paths:
           content:
             application/json:
               schema:
-                title: sum_example
-                description: 'sum_example get for groups get, read'
+                title: SumExample
+                description: 'SumExample get for groups get, read'
                 type: object
                 properties:
                   addition:
@@ -1450,8 +1394,8 @@ paths:
                     nullable: false
             application/xml:
               schema:
-                title: sum_example
-                description: 'sum_example get for groups get, read'
+                title: SumExample
+                description: 'SumExample get for groups get, read'
                 type: object
                 properties:
                   addition:
@@ -1525,8 +1469,8 @@ paths:
               schema:
                 type: array
                 items:
-                  title: application_info
-                  description: 'application_info get for groups get, read'
+                  title: ApplicationInfo
+                  description: 'ApplicationInfo get for groups get, read'
                   type: object
                   properties:
                     app_name:
@@ -1541,14 +1485,12 @@ paths:
                     debug:
                       type: boolean
                       nullable: false
-                  xml:
-                    name: item
             application/xml:
               schema:
                 type: array
                 items:
-                  title: application_info
-                  description: 'application_info get for groups get, read'
+                  title: ApplicationInfo
+                  description: 'ApplicationInfo get for groups get, read'
                   type: object
                   properties:
                     app_name:
@@ -1611,8 +1553,8 @@ paths:
               schema:
                 type: array
                 items:
-                  title: status
-                  description: 'status get for groups get, read'
+                  title: Status
+                  description: 'Status get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -1626,28 +1568,18 @@ paths:
                       nullable: true
                     context:
                       type: array
-                      items:
-                        oneOf:
-                          -
-                            type: string
-                            nullable: true
-                          -
-                            type: integer
-                          -
-                            type: boolean
+                      items: {  }
                       nullable: true
                     no_errors:
                       description: 'Returns true to tell the status check is ''healthy''.'
                       type: boolean
                       nullable: false
-                  xml:
-                    name: item
             application/xml:
               schema:
                 type: array
                 items:
-                  title: status
-                  description: 'status get for groups get, read'
+                  title: Status
+                  description: 'Status get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -1661,15 +1593,7 @@ paths:
                       nullable: true
                     context:
                       type: array
-                      items:
-                        oneOf:
-                          -
-                            type: string
-                            nullable: true
-                          -
-                            type: integer
-                          -
-                            type: boolean
+                      items: {  }
                       nullable: true
                     no_errors:
                       description: 'Returns true to tell the status check is ''healthy''.'
@@ -1727,8 +1651,8 @@ paths:
           content:
             application/json:
               schema:
-                title: status
-                description: 'status get for groups get, read'
+                title: Status
+                description: 'Status get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1742,26 +1666,16 @@ paths:
                     nullable: true
                   context:
                     type: array
-                    items:
-                      oneOf:
-                        -
-                          type: string
-                          nullable: true
-                        -
-                          type: integer
-                        -
-                          type: boolean
+                    items: {  }
                     nullable: true
                   no_errors:
                     description: 'Returns true to tell the status check is ''healthy''.'
                     type: boolean
                     nullable: false
-                xml:
-                  name: item
             application/xml:
               schema:
-                title: status
-                description: 'status get for groups get, read'
+                title: Status
+                description: 'Status get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1775,15 +1689,7 @@ paths:
                     nullable: true
                   context:
                     type: array
-                    items:
-                      oneOf:
-                        -
-                          type: string
-                          nullable: true
-                        -
-                          type: integer
-                        -
-                          type: boolean
+                    items: {  }
                     nullable: true
                   no_errors:
                     description: 'Returns true to tell the status check is ''healthy''.'

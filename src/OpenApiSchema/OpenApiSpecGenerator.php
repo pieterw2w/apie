@@ -8,7 +8,6 @@ use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use W2w\Lib\Apie\Core\ApiResourceMetadataFactory;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
-use W2w\Lib\Apie\Core\PluginContainer;
 use W2w\Lib\Apie\Core\Resources\ApiResourcesInterface;
 use W2w\Lib\Apie\Interfaces\SearchFilterProviderInterface;
 use W2w\Lib\Apie\OpenApiSchema\SubActions\SubAction;
@@ -43,7 +42,7 @@ class OpenApiSpecGenerator
         ApiResourcesInterface $apiResources,
         ClassResourceConverter $converter,
         OASv3\Info $info,
-        SchemaGenerator $schemaGenerator,
+        OpenApiSchemaGenerator $schemaGenerator,
         ApiResourceMetadataFactory $apiResourceMetadataFactory,
         IdentifierExtractor $identifierExtractor,
         string $baseUrl,

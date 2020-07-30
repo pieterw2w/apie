@@ -18,13 +18,13 @@ use W2w\Lib\Apie\Events\RetrieveSingleResourceEvent;
 use W2w\Lib\Apie\Events\StoreExistingResourceEvent;
 use W2w\Lib\Apie\Events\StoreNewResourceEvent;
 use W2w\Lib\Apie\Exceptions\MethodNotAllowedException;
-use W2w\Lib\Apie\Exceptions\ValidationException;
 use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
 use W2w\Lib\Apie\Plugins\ApplicationInfo\ApiResources\ApplicationInfo;
 use W2w\Lib\Apie\Plugins\FakeAnnotations\FakeAnnotationsPlugin;
 use W2w\Lib\Apie\Plugins\StaticConfig\StaticConfigPlugin;
 use W2w\Lib\Apie\Plugins\StaticConfig\StaticResourcesPlugin;
 use W2w\Lib\Apie\Plugins\StatusCheck\ApiResources\Status;
+use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ValidationException;
 use W2w\Test\Apie\Mocks\ApiResources\FullRestObject;
 use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
 use W2w\Test\Apie\Mocks\ApiResources\SumExample;
@@ -260,8 +260,6 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
             $serializer->postData($outputClass, json_encode($data), 'application/json');
             $this->fail('A validation exception should have been thrown!');
         } catch (ValidationException $validationException) {
-            $this->assertEquals($expectedErrorsOld, $validationException->getErrors());
-        } catch (\W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ValidationException $validationException) {
             $this->assertEquals($expectedErrors, $validationException->getErrors());
         }
     }

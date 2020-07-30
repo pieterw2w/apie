@@ -26,8 +26,8 @@ use W2w\Lib\Apie\Exceptions\BadConfigurationException;
 use W2w\Lib\Apie\Interfaces\ApiResourceFactoryInterface;
 use W2w\Lib\Apie\Interfaces\FormatRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\ResourceSerializerInterface;
+use W2w\Lib\Apie\OpenApiSchema\OpenApiSchemaGenerator;
 use W2w\Lib\Apie\OpenApiSchema\OpenApiSpecGenerator;
-use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
 use W2w\Lib\Apie\PluginInterfaces\AnnotationReaderProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\ApieAwareInterface;
 use W2w\Lib\Apie\PluginInterfaces\ApieConfigInterface;
@@ -38,8 +38,6 @@ use W2w\Lib\Apie\PluginInterfaces\NormalizerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\ObjectAccessProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\OpenApiEventProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\OpenApiInfoProviderInterface;
-use W2w\Lib\Apie\PluginInterfaces\PropertyInfoExtractorProviderInterface;
-use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
 use W2w\Lib\Apie\PluginInterfaces\ResourceProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SchemaProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SerializerProviderInterface;
@@ -62,10 +60,9 @@ final class Apie implements SerializerProviderInterface,
     OpenApiInfoProviderInterface,
     ApieConfigInterface,
     SchemaProviderInterface,
-    OpenApiEventProviderInterface,
-    PropertyInfoExtractorProviderInterface
+    OpenApiEventProviderInterface
 {
-    const VERSION = "3.0";
+    const VERSION = "4.0";
 
     /**
      * @var bool
@@ -165,23 +162,7 @@ final class Apie implements SerializerProviderInterface,
             SerializerProviderInterface::class,
             new BadConfigurationException('I have no resource serializer set up')
         )->getResourceSerializer();
-        if (!is_callable([$serializer, 'decodeRequestBody'])) {
-            @trigger_error(
-                'Class ' . get_class($serializer) . ' has no method decodeRequestBody and this will be required in Apie version 4',
-                E_USER_DEPRECATED
-            );
-        }
         return $serializer;
-    }
-
-    /**
-     * @internal
-     * @deprecated is only added in CorePlugin, will be removed in 4.0.
-     * @return iterable
-     */
-    public function getResourceLifecycles(): iterable
-    {
-        return $this->pluginContainer->getPluginsWithInterface(ResourceLifeCycleInterface::class);
     }
 
     /**
@@ -208,6 +189,15 @@ final class Apie implements SerializerProviderInterface,
     public function getEncoders(): array
     {
         return $this->pluginContainer->merge(EncoderProviderInterface::class, 'getEncoders');
+    }
+
+    /**
+     * @param string $interface
+     * @return mixed[]
+     */
+    public function getPluginsWithInterface(string $interface): array
+    {
+        return $this->pluginContainer->getPluginsWithInterface($interface);
     }
 
     public function getClassMetadataFactory(): ClassMetadataFactoryInterface
@@ -288,7 +278,7 @@ final class Apie implements SerializerProviderInterface,
         return $this->apieCore->getOpenApiSpecGenerator();
     }
 
-    public function getSchemaGenerator(): SchemaGenerator
+    public function getSchemaGenerator(): OpenApiSchemaGenerator
     {
         return $this->apieCore->getSchemaGenerator();
     }
@@ -353,47 +343,7 @@ final class Apie implements SerializerProviderInterface,
         return $document;
     }
 
-    /**
-     * @deprecated  use getObjectAccess instead
-     */
-    public function getListExtractors(): array
-    {
-        return $this->pluginContainer->merge(PropertyInfoExtractorProviderInterface::class, 'getListExtractors');
-    }
-
-    /**
-     * @deprecated  use getObjectAccess instead
-     */
-    public function getTypeExtractors(): array
-    {
-        return $this->pluginContainer->merge(PropertyInfoExtractorProviderInterface::class, 'getTypeExtractors');
-    }
-
-    /**
-     * @deprecated  use getObjectAccess instead
-     */
-    public function getDescriptionExtractors(): array
-    {
-        return $this->pluginContainer->merge(PropertyInfoExtractorProviderInterface::class, 'getDescriptionExtractors');
-    }
-
-    /**
-     * @deprecated  use getObjectAccess instead
-     */
-    public function getAccessExtractors(): array
-    {
-        return $this->pluginContainer->merge(PropertyInfoExtractorProviderInterface::class, 'getAccessExtractors');
-    }
-
-    /**
-     * @deprecated  use getObjectAccess instead
-     */
-    public function getInitializableExtractors(): array
-    {
-        return $this->pluginContainer->merge(PropertyInfoExtractorProviderInterface::class, 'getInitializableExtractors');
-    }
-
-    public function getObjectAccess(): ObjectAccessInterface
+     public function getObjectAccess(): ObjectAccessInterface
     {
         $objectAccess = new ObjectAccess();
         $objectAccesses = $this->pluginContainer->getPluginsWithInterface(ObjectAccessProviderInterface::class);
