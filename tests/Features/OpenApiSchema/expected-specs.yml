@@ -857,8 +857,9 @@ paths:
                     child:
                       type: string
                       format: path
+                      default: /test-url/recursive_object_with_id/12345
                       nullable: true
-                      example: /recursive_object_with_id/12345
+                      example: /test-url/recursive_object_with_id/12345
             application/xml:
               schema:
                 type: array
@@ -873,8 +874,9 @@ paths:
                     child:
                       type: string
                       format: path
+                      default: /test-url/recursive_object_with_id/12345
                       nullable: true
-                      example: /recursive_object_with_id/12345
+                      example: /test-url/recursive_object_with_id/12345
                   xml:
                     name: item
                 xml:
@@ -930,8 +932,9 @@ paths:
                   child:
                     type: string
                     format: path
+                    default: /test-url/recursive_object_with_id/12345
                     nullable: true
-                    example: /recursive_object_with_id/12345
+                    example: /test-url/recursive_object_with_id/12345
             application/xml:
               schema:
                 title: RecursiveObjectWithId
@@ -944,8 +947,9 @@ paths:
                   child:
                     type: string
                     format: path
+                    default: /test-url/recursive_object_with_id/12345
                     nullable: true
-                    example: /recursive_object_with_id/12345
+                    example: /test-url/recursive_object_with_id/12345
                 xml:
                   name: item
         401:
@@ -1037,8 +1041,9 @@ paths:
                   child:
                     type: string
                     format: path
+                    default: /test-url/recursive_object_with_id/12345
                     nullable: true
-                    example: /recursive_object_with_id/12345
+                    example: /test-url/recursive_object_with_id/12345
             application/xml:
               schema:
                 title: RecursiveObjectWithId
@@ -1051,8 +1056,9 @@ paths:
                   child:
                     type: string
                     format: path
+                    default: /test-url/recursive_object_with_id/12345
                     nullable: true
-                    example: /recursive_object_with_id/12345
+                    example: /test-url/recursive_object_with_id/12345
                 xml:
                   name: item
         401:
@@ -1093,8 +1099,9 @@ paths:
                   child:
                     type: string
                     format: path
+                    default: /test-url/recursive_object_with_id/12345
                     nullable: true
-                    example: /recursive_object_with_id/12345
+                    example: /test-url/recursive_object_with_id/12345
             application/xml:
               schema:
                 title: RecursiveObjectWithId
@@ -1107,8 +1114,9 @@ paths:
                   child:
                     type: string
                     format: path
+                    default: /test-url/recursive_object_with_id/12345
                     nullable: true
-                    example: /recursive_object_with_id/12345
+                    example: /test-url/recursive_object_with_id/12345
                 xml:
                   name: item
         401:

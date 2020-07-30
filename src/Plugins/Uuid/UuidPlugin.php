@@ -4,6 +4,7 @@ namespace W2w\Lib\Apie\Plugins\Uuid;
 
 use erasys\OpenApi\Spec\v3\Schema;
 use Ramsey\Uuid\UuidInterface;
+use W2w\Lib\Apie\OpenApiSchema\Factories\SchemaFactory;
 use W2w\Lib\Apie\PluginInterfaces\NormalizerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SchemaProviderInterface;
 use W2w\Lib\Apie\Plugins\Uuid\Normalizers\UuidNormalizer;
@@ -26,7 +27,7 @@ class UuidPlugin implements NormalizerProviderInterface, SchemaProviderInterface
     public function getDefinedStaticData(): array
     {
         return [
-            UuidInterface::class => new Schema(['type' => 'string', 'format' =>  'uuid'])
+            UuidInterface::class => SchemaFactory::createStringSchema('uuid')
         ];
     }
 

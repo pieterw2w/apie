@@ -4,6 +4,7 @@ namespace W2w\Lib\Apie\Core\SearchFilters;
 use erasys\OpenApi\Spec\v3\Schema;
 use W2w\Lib\Apie\Exceptions\InvalidReturnTypeOfApiResourceException;
 use W2w\Lib\Apie\Interfaces\ValueObjectInterface;
+use W2w\Lib\Apie\OpenApiSchema\Factories\SchemaFactory;
 use W2w\Lib\Apie\Plugins\ValueObject\ValueObjects\StringEnumTrait;
 
 /**
@@ -30,14 +31,14 @@ class PhpPrimitive implements ValueObjectInterface
     {
         switch ($this->toNative()) {
             case self::BOOL:
-                return new Schema(['type' => 'boolean']);
+                return SchemaFactory::createBooleanSchema();
             case self::INT:
-                return new Schema(['type' => 'number', 'format' => 'int32']);
+                return SchemaFactory::createNumberSchema('int32');
             case self::FLOAT:
-                return new Schema(['type' => 'number', 'format' => 'double']);
+                return SchemaFactory::createFloatSchema();
         }
 
-        return new Schema(['type' => 'string']);
+        return SchemaFactory::createStringSchema();
     }
 
     /**

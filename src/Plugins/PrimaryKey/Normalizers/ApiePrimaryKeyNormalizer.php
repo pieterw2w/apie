@@ -9,6 +9,7 @@ use W2w\Lib\Apie\Core\ApiResourceMetadataFactory;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Core\Resources\ApiResourcesInterface;
+use W2w\Lib\Apie\PluginInterfaces\FrameworkConnectionInterface;
 use W2w\Lib\Apie\Plugins\PrimaryKey\ValueObjects\PrimaryKeyReference;
 
 /**
@@ -39,22 +40,22 @@ class ApiePrimaryKeyNormalizer implements ContextAwareNormalizerInterface, Seria
     private $converter;
 
     /**
-     * @var string
+     * @var FrameworkConnectionInterface
      */
-    private $baseUrl;
+    private $frameworkConnection;
 
     public function __construct(
         ApiResourcesInterface $apiResources,
         IdentifierExtractor $identifierExtractor,
         ApiResourceMetadataFactory $metadataFactory,
         ClassResourceConverter $converter,
-        string $baseUrl
+        FrameworkConnectionInterface $frameworkConnection
     ) {
         $this->apiResources = $apiResources;
         $this->identifierExtractor = $identifierExtractor;
         $this->metadataFactory = $metadataFactory;
         $this->converter = $converter;
-        $this->baseUrl = rtrim($baseUrl, '/') . '/';
+        $this->frameworkConnection = $frameworkConnection;
     }
     /**
      * {@inheritdoc}
@@ -89,7 +90,7 @@ class ApiePrimaryKeyNormalizer implements ContextAwareNormalizerInterface, Seria
         return $this->serializer->normalize(
             new PrimaryKeyReference(
                 $metadata,
-                $this->baseUrl . $this->converter->normalize($metadata->getClassName()),
+                $this->frameworkConnection->getUrlForResource($object),
                 $identifierValue
             ),
             $format,

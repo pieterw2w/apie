@@ -6,6 +6,7 @@ namespace W2w\Lib\Apie\Plugins\PrimaryKey;
 use erasys\OpenApi\Spec\v3\Schema;
 use W2w\Lib\Apie\Core\Resources\ApiResources;
 use W2w\Lib\Apie\Exceptions\BadConfigurationException;
+use W2w\Lib\Apie\OpenApiSchema\Factories\SchemaFactory;
 use W2w\Lib\Apie\PluginInterfaces\ApieAwareInterface;
 use W2w\Lib\Apie\PluginInterfaces\ApieAwareTrait;
 use W2w\Lib\Apie\PluginInterfaces\NormalizerProviderInterface;
@@ -32,7 +33,7 @@ class PrimaryKeyPlugin implements NormalizerProviderInterface, ApieAwareInterfac
             $this->getApie()->getIdentifierExtractor(),
             $this->getApie()->getApiResourceMetadataFactory(),
             $this->getApie()->getClassResourceConverter(),
-            $this->getBaseUrl()
+            $this->getApie()->getFrameworkConnection()
         );
         return [
             new PrimaryKeyReferenceNormalizer(),
@@ -41,29 +42,12 @@ class PrimaryKeyPlugin implements NormalizerProviderInterface, ApieAwareInterfac
     }
 
     /**
-     * Returns base url if one is set up.
-     *
-     * @return string
-     */
-    private function getBaseUrl(): string
-    {
-        try {
-            return $this->getApie()->getBaseUrl();
-        } catch (BadConfigurationException $exception) {
-            return '';
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function getDefinedStaticData(): array
     {
         return [
-            PrimaryKeyReference::class => new Schema([
-                'type' => 'string',
-                'format' => 'path',
-            ]),
+            PrimaryKeyReference::class => SchemaFactory::createStringSchema('path'),
         ];
     }
 
@@ -74,7 +58,7 @@ class PrimaryKeyPlugin implements NormalizerProviderInterface, ApieAwareInterfac
     {
         $res = [];
         $identifierExtractor = $this->getApie()->getIdentifierExtractor();
-        $builder = new ApiResourceLinkSchemaBuilder($this->getApie()->getClassResourceConverter());
+        $builder = new ApiResourceLinkSchemaBuilder($this->getApie()->getFrameworkConnection());
         foreach ($this->getApie()->getResources() as $resource) {
             if (null !== $identifierExtractor->getIdentifierKeyOfClass($resource)) {
                 $res[$resource] = $builder;

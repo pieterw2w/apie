@@ -25,16 +25,16 @@ final class PrimaryKeyReference
     /**
      * @var string
      */
-    private $resourceSlug;
+    private $resourceUrl;
 
     /**
      * @param ApiResourceClassMetadata $metadata
      * @param string|int|float|bool|object $identifierValue
      */
-    public function __construct(ApiResourceClassMetadata $metadata, string $resourceSlug, $identifierValue)
+    public function __construct(ApiResourceClassMetadata $metadata, string $resourceUrl, $identifierValue)
     {
         $this->metadata = $metadata;
-        $this->resourceSlug = $resourceSlug;
+        $this->resourceUrl = $resourceUrl;
         if ($identifierValue instanceof ValueObjectInterface) {
             $this->identifierValue = (string) $identifierValue->toNative();
         } else {
@@ -55,7 +55,7 @@ final class PrimaryKeyReference
      */
     public function getUrl(): string
     {
-        return $this->resourceSlug . '/' . $this->identifierValue;
+        return $this->resourceUrl;
     }
 
     /**

@@ -18,6 +18,7 @@ use W2w\Lib\Apie\Events\RetrieveSingleResourceEvent;
 use W2w\Lib\Apie\Events\StoreExistingResourceEvent;
 use W2w\Lib\Apie\Events\StoreNewResourceEvent;
 use W2w\Lib\Apie\Exceptions\MethodNotAllowedException;
+use W2w\Lib\Apie\OpenApiSchema\Factories\SchemaFactory;
 use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
 use W2w\Lib\Apie\Plugins\ApplicationInfo\ApiResources\ApplicationInfo;
 use W2w\Lib\Apie\Plugins\FakeAnnotations\FakeAnnotationsPlugin;
@@ -237,8 +238,8 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
             new StaticConfigPlugin('/test-url'),
         ];
         $testItem = DefaultApie::createDefaultApie(true, $plugins);
-        $testItem->getSchemaGenerator()->defineSchemaForResource(DateTimeInterface::class, new Schema(['type' => 'string', 'format' => 'date-time']));
-        $testItem->getSchemaGenerator()->defineSchemaForResource(Uuid::class, new Schema(['format' => 'uuid', 'type' => 'string']));
+        $testItem->getSchemaGenerator()->defineSchemaForResource(DateTimeInterface::class, SchemaFactory::createStringSchema('date-time'));
+        $testItem->getSchemaGenerator()->defineSchemaForResource(Uuid::class, SchemaFactory::createStringSchema('uuid'));
         // file_put_contents(__DIR__ . '/expected-specs.yml',$testItem->getOpenApiSpecGenerator('/test-url')->getOpenApiSpec()->toYaml(20, 2));
 
         $this->assertEquals(

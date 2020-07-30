@@ -10,9 +10,11 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 use Symfony\Component\Serializer\Serializer;
 use W2w\Lib\Apie\Core\ApiResourceMetadataFactory;
+use W2w\Lib\Apie\Core\Bridge\FrameworkLessConnection;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Core\Resources\ApiResources;
+use W2w\Lib\Apie\DefaultApie;
 use W2w\Lib\Apie\Plugins\Core\ResourceFactories\FallbackFactory;
 use W2w\Lib\Apie\Plugins\PrimaryKey\Normalizers\ApiePrimaryKeyNormalizer;
 use W2w\Lib\Apie\Plugins\PrimaryKey\Normalizers\PrimaryKeyReferenceNormalizer;
@@ -39,7 +41,7 @@ class ApiePrimaryKeyNormalizerTest extends TestCase
         $this->serializer = new Serializer(
             [
                 new UuidNormalizer(),
-                new ApiePrimaryKeyNormalizer($resources, $identifierExtractor, $metadataFactory, $converter, '/'),
+                new ApiePrimaryKeyNormalizer($resources, $identifierExtractor, $metadataFactory, $converter, new FrameworkLessConnection(DefaultApie::createDefaultApie())),
                 new PrimaryKeyReferenceNormalizer(),
                 new ApieObjectAccessNormalizer(null, new CamelCaseToSnakeCaseNameConverter()),
             ],

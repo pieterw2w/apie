@@ -17,11 +17,14 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use W2w\Lib\Apie\Core\ApieCore;
 use W2w\Lib\Apie\Core\ApiResourceFacade;
 use W2w\Lib\Apie\Core\ApiResourceMetadataFactory;
+use W2w\Lib\Apie\Core\Bridge\ChainedFrameworkConnection;
+use W2w\Lib\Apie\Core\Bridge\FrameworkLessConnection;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\Encodings\ChainableFormatRetriever;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Core\PluginContainer;
 use W2w\Lib\Apie\Core\ResourceFactories\ChainableFactory;
+use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
 use W2w\Lib\Apie\Exceptions\BadConfigurationException;
 use W2w\Lib\Apie\Interfaces\ApiResourceFactoryInterface;
 use W2w\Lib\Apie\Interfaces\FormatRetrieverInterface;
@@ -34,6 +37,7 @@ use W2w\Lib\Apie\PluginInterfaces\ApieConfigInterface;
 use W2w\Lib\Apie\PluginInterfaces\ApiResourceFactoryProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\CacheItemPoolProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\EncoderProviderInterface;
+use W2w\Lib\Apie\PluginInterfaces\FrameworkConnectionInterface;
 use W2w\Lib\Apie\PluginInterfaces\NormalizerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\ObjectAccessProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\OpenApiEventProviderInterface;
@@ -60,7 +64,8 @@ final class Apie implements SerializerProviderInterface,
     OpenApiInfoProviderInterface,
     ApieConfigInterface,
     SchemaProviderInterface,
-    OpenApiEventProviderInterface
+    OpenApiEventProviderInterface,
+    FrameworkConnectionInterface
 {
     const VERSION = "4.0";
 
@@ -358,5 +363,44 @@ final class Apie implements SerializerProviderInterface,
             return new CachedObjectAccess($objectAccess, $this->getCacheItemPool());
         }
         return $objectAccess;
+    }
+
+    public function getFrameworkConnection(): FrameworkConnectionInterface
+    {
+        $res = new ChainedFrameworkConnection(
+            $this->getPluginsWithInterface(FrameworkConnectionInterface::class),
+            new FrameworkLessConnection($this)
+        );
+        return $res;
+    }
+
+    public function getService(string $id): object
+    {
+        return $this->getFrameworkConnection()->getService($id);
+    }
+
+    public function getUrlForResource(object $resource): ?string
+    {
+        return $this->getFrameworkConnection()->getUrlForResource($resource);
+    }
+
+    public function getOverviewUrlForResourceClass(string $resourceClass, ?SearchFilterRequest $filterRequest = null
+    ): ?string {
+        return $this->getFrameworkConnection()->getOverviewUrlForResourceClass($resourceClass, $filterRequest);
+    }
+
+    public function getAcceptLanguage(): ?string
+    {
+        return $this->getFrameworkConnection()->getAcceptLanguage();
+    }
+
+    public function getContentLanguage(): ?string
+    {
+        return $this->getFrameworkConnection()->getContentLanguage();
+    }
+
+    public function getExampleUrl(string $resourceClass): ?string
+    {
+        return $this->getFrameworkConnection()->getExampleUrl($resourceClass);
     }
 }

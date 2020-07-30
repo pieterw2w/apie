@@ -39,6 +39,7 @@ class PrimaryKeyPluginTest extends TestCase
                         [
                             'type' => 'string',
                             'format' => 'path',
+                            'default' => '/recursive_object_with_id/12345',
                             'nullable' => true,
                             'example' => '/recursive_object_with_id/12345',
                         ]
