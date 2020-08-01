@@ -127,6 +127,14 @@ class ApieCore
         return $this->schemaGenerator;
     }
 
+    private function getResponseFactory(): ApiResourceFacadeResponseFactory
+    {
+        return new ApiResourceFacadeResponseFactory(
+            $this->apie->getResourceSerializer(),
+            $this->pluginContainer->getPluginsWithInterface(ResourceLifeCycleInterface::class)
+        );
+    }
+
     /**
      * Returns the Apie resource facade to handle REST API responses.
      *
@@ -142,6 +150,7 @@ class ApieCore
             $this->apie->getFormatRetriever(),
             $this->getSubActionContainer(),
             $this->apie->getPropertyConverter(),
+            $this->getResponseFactory(),
             $this->pluginContainer->getPluginsWithInterface(ResourceLifeCycleInterface::class)
         );
     }

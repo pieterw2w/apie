@@ -1,6 +1,8 @@
 <?php
 namespace W2w\Lib\Apie\Core\SearchFilters;
 
+use Pagerfanta\Exception\OutOfRangeCurrentPageException;
+use Pagerfanta\Pagerfanta;
 use Psr\Http\Message\ServerRequestInterface;
 use W2w\Lib\Apie\Exceptions\InvalidPageLimitException;
 use W2w\Lib\Apie\Exceptions\PageIndexShouldNotBeNegativeException;
@@ -52,6 +54,13 @@ final class SearchFilterRequest
     public function getSearches(): array
     {
         return $this->searches;
+    }
+
+    public function updatePaginator(Pagerfanta $pager)
+    {
+        $pager->setAllowOutOfRangePages(true);
+        $pager->setMaxPerPage($this->getNumberOfItems());
+        $pager->setCurrentPage($this->getPageIndex() + 1);
     }
 
     /**

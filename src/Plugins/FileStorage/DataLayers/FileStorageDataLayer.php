@@ -2,6 +2,7 @@
 namespace W2w\Lib\Apie\Plugins\FileStorage\DataLayers;
 
 use LimitIterator;
+use Pagerfanta\Pagerfanta;
 use ReflectionClass;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -17,6 +18,7 @@ use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\Interfaces\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Interfaces\ApiResourceRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\SearchFilterProviderInterface;
+use W2w\Lib\Apie\Plugins\FileStorage\Pagers\FilestoragePager;
 
 class FileStorageDataLayer implements ApiResourcePersisterInterface, ApiResourceRetrieverInterface, SearchFilterProviderInterface
 {
@@ -112,24 +114,15 @@ class FileStorageDataLayer implements ApiResourcePersisterInterface, ApiResource
      * @param string $resourceClass
      * @param array $context
      * @param SearchFilterRequest $searchFilterRequest
-     * @return iterable
+     * @return Pagerfanta
      */
     public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest): iterable
     {
-        $offset = $searchFilterRequest->getOffset();
-        $numberOfItems = $searchFilterRequest->getNumberOfItems();
         $folder = $this->getFolder($resourceClass);
-        $result = [];
-        $list = new LimitIterator(
-            Finder::create()->files()->sortByName()->depth(0)->in($folder)->getIterator(),
-            $offset,
-            $numberOfItems
-        );
-        foreach ($list as $file) {
-            /** @var SplFileInfo $file */
-            $result[] = $this->retrieve($resourceClass, $file->getBasename(), $context);
-        }
-        return $result;
+        $iterator = Finder::create()->files()->sortByName()->depth(0)->in($folder)->getIterator();
+        $paginator = new Pagerfanta(new FilestoragePager($this, $iterator, $resourceClass, $context));
+        $searchFilterRequest->updatePaginator($paginator);
+        return $paginator;
     }
 
     protected function getFolder(string $resourceClass): string

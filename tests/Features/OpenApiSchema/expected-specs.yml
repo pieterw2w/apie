@@ -13,6 +13,14 @@ paths:
               $ref: '#/components/headers/x-ratelimit-limit'
             x-ratelimit-remaining:
               $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-previous:
+              description: 'Pagination previous page url'
+            x-pagination-next:
+              description: 'Pagination next page url'
+            x-pagination-first:
+              description: 'Pagination first page url'
+            x-pagination-last:
+              description: 'Pagination last page url'
           content:
             application/json:
               schema:
@@ -97,6 +105,14 @@ paths:
               $ref: '#/components/headers/x-ratelimit-limit'
             x-ratelimit-remaining:
               $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-previous:
+              description: 'Pagination previous page url'
+            x-pagination-next:
+              description: 'Pagination next page url'
+            x-pagination-first:
+              description: 'Pagination first page url'
+            x-pagination-last:
+              description: 'Pagination last page url'
           content:
             application/json:
               schema:
@@ -256,6 +272,14 @@ paths:
               $ref: '#/components/headers/x-ratelimit-limit'
             x-ratelimit-remaining:
               $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-previous:
+              description: 'Pagination previous page url'
+            x-pagination-next:
+              description: 'Pagination next page url'
+            x-pagination-first:
+              description: 'Pagination first page url'
+            x-pagination-last:
+              description: 'Pagination last page url'
           content:
             application/json:
               schema:
@@ -448,6 +472,14 @@ paths:
               $ref: '#/components/headers/x-ratelimit-limit'
             x-ratelimit-remaining:
               $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-previous:
+              description: 'Pagination previous page url'
+            x-pagination-next:
+              description: 'Pagination next page url'
+            x-pagination-first:
+              description: 'Pagination first page url'
+            x-pagination-last:
+              description: 'Pagination last page url'
           content:
             application/json:
               schema:
@@ -632,6 +664,14 @@ paths:
               $ref: '#/components/headers/x-ratelimit-limit'
             x-ratelimit-remaining:
               $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-previous:
+              description: 'Pagination previous page url'
+            x-pagination-next:
+              description: 'Pagination next page url'
+            x-pagination-first:
+              description: 'Pagination first page url'
+            x-pagination-last:
+              description: 'Pagination last page url'
           content:
             application/json:
               schema:
@@ -842,6 +882,14 @@ paths:
               $ref: '#/components/headers/x-ratelimit-limit'
             x-ratelimit-remaining:
               $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-previous:
+              description: 'Pagination previous page url'
+            x-pagination-next:
+              description: 'Pagination next page url'
+            x-pagination-first:
+              description: 'Pagination first page url'
+            x-pagination-last:
+              description: 'Pagination last page url'
           content:
             application/json:
               schema:
@@ -1230,6 +1278,14 @@ paths:
               $ref: '#/components/headers/x-ratelimit-limit'
             x-ratelimit-remaining:
               $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-previous:
+              description: 'Pagination previous page url'
+            x-pagination-next:
+              description: 'Pagination next page url'
+            x-pagination-first:
+              description: 'Pagination first page url'
+            x-pagination-last:
+              description: 'Pagination last page url'
           content:
             application/json:
               schema:

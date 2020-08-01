@@ -2,17 +2,18 @@
 
 namespace W2w\Lib\Apie\Plugins\Mock\DataLayers;
 
+use Pagerfanta\Pagerfanta;
 use Psr\Cache\CacheItemPoolInterface;
 use ReflectionClass;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterFromMetadataTrait;
-use W2w\Lib\Apie\Core\SearchFilters\SearchFilterHelper;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
 use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\Interfaces\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Interfaces\ApiResourceRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\SearchFilterProviderInterface;
+use W2w\Lib\Apie\Plugins\Mock\Pagers\MockAdapter;
 
 /**
  * If the implementation of a REST API is mocked this is the class that persists and retrieves all API resources.
@@ -60,11 +61,7 @@ class MockApiResourceDataLayer implements ApiResourcePersisterInterface, ApiReso
             return $resource;
         }
 
-        $cacheKey = 'mock-server.' . $this->shortName($resource) . '.' . $id;
-        $cacheItem = $this->cacheItemPool->getItem($cacheKey)->set(serialize($resource));
-        $this->addId(get_class($resource), $id);
-        $this->cacheItemPool->save($cacheItem);
-        $this->cacheItemPool->commit();
+        $this->persist($resource, $id);
         return $resource;
     }
 
@@ -76,12 +73,17 @@ class MockApiResourceDataLayer implements ApiResourcePersisterInterface, ApiReso
      */
     public function persistExisting($resource, $int, array $context = [])
     {
-        $cacheKey = 'mock-server.' . $this->shortName($resource) . '.' . $int;
+        $this->persist($resource, $int);
+        return $resource;
+    }
+
+    private function persist($resource, $id)
+    {
+        $cacheKey = 'mock-server.' . $this->shortName($resource) . '.' . $id;
         $cacheItem = $this->cacheItemPool->getItem($cacheKey)->set(serialize($resource));
-        $this->addId(get_class($resource), $int);
+        $this->addId(get_class($resource), $id);
         $this->cacheItemPool->save($cacheItem);
         $this->cacheItemPool->commit();
-        return $resource;
     }
 
     /**
@@ -117,7 +119,7 @@ class MockApiResourceDataLayer implements ApiResourcePersisterInterface, ApiReso
      * @param string $resourceClass
      * @param array $context
      * @param SearchFilterRequest $searchFilterRequest
-     * @return iterable
+     * @return Pagerfanta|array
      */
     public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest): iterable
     {
@@ -126,12 +128,9 @@ class MockApiResourceDataLayer implements ApiResourcePersisterInterface, ApiReso
         if (!$cacheItem->isHit()) {
             return [];
         }
-        return array_map(
-            function ($id) use (&$resourceClass, &$context) {
-                return $this->retrieve($resourceClass, $id, $context);
-            },
-            SearchFilterHelper::applySearchFilter($cacheItem->get(), $searchFilterRequest, $this->propertyAccessor)
-        );
+        $paginator = new Pagerfanta(new MockAdapter($this, $cacheItem->get(), $searchFilterRequest->getSearches(), $resourceClass, $context, $this->propertyAccessor));
+        $searchFilterRequest->updatePaginator($paginator);
+        return $paginator;
     }
 
     /**

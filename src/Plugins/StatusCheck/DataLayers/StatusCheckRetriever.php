@@ -5,6 +5,7 @@ namespace W2w\Lib\Apie\Plugins\StatusCheck\DataLayers;
 use CallbackFilterIterator;
 use Generator;
 use LimitIterator;
+use Pagerfanta\Pagerfanta;
 use RewindableGenerator;
 use W2w\Lib\Apie\Core\Models\ApiResourceClassMetadata;
 use W2w\Lib\Apie\Core\SearchFilters\PhpPrimitive;
@@ -15,6 +16,7 @@ use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\Interfaces\ApiResourceRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\SearchFilterProviderInterface;
 use W2w\Lib\Apie\Plugins\StatusCheck\ApiResources\Status;
+use W2w\Lib\Apie\Plugins\StatusCheck\Pagers\StatusCheckPager;
 use W2w\Lib\Apie\Plugins\StatusCheck\StatusChecks\StatusCheckInterface;
 use W2w\Lib\Apie\Plugins\StatusCheck\StatusChecks\StatusCheckListInterface;
 
@@ -89,25 +91,25 @@ class StatusCheckRetriever implements ApiResourceRetrieverInterface, SearchFilte
      * @param string $resourceClass
      * @param array $context
      * @param SearchFilterRequest $searchFilterRequest
-     * @return iterable<Status>
+     * @return Pagerfanta
      */
     public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest): iterable
     {
-        $offset = $searchFilterRequest->getOffset();
-        $numberOfItems = $searchFilterRequest->getNumberOfItems();
-        $filter = (array_key_exists('status', $searchFilterRequest->getSearches()))
-            ? function (Status $status) use ($searchFilterRequest) { return $status->getStatus() === $searchFilterRequest->getSearches()['status']; }
-            : function () { return true; };
-        return new LimitIterator(
-            new CallbackFilterIterator(
-                new RewindableGenerator(function () {
-                    return $this->iterate();
-                }),
+        $iterator = new RewindableGenerator(function () {
+            return $this->iterate();
+        });
+        if (array_key_exists('status', $searchFilterRequest->getSearches())) {
+            $filter = function (Status $status) use ($searchFilterRequest) {
+                return $status->getStatus() === $searchFilterRequest->getSearches()['status'];
+            };
+            $iterator = new CallbackFilterIterator(
+                $iterator,
                 $filter
-            ),
-            $offset,
-            $numberOfItems
-        );
+            );
+        }
+        $paginator = new Pagerfanta(new StatusCheckPager($iterator));
+        $searchFilterRequest->updatePaginator($paginator);
+        return $paginator;
     }
 
     /**

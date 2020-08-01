@@ -1,6 +1,8 @@
 <?php
 namespace W2w\Lib\Apie\Plugins\Core\DataLayers;
 
+use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Pagerfanta;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -125,14 +127,14 @@ class MemoryDataLayer implements ApiResourcePersisterInterface, ApiResourceRetri
      * @param string $resourceClass
      * @param array $context
      * @param SearchFilterRequest $searchFilterRequest
-     * @return iterable
+     * @return Pagerfanta|array
      */
     public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest): iterable
     {
         if (empty($this->persisted[$resourceClass])) {
             return [];
         }
-        return SearchFilterHelper::applySearchFilter(
+        return SearchFilterHelper::applyPaginationToSearchFilter(
             $this->persisted[$resourceClass],
             $searchFilterRequest,
             $this->propertyAccessor
