@@ -51,11 +51,6 @@ class DifferentResourceNamingPlugin implements SymfonyComponentProviderInterface
     {
         return $this->getApie()->getPlugin(CorePlugin::class)->getPropertyAccessor();
     }
-    
-    public function getPropertyTypeExtractor(): PropertyTypeExtractorInterface
-    {
-        return $this->getApie()->getPlugin(CorePlugin::class)->getPropertyTypeExtractor();
-    }
 }
 
 ```

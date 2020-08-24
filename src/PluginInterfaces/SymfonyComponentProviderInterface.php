@@ -13,5 +13,4 @@ interface SymfonyComponentProviderInterface
     public function getClassMetadataFactory(): ClassMetadataFactoryInterface;
     public function getPropertyConverter(): NameConverterInterface;
     public function getPropertyAccessor(): PropertyAccessor;
-    public function getPropertyTypeExtractor(): PropertyTypeExtractorInterface;
 }

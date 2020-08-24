@@ -229,14 +229,6 @@ final class Apie implements SerializerProviderInterface,
         )->getPropertyAccessor();
     }
 
-    public function getPropertyTypeExtractor(): PropertyTypeExtractorInterface
-    {
-        return $this->pluginContainer->first(
-            SymfonyComponentProviderInterface::class,
-            new BadConfigurationException('I have no symfony component provider set up')
-        )->getPropertyTypeExtractor();
-    }
-
     public function getCacheItemPool(): CacheItemPoolInterface
     {
         return $this->pluginContainer->first(

@@ -7,15 +7,10 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Cache\PhpFileCache;
-use Pjordaan\AlternateReflectionExtractor\ReflectionExtractor;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
-use Symfony\Component\PropertyInfo\Extractor\SerializerExtractor;
-use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
-use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Serializer\Encoder\JsonEncode;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -155,39 +150,6 @@ class CorePlugin implements SerializerProviderInterface,
                 ->getPropertyAccessor();
         }
         return $this->propertyAccessor;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getPropertyTypeExtractor(): PropertyTypeExtractorInterface
-    {
-        if (!$this->propertyTypeExtractor) {
-            $factory = $this->getApie()->getClassMetadataFactory();
-            $reflectionExtractor = new ReflectionExtractor();
-            $phpDocExtractor = new PhpDocExtractor();
-
-            $this->propertyTypeExtractor = new PropertyInfoExtractor(
-                [
-                    new SerializerExtractor($factory),
-                    $reflectionExtractor,
-                ] + $this->getApie()->getListExtractors(),
-                $this->getApie()->getTypeExtractors() +[
-                    $phpDocExtractor,
-                    $reflectionExtractor,
-                ],
-                $this->getApie()->getDescriptionExtractors() + [
-                    $phpDocExtractor,
-                ] ,
-                $this->getApie()->getAccessExtractors() + [
-                    $reflectionExtractor,
-                ] ,
-                $this->getApie()->getInitializableExtractors() + [
-                    $reflectionExtractor,
-                ]
-            );
-        }
-        return $this->propertyTypeExtractor;
     }
 
     /**
