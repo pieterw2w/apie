@@ -21,7 +21,7 @@ class FrameworkLessConnection implements FrameworkConnectionInterface, ApieAware
 
     public function getService(string $id): object
     {
-        throw new BadConfigurationException('No service ' . $id . ' found!');
+        throw new BadConfigurationException('No service "' . $id . '" found!');
     }
 
     public function getUrlForResource(object $resource): ?string

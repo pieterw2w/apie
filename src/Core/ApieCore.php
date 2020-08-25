@@ -209,7 +209,7 @@ class ApieCore
     public function getIdentifierExtractor(): IdentifierExtractor
     {
         if (!$this->identifierExtractor) {
-            $this->identifierExtractor = new IdentifierExtractor($this->apie->getPropertyAccessor());
+            $this->identifierExtractor = new IdentifierExtractor($this->apie->getObjectAccess());
         }
         return $this->identifierExtractor;
     }

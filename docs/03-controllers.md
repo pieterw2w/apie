@@ -24,8 +24,6 @@ behaviour.
 
 ```php
 <?php
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
@@ -45,11 +43,6 @@ class DifferentResourceNamingPlugin implements SymfonyComponentProviderInterface
     public function getPropertyConverter(): NameConverterInterface
     {
         return new CamelCaseToSnakeCaseNameConverter();
-    }
-    
-    public function getPropertyAccessor(): PropertyAccessor
-    {
-        return $this->getApie()->getPlugin(CorePlugin::class)->getPropertyAccessor();
     }
 }
 

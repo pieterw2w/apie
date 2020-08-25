@@ -7,10 +7,12 @@ use erasys\OpenApi\Spec\v3\Header;
 use erasys\OpenApi\Spec\v3\Operation;
 use erasys\OpenApi\Spec\v3\PathItem;
 use erasys\OpenApi\Spec\v3\Reference;
+use erasys\OpenApi\Spec\v3\Schema;
 use Pagerfanta\Adapter\AdapterInterface;
 use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Pagerfanta;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterHelper;
+use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
 use W2w\Lib\Apie\Events\DecodeEvent;
 use W2w\Lib\Apie\Events\DeleteResourceEvent;
 use W2w\Lib\Apie\Events\ModifySingleResourceEvent;
@@ -51,26 +53,36 @@ class PaginationPlugin implements ResourceLifeCycleInterface, NormalizerProvider
     {
         /** @var PathItem[] $paths */
         $paths = $document->paths ?? [];
+        $added = false;
         foreach ($paths as $url => $path) {
-            if (strpos($url, '{id}', 0) === false && $path->get) {
-                $this->patch($path->get);
+            if (strpos($url, '{id}', 0) === false && $path->get && $this->patch($path->get)) {
+                $added = true;
             }
+        }
+        if ($added) {
+            $document->components->headers['Count'] = new Header('number of results', ['schema' => new Schema(['type' => 'number', 'format' => 'int'])]);
+            $document->components->headers['Url'] = new Header('url of header', ['schema' => new Schema(['type' => 'string', 'format' => 'url']) ]);
         }
         return $document;
     }
 
-    private function patch(Operation $operation): Operation
+    private function patch(Operation $operation): bool
     {
+        $added = false;
         foreach ($operation->responses as &$response) {
             if ($response instanceof Reference) {
                 continue;
             }
-            $response->headers[self::PREV_HEADER] = new Header('Pagination previous page url', []);
-            $response->headers[self::NEXT_HEADER] = new Header('Pagination next page url', []);
-            $response->headers[self::FIRST_HEADER] = new Header('Pagination first page url', []);
-            $response->headers[self::LAST_HEADER] = new Header('Pagination last page url', []);
+            $added = true;
+            $countSchema = new Reference('#/components/headers/Count');
+            $urlSchema = new Reference('#/components/headers/Url');
+            $response->headers[self::COUNT_HEADER] = $countSchema;
+            $response->headers[self::PREV_HEADER] = $urlSchema;
+            $response->headers[self::NEXT_HEADER] = $urlSchema;
+            $response->headers[self::FIRST_HEADER] = $urlSchema;
+            $response->headers[self::LAST_HEADER] = $urlSchema;
         }
-        return $operation;
+        return $added;
     }
 
     public function onPreDeleteResource(DeleteResourceEvent $event)
@@ -160,20 +172,20 @@ class PaginationPlugin implements ResourceLifeCycleInterface, NormalizerProvider
         $response = $event->getResponse()
             ->withHeader(self::FIRST_HEADER, $this->generateUrl($event, 0))
             ->withHeader(self::LAST_HEADER, $this->generateUrl($event, $resource->getNbPages() - 1))
-            ->withHeader(self::COUNT_HEADER, $this->generateUrl($event, $resource->getNbPages()));
+            ->withHeader(self::COUNT_HEADER, $resource->getNbPages());
         if ($resource->hasPreviousPage()) {
-            $response = $response->withHeader(self::PREV_HEADER, $this->generateUrl($event, $resource->getPreviousPage()));
+            $response = $response->withHeader(self::PREV_HEADER, $this->generateUrl($event, $resource->getPreviousPage() - 1));
         }
         if ($resource->hasNextPage()) {
-            $response = $response->withHeader(self::NEXT_HEADER, $this->generateUrl($event, $resource->getNextPage()));
+            $response = $response->withHeader(self::NEXT_HEADER, $this->generateUrl($event, $resource->getNextPage() - 1));
         }
         $event->setResponse($response);
     }
 
     private function generateUrl(ResponseAllEvent  $event, int $page)
     {
-        $baseUrl = $this->getApie()->getOverviewUrlForResourceClass($event->getResourceClass(), $event->getSearchFilterRequest());
-        return $baseUrl . '?' . http_build_query(['page' => $page, 'limit' => $event->getSearchFilterRequest()->getNumberOfItems()]);
+        $filterRequest = new SearchFilterRequest($page, $event->getSearchFilterRequest()->getNumberOfItems());
+        return $this->getApie()->getOverviewUrlForResourceClass($event->getResourceClass(), $filterRequest);
     }
 
     public function onPreCreateNormalizedData(NormalizeEvent $event)

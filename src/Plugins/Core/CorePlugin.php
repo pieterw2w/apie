@@ -10,7 +10,6 @@ use Doctrine\Common\Cache\PhpFileCache;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Serializer\Encoder\JsonEncode;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -68,10 +67,6 @@ class CorePlugin implements SerializerProviderInterface,
     private $classMetadataFactory;
 
     private $propertyConverter;
-
-    private $propertyAccessor;
-
-    private $propertyTypeExtractor;
 
     private $annotationReader;
 
@@ -142,19 +137,6 @@ class CorePlugin implements SerializerProviderInterface,
     /**
      * {@inheritDoc}
      */
-    public function getPropertyAccessor(): PropertyAccessor
-    {
-        if (!$this->propertyAccessor) {
-            $this->propertyAccessor = PropertyAccess::createPropertyAccessorBuilder()
-                ->setCacheItemPool($this->getApie()->getCacheItemPool())
-                ->getPropertyAccessor();
-        }
-        return $this->propertyAccessor;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getCacheItemPool(): CacheItemPoolInterface
     {
         return new ArrayAdapter(0, true);
@@ -211,7 +193,7 @@ class CorePlugin implements SerializerProviderInterface,
     public function getApiResourceFactory(): ApiResourceFactoryInterface
     {
         return new FallbackFactory(
-            $this->getApie()->getPropertyAccessor(),
+            $this->getApie()->getObjectAccess(),
             $this->getApie()->getIdentifierExtractor()
         );
     }

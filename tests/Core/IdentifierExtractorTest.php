@@ -4,6 +4,7 @@ namespace W2w\Test\Apie\Core;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
 use W2w\Test\Apie\Mocks\ApiResources\FullRestObject;
 use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
 
@@ -13,7 +14,7 @@ class IdentifierExtractorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->testItem = new IdentifierExtractor(PropertyAccess::createPropertyAccessor());
+        $this->testItem = new IdentifierExtractor(new ObjectAccess());
     }
 
     public function testGetIdentifierKey()
@@ -26,8 +27,8 @@ class IdentifierExtractorTest extends TestCase
     {
         $testObject = new SimplePopo();
         $this->assertEquals(
-            'created_at',
-            $this->testItem->getIdentifierKey($testObject, ['identifier' => 'created_at'])
+            'createdAt',
+            $this->testItem->getIdentifierKey($testObject, ['identifier' => 'createdAt'])
         );
     }
 
@@ -42,7 +43,7 @@ class IdentifierExtractorTest extends TestCase
         $testObject = new SimplePopo();
         $this->assertEquals(
             $testObject->getCreatedAt(),
-            $this->testItem->getIdentifierValue($testObject, ['identifier' => 'created_at'])
+            $this->testItem->getIdentifierValue($testObject, ['identifier' => 'createdAt'])
         );
     }
 

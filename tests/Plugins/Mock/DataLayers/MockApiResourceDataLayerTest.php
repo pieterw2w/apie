@@ -8,6 +8,7 @@ use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
 use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\Plugins\Mock\DataLayers\MockApiResourceDataLayer;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
 use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
 use W2w\Test\Apie\Mocks\ApiResources\SumExample;
 
@@ -20,7 +21,7 @@ class MockApiResourceDataLayerTest extends TestCase
     protected function setUp(): void
     {
         $this->cache = new ArrayAdapter();
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $propertyAccessor = new ObjectAccess();
         $this->testItem = new MockApiResourceDataLayer(
             $this->cache,
             new IdentifierExtractor($propertyAccessor),

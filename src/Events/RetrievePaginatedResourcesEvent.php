@@ -2,6 +2,7 @@
 
 namespace W2w\Lib\Apie\Events;
 
+use Pagerfanta\Pagerfanta;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
@@ -72,13 +73,13 @@ class RetrievePaginatedResourcesEvent
             }
             $resourceArray[] = $resource;
         }
-        $this->resources = $resourceArray;
+        $this->resources = is_object($resources) ? $resources : $resourceArray;
     }
 
     /**
-     * @return object[]|null
+     * @return object[]|Pagerfanta|null
      */
-    public function getResources(): ?array
+    public function getResources()
     {
         return $this->resources;
     }

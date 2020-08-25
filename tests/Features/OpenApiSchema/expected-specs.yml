@@ -9,18 +9,16 @@ paths:
         200:
           description: 'Retrieves all instances of application_info'
           headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-count:
+              $ref: '#/components/headers/Count'
             x-pagination-previous:
-              description: 'Pagination previous page url'
+              $ref: '#/components/headers/Url'
             x-pagination-next:
-              description: 'Pagination next page url'
+              $ref: '#/components/headers/Url'
             x-pagination-first:
-              description: 'Pagination first page url'
+              $ref: '#/components/headers/Url'
             x-pagination-last:
-              description: 'Pagination last page url'
+              $ref: '#/components/headers/Url'
           content:
             application/json:
               schema:
@@ -66,16 +64,6 @@ paths:
                     name: item
                 xml:
                   name: response
-        401:
-          $ref: '#/components/responses/NotAuthorized'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - application_info
       summary: 'get/search all instances of application_info'
@@ -101,18 +89,16 @@ paths:
         200:
           description: 'Retrieves all instances of simple_popo'
           headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-count:
+              $ref: '#/components/headers/Count'
             x-pagination-previous:
-              description: 'Pagination previous page url'
+              $ref: '#/components/headers/Url'
             x-pagination-next:
-              description: 'Pagination next page url'
+              $ref: '#/components/headers/Url'
             x-pagination-first:
-              description: 'Pagination first page url'
+              $ref: '#/components/headers/Url'
             x-pagination-last:
-              description: 'Pagination last page url'
+              $ref: '#/components/headers/Url'
           content:
             application/json:
               schema:
@@ -148,16 +134,6 @@ paths:
                     name: item
                 xml:
                   name: response
-        401:
-          $ref: '#/components/responses/NotAuthorized'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - simple_popo
       summary: 'get/search all instances of simple_popo'
@@ -181,11 +157,7 @@ paths:
       responses:
         200:
           description: 'Creates a new instance of simple_popo'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
@@ -215,20 +187,10 @@ paths:
                   arbitrary_field: {  }
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         415:
           $ref: '#/components/responses/InvalidFormat'
         422:
           $ref: '#/components/responses/ValidationError'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - simple_popo
       summary: 'create a new single instance of simple_popo'
@@ -268,18 +230,16 @@ paths:
         200:
           description: 'Retrieves all instances of full_rest_object'
           headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-count:
+              $ref: '#/components/headers/Count'
             x-pagination-previous:
-              description: 'Pagination previous page url'
+              $ref: '#/components/headers/Url'
             x-pagination-next:
-              description: 'Pagination next page url'
+              $ref: '#/components/headers/Url'
             x-pagination-first:
-              description: 'Pagination first page url'
+              $ref: '#/components/headers/Url'
             x-pagination-last:
-              description: 'Pagination last page url'
+              $ref: '#/components/headers/Url'
           content:
             application/json:
               schema:
@@ -319,16 +279,6 @@ paths:
                     name: item
                 xml:
                   name: response
-        401:
-          $ref: '#/components/responses/NotAuthorized'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
       summary: 'get/search all instances of full_rest_object'
@@ -370,11 +320,7 @@ paths:
       responses:
         200:
           description: 'Creates a new instance of full_rest_object'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
@@ -408,20 +354,10 @@ paths:
                     format: value_object
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         415:
           $ref: '#/components/responses/InvalidFormat'
         422:
           $ref: '#/components/responses/ValidationError'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
       summary: 'create a new single instance of full_rest_object'
@@ -468,18 +404,16 @@ paths:
         200:
           description: 'Retrieves a single instance of full_rest_object'
           headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-count:
+              $ref: '#/components/headers/Count'
             x-pagination-previous:
-              description: 'Pagination previous page url'
+              $ref: '#/components/headers/Url'
             x-pagination-next:
-              description: 'Pagination next page url'
+              $ref: '#/components/headers/Url'
             x-pagination-first:
-              description: 'Pagination first page url'
+              $ref: '#/components/headers/Url'
             x-pagination-last:
-              description: 'Pagination last page url'
+              $ref: '#/components/headers/Url'
           content:
             application/json:
               schema:
@@ -513,18 +447,8 @@ paths:
                     format: value_object
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
       summary: 'retrieve a single instance of full_rest_object'
@@ -533,11 +457,7 @@ paths:
       responses:
         200:
           description: 'Retrieves and update a single instance of full_rest_object'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
@@ -571,22 +491,12 @@ paths:
                     format: value_object
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         404:
           $ref: '#/components/responses/NotFound'
         415:
           $ref: '#/components/responses/InvalidFormat'
         422:
           $ref: '#/components/responses/ValidationError'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
       summary: 'modify a single instance of full_rest_object'
@@ -625,23 +535,9 @@ paths:
       responses:
         204:
           description: 'Deletes a single instance of full_rest_object'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
       summary: 'delete a single instance of full_rest_object'
@@ -660,18 +556,16 @@ paths:
         200:
           description: 'Retrieves all instances of recursive_object'
           headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-count:
+              $ref: '#/components/headers/Count'
             x-pagination-previous:
-              description: 'Pagination previous page url'
+              $ref: '#/components/headers/Url'
             x-pagination-next:
-              description: 'Pagination next page url'
+              $ref: '#/components/headers/Url'
             x-pagination-first:
-              description: 'Pagination first page url'
+              $ref: '#/components/headers/Url'
             x-pagination-last:
-              description: 'Pagination last page url'
+              $ref: '#/components/headers/Url'
           content:
             application/json:
               schema:
@@ -723,16 +617,6 @@ paths:
                     name: item
                 xml:
                   name: response
-        401:
-          $ref: '#/components/responses/NotAuthorized'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - recursive_object
       summary: 'get/search all instances of recursive_object'
@@ -756,11 +640,7 @@ paths:
       responses:
         200:
           description: 'Creates a new instance of recursive_object'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
@@ -806,20 +686,10 @@ paths:
                             additionalProperties: true
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         415:
           $ref: '#/components/responses/InvalidFormat'
         422:
           $ref: '#/components/responses/ValidationError'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - recursive_object
       summary: 'create a new single instance of recursive_object'
@@ -878,18 +748,16 @@ paths:
         200:
           description: 'Retrieves all instances of recursive_object_with_id'
           headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-count:
+              $ref: '#/components/headers/Count'
             x-pagination-previous:
-              description: 'Pagination previous page url'
+              $ref: '#/components/headers/Url'
             x-pagination-next:
-              description: 'Pagination next page url'
+              $ref: '#/components/headers/Url'
             x-pagination-first:
-              description: 'Pagination first page url'
+              $ref: '#/components/headers/Url'
             x-pagination-last:
-              description: 'Pagination last page url'
+              $ref: '#/components/headers/Url'
           content:
             application/json:
               schema:
@@ -929,16 +797,6 @@ paths:
                     name: item
                 xml:
                   name: response
-        401:
-          $ref: '#/components/responses/NotAuthorized'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - recursive_object_with_id
       summary: 'get/search all instances of recursive_object_with_id'
@@ -962,11 +820,7 @@ paths:
       responses:
         200:
           description: 'Creates a new instance of recursive_object_with_id'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
@@ -1000,20 +854,10 @@ paths:
                     example: /test-url/recursive_object_with_id/12345
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         415:
           $ref: '#/components/responses/InvalidFormat'
         422:
           $ref: '#/components/responses/ValidationError'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - recursive_object_with_id
       summary: 'create a new single instance of recursive_object_with_id'
@@ -1071,11 +915,7 @@ paths:
       responses:
         200:
           description: 'Retrieves a single instance of recursive_object_with_id'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
@@ -1109,18 +949,8 @@ paths:
                     example: /test-url/recursive_object_with_id/12345
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - recursive_object_with_id
       summary: 'retrieve a single instance of recursive_object_with_id'
@@ -1129,11 +959,7 @@ paths:
       responses:
         200:
           description: 'Retrieves and update a single instance of recursive_object_with_id'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
@@ -1167,22 +993,12 @@ paths:
                     example: /test-url/recursive_object_with_id/12345
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         404:
           $ref: '#/components/responses/NotFound'
         415:
           $ref: '#/components/responses/InvalidFormat'
         422:
           $ref: '#/components/responses/ValidationError'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - recursive_object_with_id
       summary: 'modify a single instance of recursive_object_with_id'
@@ -1239,23 +1055,9 @@ paths:
       responses:
         204:
           description: 'Deletes a single instance of recursive_object_with_id'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - recursive_object_with_id
       summary: 'delete a single instance of recursive_object_with_id'
@@ -1274,18 +1076,16 @@ paths:
         200:
           description: 'Retrieves all instances of status'
           headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-count:
+              $ref: '#/components/headers/Count'
             x-pagination-previous:
-              description: 'Pagination previous page url'
+              $ref: '#/components/headers/Url'
             x-pagination-next:
-              description: 'Pagination next page url'
+              $ref: '#/components/headers/Url'
             x-pagination-first:
-              description: 'Pagination first page url'
+              $ref: '#/components/headers/Url'
             x-pagination-last:
-              description: 'Pagination last page url'
+              $ref: '#/components/headers/Url'
           content:
             application/json:
               schema:
@@ -1341,16 +1141,6 @@ paths:
                     name: item
                 xml:
                   name: response
-        401:
-          $ref: '#/components/responses/NotAuthorized'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - status
       summary: 'get/search all instances of status'
@@ -1381,11 +1171,7 @@ paths:
       responses:
         200:
           description: 'Retrieves a single instance of status'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
@@ -1435,18 +1221,8 @@ paths:
                     nullable: false
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - status
       summary: 'retrieve a single instance of status'
@@ -1484,6 +1260,15 @@ components:
   responses:
     InvalidFormat:
       description: 'The body input could not be parsed'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: 'Response when resource could not be found'
       content:
         application/json:
           schema:
@@ -1542,68 +1327,14 @@ components:
                     type: string
             xml:
               name: response
-    TooManyRequests:
-      description: 'Too many requests per seconds were sent'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Error'
-    MaintenanceMode:
-      description: 'App is in maintenance mode'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: 'Response when resource could not be found'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotAuthorized:
-      description: 'You have no permission to do this call'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Error'
-    InternalError:
-      description: 'An internal error occured'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Error'
-    ServerDependencyError:
-      description: 'The server required an external response which threw an error'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Error'
   headers:
-    x-ratelimit-limit:
-      description: 'Request limit per hour'
+    Count:
+      description: 'number of results'
       schema:
-        type: integer
-      example: 100
-    x-ratelimit-remaining:
-      description: 'Request limit per hour'
+        type: number
+        format: int
+    Url:
+      description: 'url of header'
       schema:
-        type: integer
-      example: 94
+        type: string
+        format: url

@@ -71,7 +71,7 @@ class MemoryDataLayerWithLargeDataPlugin implements ApiResourceFactoryProviderIn
 
                 private function loadDataLayer()
                 {
-                    $access = $this->getApie()->getPropertyAccessor();
+                    $access = $this->getApie()->getObjectAccess();
                     $this->dataLayer = new MemoryDataLayer($access, $this->getApie()->getIdentifierExtractor());
                     for ($i = 0; $i < 1000; $i++) {
                         $object = new FullRestObject();

@@ -3,10 +3,10 @@
 namespace W2w\Lib\Apie\Plugins\Mock\Pagers;
 
 use Pagerfanta\Adapter\AdapterInterface;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterHelper;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
 use W2w\Lib\Apie\Plugins\Mock\DataLayers\MockApiResourceDataLayer;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccessInterface;
 
 class MockAdapter implements AdapterInterface
 {
@@ -36,7 +36,7 @@ class MockAdapter implements AdapterInterface
     private $context;
 
     /**
-     * @var PropertyAccessorInterface
+     * @var ObjectAccessInterface
      */
     private $propertyAccessor;
 
@@ -46,7 +46,7 @@ class MockAdapter implements AdapterInterface
         array $searches,
         string $resourceClass,
         array $context,
-        PropertyAccessorInterface  $propertyAccessor
+        ObjectAccessInterface $propertyAccessor
     ) {
         $this->dataLayer = $dataLayer;
         $this->idList = $idList;

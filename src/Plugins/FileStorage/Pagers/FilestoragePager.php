@@ -4,6 +4,7 @@ namespace W2w\Lib\Apie\Plugins\FileStorage\Pagers;
 
 use Iterator;
 use LimitIterator;
+use OutOfBoundsException;
 use Pagerfanta\Adapter\AdapterInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -56,9 +57,14 @@ class FilestoragePager implements AdapterInterface
             $length
         );
         $result = [];
-        foreach ($list as $file) {
-            /** @var SplFileInfo $file */
-            $result[] = $this->dataLayer->retrieve($this->resourceClass, $file->getBasename(), $this->context);
+        try {
+            foreach ($list as $file) {
+                /** @var SplFileInfo $file */
+                $result[] = $this->dataLayer->retrieve($this->resourceClass, $file->getBasename(), $this->context);
+
+            }
+        } catch (OutOfBoundsException $outOfBoundsException) {
+            $outOfBoundsException->getMessage(); // ignore
         }
         return $result;
     }

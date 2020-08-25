@@ -6,8 +6,6 @@ use Doctrine\Common\Annotations\Reader;
 use erasys\OpenApi\Spec\v3\Document;
 use erasys\OpenApi\Spec\v3\Info;
 use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
@@ -219,14 +217,6 @@ final class Apie implements SerializerProviderInterface,
             SymfonyComponentProviderInterface::class,
             new BadConfigurationException('I have no symfony component provider set up')
         )->getPropertyConverter();
-    }
-
-    public function getPropertyAccessor(): PropertyAccessor
-    {
-        return $this->pluginContainer->first(
-            SymfonyComponentProviderInterface::class,
-            new BadConfigurationException('I have no symfony component provider set up')
-        )->getPropertyAccessor();
     }
 
     public function getCacheItemPool(): CacheItemPoolInterface

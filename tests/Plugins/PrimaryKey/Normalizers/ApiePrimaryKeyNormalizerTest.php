@@ -21,6 +21,7 @@ use W2w\Lib\Apie\Plugins\PrimaryKey\Normalizers\PrimaryKeyReferenceNormalizer;
 use W2w\Lib\Apie\Plugins\PrimaryKey\ValueObjects\PrimaryKeyReference;
 use W2w\Lib\Apie\Plugins\Uuid\Normalizers\UuidNormalizer;
 use W2w\Lib\ApieObjectAccessNormalizer\Normalizers\ApieObjectAccessNormalizer;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
 use W2w\Test\Apie\OpenApiSchema\Data\RecursiveObjectWithId;
 
 class ApiePrimaryKeyNormalizerTest extends TestCase
@@ -34,7 +35,7 @@ class ApiePrimaryKeyNormalizerTest extends TestCase
     {
         parent::setUp();
         $resources = new ApiResources([RecursiveObjectWithId::class]);
-        $propertyAccess = PropertyAccess::createPropertyAccessor();
+        $propertyAccess = new ObjectAccess();
         $identifierExtractor = new IdentifierExtractor($propertyAccess);
         $metadataFactory = new ApiResourceMetadataFactory(new AnnotationReader(), new FallbackFactory($propertyAccess, $identifierExtractor));
         $converter = new ClassResourceConverter(new CamelCaseToSnakeCaseNameConverter(), $resources, true);

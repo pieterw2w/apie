@@ -53,22 +53,22 @@ the filtering can be easily programmed with W2w\Lib\Apie\Core\SearchFilters\Sear
 
 ```php
 <?php
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterFromMetadataTrait;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterHelper;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
 use W2w\Lib\Apie\Interfaces\ApiResourceRetrieverInterface;  
 use W2w\Lib\Apie\Interfaces\SearchFilterProviderInterface;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccessInterface;
 
 class ExampleRetriever implements ApiResourceRetrieverInterface, SearchFilterProviderInterface
 {
     use SearchFilterFromMetadataTrait;
     
-    private $propertyAccess;
+    private $objectAccess;
     
-    public function __construct(PropertyAccessorInterface $propertyAccess)
+    public function __construct(ObjectAccessInterface $objectAccess)
     {
-        $this->propertyAccess = $propertyAccess;
+        $this->objectAccess = $objectAccess;
     }
     
     public function retrieve(string $resourceClass, $id, array $context)
@@ -79,7 +79,7 @@ class ExampleRetriever implements ApiResourceRetrieverInterface, SearchFilterPro
     public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest): iterable
     {
         $allRecords  = $this->methodThatRetrievesAll();
-        return SearchFilterHelper::applySearchFilter($allRecords, $searchFilterRequest, $this->propertyAccess);
+        return SearchFilterHelper::applySearchFilter($allRecords, $searchFilterRequest, $this->objectAccess);
     }
 }
 ```

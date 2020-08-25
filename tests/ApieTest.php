@@ -7,8 +7,6 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use erasys\OpenApi\Spec\v3\Info;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
 use W2w\Lib\Apie\Apie;
@@ -17,6 +15,7 @@ use W2w\Lib\Apie\Exceptions\BadConfigurationException;
 use W2w\Lib\Apie\OpenApiSchema\OpenApiSpecGenerator;
 use W2w\Lib\Apie\Plugins\Core\Serializers\SymfonySerializerAdapter;
 use W2w\Lib\Apie\Plugins\StaticConfig\StaticConfigPlugin;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\GroupedObjectAccess;
 
 class ApieTest extends TestCase
 {
@@ -42,7 +41,6 @@ class ApieTest extends TestCase
         yield [BadConfigurationException::class, 'getResourceSerializer'];
         yield [BadConfigurationException::class, 'getClassMetadataFactory'];
         yield [BadConfigurationException::class, 'getPropertyConverter'];
-        yield [BadConfigurationException::class, 'getPropertyAccessor'];
         yield [BadConfigurationException::class, 'getCacheItemPool'];
         yield [BadConfigurationException::class, 'getAnnotationReader'];
         yield [BadConfigurationException::class, 'getResourceSerializer'];
@@ -66,7 +64,7 @@ class ApieTest extends TestCase
         yield [SymfonySerializerAdapter::class, 'getResourceSerializer'];
         yield [ClassMetadataFactory::class, 'getClassMetadataFactory'];
         yield [MetadataAwareNameConverter::class, 'getPropertyConverter'];
-        yield [PropertyAccessor::class, 'getPropertyAccessor'];
+        yield [GroupedObjectAccess::class, 'getObjectAccess'];
         yield [ArrayAdapter::class, 'getCacheItemPool'];
         yield [AnnotationReader::class, 'getAnnotationReader'];
         yield [SymfonySerializerAdapter::class, 'getResourceSerializer'];

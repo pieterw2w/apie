@@ -101,7 +101,7 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
         $request = new ServerRequest('GET', '/full_rest_object/', []);
         $this->assertEquals(
             [$expected],
-            $facade->getAll(FullRestObject::class, $request)->getResource()
+            $facade->getAll(FullRestObject::class, $request)->getResource()->getCurrentPageResults()
         );
 
         // now put the resource
@@ -116,7 +116,7 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
         $request = new ServerRequest('GET', '/full_rest_object/', []);
         $this->assertEquals(
             [$expected],
-            $facade->getAll(FullRestObject::class, $request)->getResource()
+            $facade->getAll(FullRestObject::class, $request)->getResource()->getCurrentPageResults()
         );
 
         $this->assertEquals(
@@ -202,7 +202,7 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
         $actual = $testItem->getApiResourceFacade()->getAll(FullRestObject::class, $request);
         $this->assertEquals(
             [],
-            $actual->getResource()
+            $actual->getResource()->getCurrentPageResults()
         );
         $request = (new ServerRequest('GET', '/full_rest_object/'))
             ->withQueryParams(['stringValue' => 'value1', 'valueObject' => 'pizza', 'page' => 0, 'limit' => 500]);
