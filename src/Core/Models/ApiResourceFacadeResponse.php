@@ -3,6 +3,7 @@
 namespace W2w\Lib\Apie\Core\Models;
 
 use Psr\Http\Message\ResponseInterface;
+use W2w\Lib\Apie\Apie;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
 use W2w\Lib\Apie\Events\NormalizeEvent;
 use W2w\Lib\Apie\Events\ResponseEvent;
@@ -81,7 +82,10 @@ class ApiResourceFacadeResponse
         $event = new ResponseEvent($this->resource, $this->acceptHeader ?? 'application/json');
         $this->runLifeCycleEvent('onPreCreateResponse', $event);
         if (!$event->getResponse()) {
-            $event->setResponse($this->serializer->toResponse($this->resource, $this->getAcceptHeader()));
+            $event->setResponse(
+                $this->serializer->toResponse($this->resource, $this->getAcceptHeader())
+                    ->withHeader('x-apie', Apie::VERSION)
+            );
         }
         $this->runLifeCycleEvent('onPostCreateResponse', $event);
 

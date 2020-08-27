@@ -1,11 +1,12 @@
 <?php
 namespace W2w\Test\Apie\Core\Models;
 
+use Laminas\Diactoros\Response\TextResponse;
 use PHPUnit\Framework\TestCase;
+use W2w\Lib\Apie\Apie;
 use W2w\Lib\Apie\Core\Models\ApiResourceFacadeResponse;
 use W2w\Lib\Apie\Interfaces\ResourceSerializerInterface;
 use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
-use Zend\Diactoros\Response\TextResponse;
 
 class ApiResourceFacadeResponseTest extends TestCase
 {
@@ -36,7 +37,9 @@ class ApiResourceFacadeResponseTest extends TestCase
             ->shouldBeCalled()
             ->willReturn($response);
 
+        $expectedResponse = $response->withHeader('x-apie', Apie::VERSION);
+
         $actual = $testItem->getResponse();
-        $this->assertEquals($response, $actual);
+        $this->assertEquals($expectedResponse, $actual);
     }
 }
