@@ -81,7 +81,7 @@ class PaginationTest extends TestCase
         $this->assertCount(20, $facadeResponse->getNormalizedData());
         $response = $facadeResponse->getResponse();
         $expected = [
-            PaginationPlugin::COUNT_HEADER => ['26'],
+            PaginationPlugin::COUNT_HEADER => ['510'],
             PaginationPlugin::FIRST_HEADER => ['/simple_popo?page=0&limit=20'],
             PaginationPlugin::LAST_HEADER => ['/simple_popo?page=25&limit=20'],
             PaginationPlugin::NEXT_HEADER => ['/simple_popo?page=1&limit=20'],
@@ -106,7 +106,7 @@ class PaginationTest extends TestCase
         $response = $facadeResponse->getResponse();
 
         $expected = [
-            PaginationPlugin::COUNT_HEADER => ['34'],
+            PaginationPlugin::COUNT_HEADER => ['510'],
             PaginationPlugin::FIRST_HEADER => ['/simple_popo?page=0&limit=15'],
             PaginationPlugin::LAST_HEADER => ['/simple_popo?page=33&limit=15'],
             PaginationPlugin::NEXT_HEADER => ['/simple_popo?page=11&limit=15'],
@@ -134,7 +134,7 @@ class PaginationTest extends TestCase
         $response = $facadeResponse->getResponse();
 
         $expected = [
-            PaginationPlugin::COUNT_HEADER => ['26'],
+            PaginationPlugin::COUNT_HEADER => ['510'],
             PaginationPlugin::FIRST_HEADER => ['/simple_popo?page=0&limit=20'],
             PaginationPlugin::LAST_HEADER => ['/simple_popo?page=25&limit=20'],
             PaginationPlugin::PREV_HEADER => ['/simple_popo?page=24&limit=20'],
@@ -161,7 +161,7 @@ class PaginationTest extends TestCase
         $response = $facadeResponse->getResponse();
 
         $expected = [
-            PaginationPlugin::COUNT_HEADER => ['26'],
+            PaginationPlugin::COUNT_HEADER => ['510'],
             PaginationPlugin::FIRST_HEADER => ['/simple_popo?page=0&limit=20'],
             PaginationPlugin::LAST_HEADER => ['/simple_popo?page=25&limit=20'],
             PaginationPlugin::PREV_HEADER => ['/simple_popo?page=9000&limit=20'],

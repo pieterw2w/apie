@@ -61,7 +61,7 @@ class PaginationPlugin implements ResourceLifeCycleInterface, NormalizerProvider
         }
         if ($added) {
             $document->components->headers['Count'] = new Header('number of results', ['schema' => new Schema(['type' => 'number', 'format' => 'int'])]);
-            $document->components->headers['Url'] = new Header('url of header', ['schema' => new Schema(['type' => 'string', 'format' => 'url']) ]);
+            $document->components->headers['Url'] = new Header('pagination url', ['schema' => new Schema(['type' => 'string', 'format' => 'url']) ]);
         }
         return $document;
     }
@@ -172,7 +172,7 @@ class PaginationPlugin implements ResourceLifeCycleInterface, NormalizerProvider
         $response = $event->getResponse()
             ->withHeader(self::FIRST_HEADER, $this->generateUrl($event, 0))
             ->withHeader(self::LAST_HEADER, $this->generateUrl($event, $resource->getNbPages() - 1))
-            ->withHeader(self::COUNT_HEADER, $resource->getNbPages());
+            ->withHeader(self::COUNT_HEADER, $resource->getNbResults());
         if ($resource->hasPreviousPage()) {
             $response = $response->withHeader(self::PREV_HEADER, $this->generateUrl($event, $resource->getPreviousPage() - 1));
         }

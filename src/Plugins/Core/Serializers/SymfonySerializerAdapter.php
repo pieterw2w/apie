@@ -2,6 +2,7 @@
 
 namespace W2w\Lib\Apie\Plugins\Core\Serializers;
 
+use Laminas\Diactoros\Response\TextResponse;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Serializer\Serializer;
 use W2w\Lib\Apie\Events\DecodeEvent;
@@ -9,12 +10,9 @@ use W2w\Lib\Apie\Interfaces\FormatRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\ResourceSerializerInterface;
 use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
 use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
-use Zend\Diactoros\Response\TextResponse;
 
 /**
  * Wrapper around Symfony Serializer.
- *
- * @TODO: in version 4 move resourceLifeCycles to ApiResourceFacade.
  */
 class SymfonySerializerAdapter implements ResourceSerializerInterface
 {
