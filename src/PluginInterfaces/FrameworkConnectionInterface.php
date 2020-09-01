@@ -3,13 +3,13 @@
 
 namespace W2w\Lib\Apie\PluginInterfaces;
 
-
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
+use W2w\Lib\ApieObjectAccessNormalizer\Interfaces\LocalizationAwareInterface;
 
 /**
  * Interface to connect Apie with a framework.
  */
-interface FrameworkConnectionInterface
+interface FrameworkConnectionInterface extends LocalizationAwareInterface
 {
     /**
      * Gets/creates service from a service container.
