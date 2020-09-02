@@ -146,7 +146,7 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
             $data,
             $resourceClass,
            null,
-           ['object_access' => new ObjectAccess(false, true)]
+           ['object_access' => new ObjectAccess(false, true), 'keep_setter_calls' => true]
         );
     }
 }
