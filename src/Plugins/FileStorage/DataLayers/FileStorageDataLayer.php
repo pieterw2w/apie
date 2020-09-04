@@ -7,7 +7,6 @@ use Symfony\Component\Finder\Finder;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterFromMetadataTrait;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
-use W2w\Lib\Apie\Exceptions\CanNotDetermineIdException;
 use W2w\Lib\Apie\Exceptions\CouldNotMakeDirectoryException;
 use W2w\Lib\Apie\Exceptions\CouldNotRemoveFileException;
 use W2w\Lib\Apie\Exceptions\CouldNotWriteFileException;
@@ -17,7 +16,6 @@ use W2w\Lib\Apie\Interfaces\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Interfaces\ApiResourceRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\SearchFilterProviderInterface;
 use W2w\Lib\Apie\Plugins\FileStorage\Pagers\FilestoragePager;
-use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccessInterface;
 
 class FileStorageDataLayer implements ApiResourcePersisterInterface, ApiResourceRetrieverInterface, SearchFilterProviderInterface
 {

@@ -16,6 +16,8 @@ use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
  */
 class SymfonySerializerAdapter implements ResourceSerializerInterface
 {
+    const INTERNAL_FOR_DATALAYER = 'datalayer';
+
     private $serializer;
 
     private $formatRetriever;
@@ -35,6 +37,13 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
         $this->serializer = $serializer;
         $this->formatRetriever = $formatRetriever;
         $this->resourceLifeCycles = $resourceLifeCycles;
+    }
+
+    private function toFormat(?string $acceptHeader): string
+    {
+        return $acceptHeader === self::INTERNAL_FOR_DATALAYER
+            ? self::INTERNAL_FOR_DATALAYER
+            : ($this->formatRetriever->getFormat($acceptHeader) ?? 'json');
     }
 
     /**
@@ -66,7 +75,7 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
      */
     public function putData(object $resource, string $requestBody, string $contentType): object
     {
-        $contentFormat = $this->formatRetriever->getFormat($contentType) ?? 'json';
+        $contentFormat = $this->toFormat($contentType);
         $event = new DecodeEvent($requestBody, $contentType, $resource, get_class($resource));
         $this->runLifeCycleEvent('onPreDecodeRequestBody', $event);
         if (!$event->hasDecodedData()) {
@@ -90,7 +99,7 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
      */
     public function decodeRequestBody(string $requestBody, string $contentType)
     {
-        $contentFormat = $this->formatRetriever->getFormat($contentType) ?? 'json';
+        $contentFormat = $this->toFormat($contentType);
         return $this->serializer->decode($requestBody, $contentFormat, []);
     }
 
@@ -99,7 +108,7 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
      */
     public function postData(string $resourceClass, string $requestBody, string $contentType): object
     {
-        $contentFormat = $this->formatRetriever->getFormat($contentType) ?? 'json';
+        $contentFormat = $this->toFormat($contentType);
         $event = new DecodeEvent($requestBody, $contentType, null, $resourceClass);
         $this->runLifeCycleEvent('onPreDecodeRequestBody', $event);
         if (!$event->hasDecodedData()) {
@@ -121,7 +130,7 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
      */
     public function toResponse($resource, string $acceptHeader): ResponseInterface
     {
-        $format = $this->formatRetriever->getFormat($acceptHeader) ?? 'json';
+        $format = $this->toFormat($acceptHeader);
         $contentType = $this->formatRetriever->getContentType($format);
         $response = $this->serializer->serialize($resource, $format, ['groups' => ['base', 'read', 'get']]);
 
@@ -133,7 +142,7 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
      */
     public function normalize($resource, string $acceptHeader)
     {
-        $format = $this->formatRetriever->getFormat($acceptHeader);
+        $format = $this->toFormat($acceptHeader);
         return $this->serializer->normalize($resource, $format, ['groups' => ['base', 'read', 'get']]);
     }
 
@@ -145,7 +154,7 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
         return $this->serializer->denormalize(
             $data,
             $resourceClass,
-           null,
+           self::INTERNAL_FOR_DATALAYER,
            ['object_access' => new ObjectAccess(false, true), 'keep_setter_calls' => true]
         );
     }
