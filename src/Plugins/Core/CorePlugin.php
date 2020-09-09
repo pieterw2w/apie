@@ -70,6 +70,10 @@ class CorePlugin implements SerializerProviderInterface,
 
     private $annotationReader;
 
+    private $arrayAdapter;
+
+    private $apiResourceFactory;
+
     /**
      * {@inheritDoc}
      */
@@ -139,7 +143,10 @@ class CorePlugin implements SerializerProviderInterface,
      */
     public function getCacheItemPool(): CacheItemPoolInterface
     {
-        return new ArrayAdapter(0, true);
+        if (!$this->arrayAdapter) {
+            $this->arrayAdapter = new ArrayAdapter(0, true);
+        }
+        return $this->arrayAdapter;
     }
 
     /**
@@ -192,10 +199,13 @@ class CorePlugin implements SerializerProviderInterface,
      */
     public function getApiResourceFactory(): ApiResourceFactoryInterface
     {
-        return new FallbackFactory(
-            $this->getApie()->getObjectAccess(),
-            $this->getApie()->getIdentifierExtractor()
-        );
+        if (!$this->apiResourceFactory) {
+            $this->apiResourceFactory = new FallbackFactory(
+                $this->getApie()->getObjectAccess(),
+                $this->getApie()->getIdentifierExtractor()
+            );
+        }
+        return $this->apiResourceFactory;
     }
 
     /**
