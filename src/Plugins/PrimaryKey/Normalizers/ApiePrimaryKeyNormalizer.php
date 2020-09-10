@@ -10,6 +10,7 @@ use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Core\Resources\ApiResourcesInterface;
 use W2w\Lib\Apie\PluginInterfaces\FrameworkConnectionInterface;
+use W2w\Lib\Apie\Plugins\Core\Serializers\SymfonySerializerAdapter;
 use W2w\Lib\Apie\Plugins\PrimaryKey\ValueObjects\PrimaryKeyReference;
 
 /**
@@ -62,7 +63,7 @@ class ApiePrimaryKeyNormalizer implements ContextAwareNormalizerInterface, Seria
      */
     public function supportsNormalization($data, $format = null, array $context = [])
     {
-        if (empty($context['object_hierarchy']) || !empty($context['disable_pk_normalize'])) {
+        if ($format === SymfonySerializerAdapter::INTERNAL_FOR_DATALAYER || empty($context['object_hierarchy']) || !empty($context['disable_pk_normalize'])) {
             return false;
         }
         foreach ($this->apiResources->getApiResources() as $apiResource) {
