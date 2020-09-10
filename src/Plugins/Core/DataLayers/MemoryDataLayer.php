@@ -1,9 +1,7 @@
 <?php
 namespace W2w\Lib\Apie\Plugins\Core\DataLayers;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Pagerfanta\Pagerfanta;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterFromMetadataTrait;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterHelper;
@@ -13,6 +11,8 @@ use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\Interfaces\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Interfaces\ApiResourceRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\SearchFilterProviderInterface;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccessInterface;
 
 /**
  * Persists and retrieves from an array in memory. Only useful for unit tests.
@@ -22,7 +22,7 @@ class MemoryDataLayer implements ApiResourcePersisterInterface, ApiResourceRetri
     use SearchFilterFromMetadataTrait;
 
     /**
-     * @var PropertyAccessorInterface
+     * @var ObjectAccessInterface
      */
     private $propertyAccessor;
 
@@ -36,9 +36,9 @@ class MemoryDataLayer implements ApiResourcePersisterInterface, ApiResourceRetri
      */
     private $persisted = [];
 
-    public function __construct(PropertyAccessor $propertyAccessor = null, IdentifierExtractor $identifierExtractor = null)
+    public function __construct(ObjectAccessInterface $propertyAccessor = null, IdentifierExtractor $identifierExtractor = null)
     {
-        $this->propertyAccessor = $propertyAccessor ?? PropertyAccess::createPropertyAccessor();
+        $this->propertyAccessor = $propertyAccessor ?? new ObjectAccess();
         $this->identifierExtractor = $identifierExtractor ?? new IdentifierExtractor($this->propertyAccessor);
     }
     /**
@@ -51,10 +51,10 @@ class MemoryDataLayer implements ApiResourcePersisterInterface, ApiResourceRetri
     public function persistNew($resource, array $context = [])
     {
         $className = get_class($resource);
-        $identifier = $this->identifierExtractor->getIdentifierKey($resource, $context) ?? 'id';
+        $identifier = $this->identifierExtractor->getIdentifierKey($resource, $context);
         $keepReference = $context['keep_reference'] ?? false;
-        if (!$this->propertyAccessor->isReadable($resource, $identifier)) {
-            throw new CanNotDetermineIdException($resource, $identifier);
+        if (null === $identifier) {
+            throw new CanNotDetermineIdException($resource, $identifier ?? 'id');
         }
         $id = (string) $this->propertyAccessor->getValue($resource, $identifier);
         if (empty($this->persisted[$className])) {
@@ -125,14 +125,14 @@ class MemoryDataLayer implements ApiResourcePersisterInterface, ApiResourceRetri
      * @param string $resourceClass
      * @param array $context
      * @param SearchFilterRequest $searchFilterRequest
-     * @return iterable
+     * @return Pagerfanta|array
      */
     public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest): iterable
     {
         if (empty($this->persisted[$resourceClass])) {
             return [];
         }
-        return SearchFilterHelper::applySearchFilter(
+        return SearchFilterHelper::applyPaginationToSearchFilter(
             $this->persisted[$resourceClass],
             $searchFilterRequest,
             $this->propertyAccessor

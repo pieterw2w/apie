@@ -8,7 +8,6 @@ use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use W2w\Lib\Apie\Core\ApiResourceMetadataFactory;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
-use W2w\Lib\Apie\Core\PluginContainer;
 use W2w\Lib\Apie\Core\Resources\ApiResourcesInterface;
 use W2w\Lib\Apie\Interfaces\SearchFilterProviderInterface;
 use W2w\Lib\Apie\OpenApiSchema\SubActions\SubAction;
@@ -43,7 +42,7 @@ class OpenApiSpecGenerator
         ApiResourcesInterface $apiResources,
         ClassResourceConverter $converter,
         OASv3\Info $info,
-        SchemaGenerator $schemaGenerator,
+        OpenApiSchemaGenerator $schemaGenerator,
         ApiResourceMetadataFactory $apiResourceMetadataFactory,
         IdentifierExtractor $identifierExtractor,
         string $baseUrl,
@@ -132,73 +131,10 @@ class OpenApiSpecGenerator
                         ]),
                     ],
                     'headers' => [
-                        'x-ratelimit-limit' => new Oasv3\Header(
-                            'Request limit per hour',
-                            [
-                                'example' => 100,
-                                'schema'  => new OASv3\Schema([
-                                    'type' => 'integer',
-                                ]),
-                            ]
-                        ),
-                        'x-ratelimit-remaining' => new Oasv3\Header(
-                            'Request limit per hour',
-                            [
-                                'example' => 94,
-                                'schema'  => new OASv3\Schema([
-                                    'type' => 'integer',
-                                ]),
-                            ]
-                        ),
                     ],
                     'responses' => [
                         'InvalidFormat' => new OASv3\Response(
                             'The body input could not be parsed',
-                            [
-                                'application/json' => new OASv3\MediaType(
-                                    [
-                                        'schema' => $errorSchema,
-                                    ]
-                                ),
-                                'application/xml' => new OASv3\MediaType(
-                                    [
-                                        'schema' => $errorSchema,
-                                    ]
-                                ),
-                            ]
-                        ),
-                        'ValidationError' => new OASv3\Response(
-                            'The body input was in a proper format, but the input values were not valid',
-                            [
-                                'application/json' => new OASv3\MediaType(
-                                    [
-                                        'schema' => $validationErrorSchema,
-                                    ]
-                                ),
-                                'application/xml' => new OASv3\MediaType(
-                                    [
-                                        'schema' => $validationErrorSchema,
-                                    ]
-                                ),
-                            ]
-                        ),
-                        'TooManyRequests' => new OASv3\Response(
-                            'Too many requests per seconds were sent',
-                            [
-                                'application/json' => new OASv3\MediaType(
-                                    [
-                                        'schema' => $errorSchema,
-                                    ]
-                                ),
-                                'application/xml' => new OASv3\MediaType(
-                                    [
-                                        'schema' => $errorSchema,
-                                    ]
-                                ),
-                            ]
-                        ),
-                        'MaintenanceMode' => new OASv3\Response(
-                            'App is in maintenance mode',
                             [
                                 'application/json' => new OASv3\MediaType(
                                     [
@@ -227,51 +163,21 @@ class OpenApiSpecGenerator
                                 ),
                             ]
                         ),
-                        'NotAuthorized' => new OASv3\Response(
-                            'You have no permission to do this call',
+                        'ValidationError' => new OASv3\Response(
+                            'The body input was in a proper format, but the input values were not valid',
                             [
                                 'application/json' => new OASv3\MediaType(
                                     [
-                                        'schema' => $errorSchema,
+                                        'schema' => $validationErrorSchema,
                                     ]
-                                ),
-                                'application/xml' => new OASv3\MediaType(
+                               ),
+                               'application/xml' => new OASv3\MediaType(
                                     [
-                                        'schema' => $errorSchema,
+                                        'schema' => $validationErrorSchema,
                                     ]
-                                ),
-                            ]
-                        ),
-                        'InternalError' => new OASv3\Response(
-                            'An internal error occured',
-                            [
-                                'application/json' => new OASv3\MediaType(
-                                    [
-                                        'schema' => $errorSchema,
-                                    ]
-                                ),
-                                'application/xml' => new OASv3\MediaType(
-                                    [
-                                        'schema' => $errorSchema,
-                                    ]
-                                ),
-                            ]
-                        ),
-                        'ServerDependencyError' => new OASv3\Response(
-                            'The server required an external response which threw an error',
-                            [
-                                'application/json' => new OASv3\MediaType(
-                                    [
-                                        'schema' => $errorSchema,
-                                    ]
-                                ),
-                                'application/xml' => new OASv3\MediaType(
-                                    [
-                                        'schema' => $errorSchema,
-                                    ]
-                                ),
-                            ]
-                        ),
+                               ),
+                           ]
+                       ),
                     ],
                 ]),
             ]
@@ -284,19 +190,6 @@ class OpenApiSpecGenerator
         }
 
         return $doc;
-    }
-
-    /**
-     * Returns the default HTTP headers we generated for every REST api call.
-     *
-     * @return array
-     */
-    private function getDefaultHeaders(): array
-    {
-        return [
-            'x-ratelimit-limit'     => new OASv3\Reference('#/components/headers/x-ratelimit-limit'),
-            'x-ratelimit-remaining' => new OASv3\Reference('#/components/headers/x-ratelimit-remaining'),
-        ];
     }
 
     private function convertSubActionToRequestBody(SubAction $subAction): ?OASv3\RequestBody
@@ -441,13 +334,8 @@ class OpenApiSpecGenerator
                     '200' => new OASv3\Response(
                         'Retrieves all instances of ' . $resourceName,
                         $this->convertToContentArray($apiResourceClass, 'get'),
-                        $this->getDefaultHeaders()
+                        []
                     ),
-                    '401' => new OASv3\Reference('#/components/responses/NotAuthorized'),
-                    '429' => new OASv3\Reference('#/components/responses/TooManyRequests'),
-                    '500' => new OASv3\Reference('#/components/responses/InternalError'),
-                    '502' => new OASv3\Reference('#/components/responses/ServerDependencyError'),
-                    '503' => new OASv3\Reference('#/components/responses/MaintenanceMode'),
                 ],
                 'resourceGetAll' . $this->sluggify($resourceName),
                 'get/search all instances of ' . $resourceName,
@@ -480,15 +368,10 @@ class OpenApiSpecGenerator
                     '200' => new OASv3\Response(
                         'Creates a new instance of ' . $resourceName,
                         $this->convertToContent($apiResourceClass, 'get'),
-                        $this->getDefaultHeaders()
+                        []
                     ),
-                    '401' => new OASv3\Reference('#/components/responses/NotAuthorized'),
                     '415' => new OASv3\Reference('#/components/responses/InvalidFormat'),
                     '422' => new OASv3\Reference('#/components/responses/ValidationError'),
-                    '429' => new OASv3\Reference('#/components/responses/TooManyRequests'),
-                    '500' => new OASv3\Reference('#/components/responses/InternalError'),
-                    '502' => new OASv3\Reference('#/components/responses/ServerDependencyError'),
-                    '503' => new OASv3\Reference('#/components/responses/MaintenanceMode'),
                 ],
                 'resourcePostSingle' . $this->sluggify($resourceName),
                 'create a new single instance of ' . $resourceName,
@@ -526,14 +409,9 @@ class OpenApiSpecGenerator
                 '200' => new OASv3\Response(
                     'Retrieves return value of ' . $subAction->getName(),
                     $subAction->getReturnTypehint()->getClassName() ? $this->convertToContent($subAction->getReturnTypehint()->getClassName(), 'get') : null,
-                    $this->getDefaultHeaders()
+                    []
                 ),
-                '401' => new OASv3\Reference('#/components/responses/NotAuthorized'),
                 '404' => new OASv3\Reference('#/components/responses/NotFound'),
-                '429' => new OASv3\Reference('#/components/responses/TooManyRequests'),
-                '500' => new OASv3\Reference('#/components/responses/InternalError'),
-                '502' => new OASv3\Reference('#/components/responses/ServerDependencyError'),
-                '503' => new OASv3\Reference('#/components/responses/MaintenanceMode'),
             ],
             'resourcePostSubAction' . $this->sluggify($resourceName . '_' . $subAction->getName()),
             $subAction->getSummary(),
@@ -564,14 +442,9 @@ class OpenApiSpecGenerator
                     '200' => new OASv3\Response(
                         'Retrieves a single instance of ' . $resourceName,
                         $this->convertToContent($apiResourceClass, 'get'),
-                        $this->getDefaultHeaders()
+                        []
                     ),
-                    '401' => new OASv3\Reference('#/components/responses/NotAuthorized'),
                     '404' => new OASv3\Reference('#/components/responses/NotFound'),
-                    '429' => new OASv3\Reference('#/components/responses/TooManyRequests'),
-                    '500' => new OASv3\Reference('#/components/responses/InternalError'),
-                    '502' => new OASv3\Reference('#/components/responses/ServerDependencyError'),
-                    '503' => new OASv3\Reference('#/components/responses/MaintenanceMode'),
                 ],
                 'resourceGetSingle' . $this->sluggify($resourceName),
                 'retrieve a single instance of ' . $resourceName,
@@ -586,14 +459,9 @@ class OpenApiSpecGenerator
                     '204' => new OASv3\Response(
                         'Deletes a single instance of ' . $resourceName,
                         null,
-                        $this->getDefaultHeaders()
+                        []
                     ),
-                    '401' => new OASv3\Reference('#/components/responses/NotAuthorized'),
                     '404' => new OASv3\Reference('#/components/responses/NotFound'),
-                    '429' => new OASv3\Reference('#/components/responses/TooManyRequests'),
-                    '500' => new OASv3\Reference('#/components/responses/InternalError'),
-                    '502' => new OASv3\Reference('#/components/responses/ServerDependencyError'),
-                    '503' => new OASv3\Reference('#/components/responses/MaintenanceMode'),
                 ],
                 'resourceDeleteSingle' . $this->sluggify($resourceName),
                 'delete a single instance of ' . $resourceName,
@@ -608,16 +476,11 @@ class OpenApiSpecGenerator
                     '200' => new OASv3\Response(
                         'Retrieves and update a single instance of ' . $resourceName,
                         $this->convertToContent($apiResourceClass, 'get'),
-                        $this->getDefaultHeaders()
+                        []
                     ),
-                    '401' => new OASv3\Reference('#/components/responses/NotAuthorized'),
                     '404' => new OASv3\Reference('#/components/responses/NotFound'),
                     '415' => new OASv3\Reference('#/components/responses/InvalidFormat'),
                     '422' => new OASv3\Reference('#/components/responses/ValidationError'),
-                    '429' => new OASv3\Reference('#/components/responses/TooManyRequests'),
-                    '500' => new OASv3\Reference('#/components/responses/InternalError'),
-                    '502' => new OASv3\Reference('#/components/responses/ServerDependencyError'),
-                    '503' => new OASv3\Reference('#/components/responses/MaintenanceMode'),
                 ],
                 'resourcePutSingle' . $this->sluggify($resourceName),
                 'modify a single instance of ' . $resourceName,

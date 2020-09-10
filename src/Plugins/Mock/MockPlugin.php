@@ -28,7 +28,7 @@ final class MockPlugin implements ApiResourceFactoryProviderInterface, ApieAware
             new MockApiResourceDataLayer(
                 $this->getApie()->getCacheItemPool(),
                 $this->getApie()->getIdentifierExtractor(),
-                $this->getApie()->getPropertyAccessor()
+                $this->getApie()->getObjectAccess()
             ),
             $apie,
             $this->ignoreList

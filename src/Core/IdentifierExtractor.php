@@ -1,21 +1,22 @@
 <?php
 namespace W2w\Lib\Apie\Core;
 
+use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccessInterface;
 
 /**
  * Extracts the identifier from a resource.
  */
 class IdentifierExtractor
 {
-    private $propertyAccessor;
+    private $objectAccess;
 
-    public function __construct(PropertyAccessor $propertyAccessor)
+    public function __construct(ObjectAccessInterface $objectAccess)
     {
-        $this->propertyAccessor = $propertyAccessor;
+        $this->objectAccess = $objectAccess;
     }
 
     /**
@@ -66,8 +67,9 @@ class IdentifierExtractor
         if (isset($context['identifier'])) {
             return $context['identifier'];
         }
+        $fields = $this->objectAccess->getGetterFields(new ReflectionClass($resource));
         foreach (['id', 'uuid'] as $id) {
-            if ($this->propertyAccessor->isReadable($resource, $id)) {
+            if (in_array($id, $fields)) {
                 return $id;
             }
         }
@@ -87,6 +89,6 @@ class IdentifierExtractor
         if (empty($key)) {
             return null;
         }
-        return $this->propertyAccessor->getValue($resource, $key);
+        return $this->objectAccess->getValue($resource, $key);
     }
 }

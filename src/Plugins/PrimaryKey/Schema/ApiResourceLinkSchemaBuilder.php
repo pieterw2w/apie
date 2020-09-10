@@ -6,43 +6,39 @@ namespace W2w\Lib\Apie\Plugins\PrimaryKey\Schema;
 
 use erasys\OpenApi\Spec\v3\Schema;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
-use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
+use W2w\Lib\Apie\OpenApiSchema\Factories\SchemaFactory;
+use W2w\Lib\Apie\OpenApiSchema\OpenApiSchemaGenerator;
 use W2w\Lib\Apie\PluginInterfaces\DynamicSchemaInterface;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\ApieObjectNormalizer;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\ContextualNormalizer;
+use W2w\Lib\Apie\PluginInterfaces\FrameworkConnectionInterface;
 
 class ApiResourceLinkSchemaBuilder implements DynamicSchemaInterface
 {
     /**
-     * @var ClassResourceConverter
+     * @var FrameworkConnectionInterface
      */
-    private $classResourceConverter;
+    private $connection;
 
-    public function __construct(ClassResourceConverter $classResourceConverter)
+    public function __construct(FrameworkConnectionInterface $connection)
     {
-        $this->classResourceConverter = $classResourceConverter;
+        $this->connection = $connection;
     }
+
     /**
-     * @param string $resourceClass
-     * @param string $operation
-     * @param array $groups
-     * @param int $recursion
-     * @param SchemaGenerator $generator
+     * {@inheritDoc}
      */
     public function __invoke(
         string $resourceClass,
         string $operation,
         array $groups,
         int $recursion,
-        SchemaGenerator $generator
-    ) {
-        if (!ContextualNormalizer::isNormalizerEnabled(ApieObjectNormalizer::class) && $recursion > 0 && $operation === 'get') {
-            return new Schema([
-                'type' => 'string',
-                'format' => 'path',
-                'nullable' => true,
-                'example' => '/' . $this->classResourceConverter->normalize($resourceClass) . '/12345',
-            ]);
+        OpenApiSchemaGenerator $generator
+    ): ?Schema {
+        if ($recursion > 0 && $operation === 'get') {
+            return SchemaFactory::createStringSchema(
+                'path',
+                $this->connection->getExampleUrl($resourceClass),
+                true
+            );
         }
         return $generator->createSchema($resourceClass, $operation, $groups);
     }

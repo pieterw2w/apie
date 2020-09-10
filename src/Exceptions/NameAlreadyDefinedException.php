@@ -3,6 +3,7 @@
 
 namespace W2w\Lib\Apie\Exceptions;
 
+use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ApieException;
 
 class NameAlreadyDefinedException extends BadConfigurationException
 {

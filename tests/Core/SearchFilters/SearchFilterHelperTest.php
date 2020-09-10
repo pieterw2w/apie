@@ -5,6 +5,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterHelper;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
 
 class SearchFilterHelperTest extends TestCase
 {
@@ -18,7 +19,7 @@ class SearchFilterHelperTest extends TestCase
     ) {
         $this->assertEquals(
             $expected,
-            SearchFilterHelper::applySearchFilter($input, $searchFilterRequest, PropertyAccess::createPropertyAccessor())
+            SearchFilterHelper::applySearchFilter($input, $searchFilterRequest, new ObjectAccess())
         );
     }
 
@@ -55,14 +56,14 @@ class SearchFilterHelperTest extends TestCase
                 ['test' => 0, 'counter' => 6],
             ],
             $this->createArray(12, 0),
-            new SearchFilterRequest(0, 3, ['[test]' => 0])
+            new SearchFilterRequest(0, 3, ['test' => 0])
         ];
         yield [
             [
                 ['test' => 0, 'counter' => 9],
             ],
             $this->createArray(12, 0),
-            new SearchFilterRequest(1, 3, ['[test]' => 0])
+            new SearchFilterRequest(1, 3, ['test' => 0])
         ];
     }
 

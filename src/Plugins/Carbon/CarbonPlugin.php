@@ -5,6 +5,7 @@ use DateTimeInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 use erasys\OpenApi\Spec\v3\Schema;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use W2w\Lib\Apie\OpenApiSchema\Factories\SchemaFactory;
 use W2w\Lib\Apie\PluginInterfaces\NormalizerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SchemaProviderInterface;
 use W2w\Lib\Apie\Plugins\Carbon\Normalizers\CarbonNormalizer;
@@ -35,7 +36,7 @@ final class CarbonPlugin implements NormalizerProviderInterface, SchemaProviderI
     {
         AnnotationReader::addGlobalIgnoredName('alias');
         return [
-            DateTimeInterface::class => new Schema(['type' => 'string', 'format' => 'date-time'])
+            DateTimeInterface::class => SchemaFactory::createStringSchema('date-time'),
         ];
     }
 

@@ -54,7 +54,7 @@ class SubActionsFeatureTest extends TestCase
 
     public function testSubActionIsMadeInSchema()
     {
-        // file_put_contents(__DIR__ . '/expected-specs.yml', $this->testItem->getOpenApiSpecGenerator()->getOpenApiSpec()->toYaml(20, 2));
+         file_put_contents(__DIR__ . '/expected-specs.yml', $this->testItem->getOpenApiSpecGenerator()->getOpenApiSpec()->toYaml(20, 2));
 
         $this->assertEquals(
             file_get_contents(__DIR__ . '/expected-specs.yml'),

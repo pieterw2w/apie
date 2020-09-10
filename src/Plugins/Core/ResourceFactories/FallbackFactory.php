@@ -4,7 +4,6 @@ namespace W2w\Lib\Apie\Plugins\Core\ResourceFactories;
 
 use ReflectionClass;
 use ReflectionException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Exceptions\CouldNotConstructApiResourceClassException;
 use W2w\Lib\Apie\Exceptions\InvalidClassTypeException;
@@ -12,6 +11,7 @@ use W2w\Lib\Apie\Interfaces\ApiResourceFactoryInterface;
 use W2w\Lib\Apie\Interfaces\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Interfaces\ApiResourceRetrieverInterface;
 use W2w\Lib\Apie\Plugins\Core\DataLayers\MemoryDataLayer;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccessInterface;
 
 class FallbackFactory implements ApiResourceFactoryInterface
 {
@@ -19,12 +19,25 @@ class FallbackFactory implements ApiResourceFactoryInterface
 
     private $identifierExtractor;
 
+    private $memoryDataLayer;
+
     public function __construct(
-        PropertyAccessor $propertyAccessor,
+        ObjectAccessInterface $propertyAccessor,
         IdentifierExtractor $identifierExtractor
     ) {
         $this->propertyAccessor = $propertyAccessor;
         $this->identifierExtractor = $identifierExtractor;
+    }
+
+    private function getMemoryDataLayer(): MemoryDataLayer
+    {
+        if (!$this->memoryDataLayer) {
+            $this->memoryDataLayer = new MemoryDataLayer(
+                $this->propertyAccessor,
+                $this->identifierExtractor
+            );
+        }
+        return $this->memoryDataLayer;
     }
 
     /**
@@ -45,12 +58,8 @@ class FallbackFactory implements ApiResourceFactoryInterface
      */
     public function getApiResourceRetrieverInstance(string $identifier): ApiResourceRetrieverInterface
     {
-        switch ($identifier) {
-            case MemoryDataLayer::class:
-                return new MemoryDataLayer(
-                    $this->propertyAccessor,
-                    $this->identifierExtractor
-                );
+        if ($identifier === MemoryDataLayer::class) {
+            return $this->getMemoryDataLayer();
         }
         $retriever = $this->createClassWithoutConstructorArguments($identifier);
         if (!$retriever instanceof ApiResourceRetrieverInterface) {
@@ -78,10 +87,7 @@ class FallbackFactory implements ApiResourceFactoryInterface
     public function getApiResourcePersisterInstance(string $identifier): ApiResourcePersisterInterface
     {
         if ($identifier === MemoryDataLayer::class) {
-            return new MemoryDataLayer(
-                $this->propertyAccessor,
-                $this->identifierExtractor
-            );
+            return $this->getMemoryDataLayer();
         }
         $retriever = $this->createClassWithoutConstructorArguments($identifier);
         if (!$retriever instanceof ApiResourcePersisterInterface) {

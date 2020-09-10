@@ -1,14 +1,12 @@
 <?php
 namespace W2w\Lib\Apie\Plugins\FileStorage\DataLayers;
 
-use LimitIterator;
+use Pagerfanta\Pagerfanta;
 use ReflectionClass;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterFromMetadataTrait;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
-use W2w\Lib\Apie\Exceptions\CanNotDetermineIdException;
 use W2w\Lib\Apie\Exceptions\CouldNotMakeDirectoryException;
 use W2w\Lib\Apie\Exceptions\CouldNotRemoveFileException;
 use W2w\Lib\Apie\Exceptions\CouldNotWriteFileException;
@@ -17,19 +15,26 @@ use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\Interfaces\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Interfaces\ApiResourceRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\SearchFilterProviderInterface;
+use W2w\Lib\Apie\Plugins\FileStorage\Pagers\FilestoragePager;
 
 class FileStorageDataLayer implements ApiResourcePersisterInterface, ApiResourceRetrieverInterface, SearchFilterProviderInterface
 {
     use SearchFilterFromMetadataTrait;
 
+    /**
+     * @var string
+     */
     private $folder;
 
-    private $propertyAccessor;
+    /**
+     * @var IdentifierExtractor
+     */
+    private $identifierExtractor;
 
-    public function __construct(string $folder, PropertyAccessor $propertyAccessor)
+    public function __construct(string $folder, IdentifierExtractor  $identifierExtractor)
     {
         $this->folder = $folder;
-        $this->propertyAccessor = $propertyAccessor;
+        $this->identifierExtractor = $identifierExtractor;
     }
 
     /**
@@ -41,11 +46,7 @@ class FileStorageDataLayer implements ApiResourcePersisterInterface, ApiResource
      */
     public function persistNew($resource, array $context = [])
     {
-        $identifier = $context['identifier'] ?? 'id';
-        if (!$this->propertyAccessor->isReadable($resource, $identifier)) {
-            throw new CanNotDetermineIdException($resource, $identifier);
-        }
-        $id = $this->propertyAccessor->getValue($resource, $identifier);
+        $id = $this->identifierExtractor->getIdentifierValue($resource, $context);
         $this->store($resource, $id);
         return $resource;
 
@@ -62,12 +63,9 @@ class FileStorageDataLayer implements ApiResourcePersisterInterface, ApiResource
      */
     public function persistExisting($resource, $int, array $context = [])
     {
-        $identifier = $context['identifier'] ?? 'id';
-        if ($this->propertyAccessor->isReadable($resource, $identifier)) {
-            $actualIdentifier = $this->propertyAccessor->getValue($resource, $identifier);
-            if ((string) $actualIdentifier !== (string) $int) {
-                throw new InvalidIdException((string) $int);
-            }
+        $id = $this->identifierExtractor->getIdentifierValue($resource, $context);
+        if ((string) $id !== (string) $int) {
+            throw new InvalidIdException((string) $int);
         }
         $this->store($resource, $int);
         return $resource;
@@ -112,24 +110,15 @@ class FileStorageDataLayer implements ApiResourcePersisterInterface, ApiResource
      * @param string $resourceClass
      * @param array $context
      * @param SearchFilterRequest $searchFilterRequest
-     * @return iterable
+     * @return Pagerfanta
      */
     public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest): iterable
     {
-        $offset = $searchFilterRequest->getOffset();
-        $numberOfItems = $searchFilterRequest->getNumberOfItems();
         $folder = $this->getFolder($resourceClass);
-        $result = [];
-        $list = new LimitIterator(
-            Finder::create()->files()->sortByName()->depth(0)->in($folder)->getIterator(),
-            $offset,
-            $numberOfItems
-        );
-        foreach ($list as $file) {
-            /** @var SplFileInfo $file */
-            $result[] = $this->retrieve($resourceClass, $file->getBasename(), $context);
-        }
-        return $result;
+        $iterator = Finder::create()->files()->sortByName()->depth(0)->in($folder)->getIterator();
+        $paginator = new Pagerfanta(new FilestoragePager($this, $iterator, $resourceClass, $context));
+        $searchFilterRequest->updatePaginator($paginator);
+        return $paginator;
     }
 
     protected function getFolder(string $resourceClass): string

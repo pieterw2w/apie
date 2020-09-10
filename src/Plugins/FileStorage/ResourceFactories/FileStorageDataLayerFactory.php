@@ -1,9 +1,8 @@
 <?php
 
-
 namespace W2w\Lib\Apie\Plugins\FileStorage\ResourceFactories;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
+use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Interfaces\ApiResourceFactoryInterface;
 use W2w\Lib\Apie\Interfaces\ApiResourcePersisterInterface;
 use W2w\Lib\Apie\Interfaces\ApiResourceRetrieverInterface;
@@ -13,12 +12,15 @@ class FileStorageDataLayerFactory implements ApiResourceFactoryInterface
 {
     private $path;
 
-    private $propertyAccessor;
+    /**
+     * @var IdentifierExtractor
+     */
+    private $identifierExtractor;
 
-    public function __construct(string $path, PropertyAccess $propertyAccessor)
+    public function __construct(string $path, IdentifierExtractor $identifierExtractor)
     {
         $this->path = $path;
-        $this->propertyAccessor = $propertyAccessor;
+        $this->identifierExtractor = $identifierExtractor;
     }
 
     /**
@@ -39,7 +41,7 @@ class FileStorageDataLayerFactory implements ApiResourceFactoryInterface
      */
     public function getApiResourceRetrieverInstance(string $identifier): ApiResourceRetrieverInterface
     {
-        return new FileStorageDataLayer($this->path, $this->propertyAccessor);
+        return new FileStorageDataLayer($this->path, $this->identifierExtractor);
     }
 
     /**
@@ -60,6 +62,6 @@ class FileStorageDataLayerFactory implements ApiResourceFactoryInterface
      */
     public function getApiResourcePersisterInstance(string $identifier): ApiResourcePersisterInterface
     {
-        return new FileStorageDataLayer($this->path, $this->propertyAccessor);
+        return new FileStorageDataLayer($this->path, $this->identifierExtractor);
     }
 }

@@ -24,6 +24,6 @@ class FileStoragePlugin implements ApiResourceFactoryProviderInterface, ApieAwar
 
     public function getApiResourceFactory(): ApiResourceFactoryInterface
     {
-        return new FileStorageDataLayerFactory($this->path, $this->getApie()->getPropertyAccessor());
+        return new FileStorageDataLayerFactory($this->path, $this->getApie()->getIdentifierExtractor());
     }
 }

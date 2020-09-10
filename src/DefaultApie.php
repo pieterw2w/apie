@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use W2w\Lib\Apie\Plugins\ApplicationInfo\ApplicationInfoPlugin;
 use W2w\Lib\Apie\Plugins\Carbon\CarbonPlugin;
 use W2w\Lib\Apie\Plugins\DateTime\DateTimePlugin;
+use W2w\Lib\Apie\Plugins\Pagination\PaginationPlugin;
 use W2w\Lib\Apie\Plugins\StatusCheck\StatusCheckPlugin;
 use W2w\Lib\Apie\Plugins\Uuid\UuidPlugin;
 use W2w\Lib\Apie\Plugins\ValueObject\ValueObjectPlugin;
@@ -19,6 +20,7 @@ class DefaultApie
     {
         $plugins = $additionalPlugins;
         $plugins[] = class_exists(Carbon::class) ? new CarbonPlugin() : new DateTimePlugin();
+        $plugins[] = new PaginationPlugin();
         $plugins[] = new UuidPlugin();
         $plugins[] = new ValueObjectPlugin();
         if ($defaultResources) {

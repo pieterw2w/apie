@@ -7,16 +7,20 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use erasys\OpenApi\Spec\v3\Info;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
+use W2w\Lib\Apie\Annotations\ApiResource;
 use W2w\Lib\Apie\Apie;
 use W2w\Lib\Apie\Core\ApiResourceFacade;
 use W2w\Lib\Apie\Exceptions\BadConfigurationException;
 use W2w\Lib\Apie\OpenApiSchema\OpenApiSpecGenerator;
+use W2w\Lib\Apie\Plugins\Core\DataLayers\NullDataLayer;
 use W2w\Lib\Apie\Plugins\Core\Serializers\SymfonySerializerAdapter;
+use W2w\Lib\Apie\Plugins\FakeAnnotations\FakeAnnotationsPlugin;
 use W2w\Lib\Apie\Plugins\StaticConfig\StaticConfigPlugin;
+use W2w\Lib\Apie\Plugins\StaticConfig\StaticResourcesPlugin;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\GroupedObjectAccess;
+use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
 
 class ApieTest extends TestCase
 {
@@ -42,14 +46,41 @@ class ApieTest extends TestCase
         yield [BadConfigurationException::class, 'getResourceSerializer'];
         yield [BadConfigurationException::class, 'getClassMetadataFactory'];
         yield [BadConfigurationException::class, 'getPropertyConverter'];
-        yield [BadConfigurationException::class, 'getPropertyAccessor'];
-        yield [BadConfigurationException::class, 'getPropertyTypeExtractor'];
         yield [BadConfigurationException::class, 'getCacheItemPool'];
         yield [BadConfigurationException::class, 'getAnnotationReader'];
         yield [BadConfigurationException::class, 'getResourceSerializer'];
         yield [BadConfigurationException::class, 'getApiResourceFacade'];
         yield [BadConfigurationException::class, 'getOpenApiSpecGenerator'];
         yield [BadConfigurationException::class, 'getBaseUrl'];
+    }
+
+    public function test_getService_throws_exception()
+    {
+        $testItem = new Apie([], true, null);
+        $this->expectException(BadConfigurationException::class);
+        $testItem->getService(Apie::class);
+    }
+
+    public function test_framework_connection_works_without_override()
+    {
+        $testItem = new Apie(
+            [
+                new StaticResourcesPlugin([SimplePopo::class]),
+                new FakeAnnotationsPlugin(
+                    [
+                        SimplePopo::class => ApiResource::createFromArray(['retrieveClass' => NullDataLayer::class]),
+                    ]
+                ),
+            ],
+            true,
+            null
+        );
+        $this->assertNull($testItem->getAcceptLanguage());
+        $this->assertNull($testItem->getContentLanguage());
+        $this->assertEquals('/simple_popo/12345', $testItem->getExampleUrl(SimplePopo::class));
+        $this->assertEquals('/simple_popo', $testItem->getOverviewUrlForResourceClass(SimplePopo::class));
+        srand(0);
+        $this->assertEquals('/simple_popo/QPBQZRDZRRZYQVKA', $testItem->getUrlForResource(new SimplePopo()));
     }
 
     /**
@@ -67,8 +98,7 @@ class ApieTest extends TestCase
         yield [SymfonySerializerAdapter::class, 'getResourceSerializer'];
         yield [ClassMetadataFactory::class, 'getClassMetadataFactory'];
         yield [MetadataAwareNameConverter::class, 'getPropertyConverter'];
-        yield [PropertyAccessor::class, 'getPropertyAccessor'];
-        yield [PropertyInfoExtractor::class, 'getPropertyTypeExtractor'];
+        yield [GroupedObjectAccess::class, 'getObjectAccess'];
         yield [ArrayAdapter::class, 'getCacheItemPool'];
         yield [AnnotationReader::class, 'getAnnotationReader'];
         yield [SymfonySerializerAdapter::class, 'getResourceSerializer'];

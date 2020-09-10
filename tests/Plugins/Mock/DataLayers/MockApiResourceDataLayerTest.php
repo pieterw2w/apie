@@ -8,6 +8,7 @@ use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
 use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\Plugins\Mock\DataLayers\MockApiResourceDataLayer;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
 use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
 use W2w\Test\Apie\Mocks\ApiResources\SumExample;
 
@@ -20,7 +21,7 @@ class MockApiResourceDataLayerTest extends TestCase
     protected function setUp(): void
     {
         $this->cache = new ArrayAdapter();
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $propertyAccessor = new ObjectAccess();
         $this->testItem = new MockApiResourceDataLayer(
             $this->cache,
             new IdentifierExtractor($propertyAccessor),
@@ -45,10 +46,10 @@ class MockApiResourceDataLayerTest extends TestCase
 
         $this->testItem->persistNew($resource1, []);
 
-        $this->assertEquals([$resource1], $this->testItem->retrieveAll(SimplePopo::class, [], $request));
+        $this->assertEquals([$resource1], $this->testItem->retrieveAll(SimplePopo::class, [], $request)->getCurrentPageResults());
 
         $this->testItem->persistNew($resource2, []);
-        $this->assertEquals([$resource1, $resource2], $this->testItem->retrieveAll(SimplePopo::class, [], $request));
+        $this->assertEquals([$resource1, $resource2], $this->testItem->retrieveAll(SimplePopo::class, [], $request)->getCurrentPageResults());
 
         $resource1->arbitraryField = 'test';
         $this->assertNotEquals($resource1, $this->testItem->retrieve(SimplePopo::class, $resource1->getId(), []));
@@ -57,7 +58,7 @@ class MockApiResourceDataLayerTest extends TestCase
         $this->assertEquals($resource1, $this->testItem->retrieve(SimplePopo::class, $resource1->getId(), []));
 
         $this->testItem->remove(SimplePopo::class, $resource1->getId(), []);
-        $this->assertEquals([$resource2], $this->testItem->retrieveAll(SimplePopo::class, [], $request));
+        $this->assertEquals([$resource2], $this->testItem->retrieveAll(SimplePopo::class, [], $request)->getCurrentPageResults());
     }
 
     public function testRetrieveThrowsError()

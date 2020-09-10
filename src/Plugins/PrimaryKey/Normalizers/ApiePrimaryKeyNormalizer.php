@@ -9,8 +9,8 @@ use W2w\Lib\Apie\Core\ApiResourceMetadataFactory;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Core\Resources\ApiResourcesInterface;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\ApieObjectNormalizer;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\ContextualNormalizer;
+use W2w\Lib\Apie\PluginInterfaces\FrameworkConnectionInterface;
+use W2w\Lib\Apie\Plugins\Core\Serializers\SymfonySerializerAdapter;
 use W2w\Lib\Apie\Plugins\PrimaryKey\ValueObjects\PrimaryKeyReference;
 
 /**
@@ -41,29 +41,29 @@ class ApiePrimaryKeyNormalizer implements ContextAwareNormalizerInterface, Seria
     private $converter;
 
     /**
-     * @var string
+     * @var FrameworkConnectionInterface
      */
-    private $baseUrl;
+    private $frameworkConnection;
 
     public function __construct(
         ApiResourcesInterface $apiResources,
         IdentifierExtractor $identifierExtractor,
         ApiResourceMetadataFactory $metadataFactory,
         ClassResourceConverter $converter,
-        string $baseUrl
+        FrameworkConnectionInterface $frameworkConnection
     ) {
         $this->apiResources = $apiResources;
         $this->identifierExtractor = $identifierExtractor;
         $this->metadataFactory = $metadataFactory;
         $this->converter = $converter;
-        $this->baseUrl = rtrim($baseUrl, '/') . '/';
+        $this->frameworkConnection = $frameworkConnection;
     }
     /**
      * {@inheritdoc}
      */
     public function supportsNormalization($data, $format = null, array $context = [])
     {
-        if (ContextualNormalizer::isNormalizerEnabled(ApieObjectNormalizer::class) || empty($context['object_hierarchy']) || !empty($context['disable_pk_normalize'])) {
+        if ($format === SymfonySerializerAdapter::INTERNAL_FOR_DATALAYER || empty($context['object_hierarchy']) || !empty($context['disable_pk_normalize'])) {
             return false;
         }
         foreach ($this->apiResources->getApiResources() as $apiResource) {
@@ -91,7 +91,7 @@ class ApiePrimaryKeyNormalizer implements ContextAwareNormalizerInterface, Seria
         return $this->serializer->normalize(
             new PrimaryKeyReference(
                 $metadata,
-                $this->baseUrl . $this->converter->normalize($metadata->getClassName()),
+                $this->frameworkConnection->getUrlForResource($object),
                 $identifierValue
             ),
             $format,

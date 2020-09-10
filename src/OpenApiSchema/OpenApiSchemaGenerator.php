@@ -2,6 +2,7 @@
 
 namespace W2w\Lib\Apie\OpenApiSchema;
 
+use erasys\OpenApi\Spec\v3\Discriminator;
 use erasys\OpenApi\Spec\v3\Schema;
 use ReflectionClass;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
@@ -9,11 +10,12 @@ use Symfony\Component\PropertyInfo\Type;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
+use W2w\Lib\Apie\OpenApiSchema\Factories\SchemaFactory;
 use W2w\Lib\Apie\PluginInterfaces\DynamicSchemaInterface;
 use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\FilteredObjectAccess;
 use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccessInterface;
 
-class OpenApiSchemaGenerator extends SchemaGenerator
+class OpenApiSchemaGenerator
 {
     private const MAX_RECURSION = 2;
 
@@ -47,26 +49,31 @@ class OpenApiSchemaGenerator extends SchemaGenerator
     private $classMetadataFactory;
 
     /**
+     * @var Schema[]
+     */
+    protected $alreadyDefined = [];
+
+    /**
+     * @var int
+     */
+    protected $oldRecursion = -1;
+
+    /**
      * @param DynamicSchemaInterface[] $schemaGenerators
      * @param ObjectAccessInterface $objectAccess
      * @param ClassMetadataFactoryInterface $classMetadataFactory
-     * @param PropertyInfoExtractor $propertyInfoExtractor
-     * @param ClassResourceConverter $converter
      * @param NameConverterInterface $nameConverter
      */
     public function __construct(
         array $schemaGenerators,
         ObjectAccessInterface $objectAccess,
         ClassMetadataFactoryInterface $classMetadataFactory,
-        PropertyInfoExtractor $propertyInfoExtractor,
-        ClassResourceConverter $converter,
         NameConverterInterface $nameConverter
     ) {
         $this->schemaGenerators = $schemaGenerators;
         $this->objectAccess = $objectAccess;
         $this->nameConverter = $nameConverter;
         $this->classMetadataFactory = $classMetadataFactory;
-        parent::__construct($classMetadataFactory, $propertyInfoExtractor, $converter, $nameConverter, $schemaGenerators);
     }
 
     /**
@@ -166,12 +173,8 @@ class OpenApiSchemaGenerator extends SchemaGenerator
             return $this->alreadyDefined[$cacheKey] = $predefinedSchema;
         }
         $refl = new ReflectionClass($resourceClass);
-        $schema = new Schema([
-            'type' => 'object',
-            'properties' => [],
-            'title' => $refl->getShortName(),
-            'description' => $refl->getShortName() . ' ' . $operation . ' for groups ' . implode(', ', $groups),
-        ]);
+        $schema = SchemaFactory::createObjectSchemaWithoutProperties($refl, $operation, $groups);
+
         // if definition is an interface or abstract base class it is possible that it has additional properties.
         if ($refl->isAbstract() || $refl->isInterface()) {
             $schema->additionalProperties = true;
@@ -242,7 +245,7 @@ class OpenApiSchemaGenerator extends SchemaGenerator
     private function convertTypesToSchema(array $types, string $operation, array $groups, int $recursion = 0): Schema
     {
         if (empty($types)) {
-            return new Schema([]);
+            return SchemaFactory::createAnyTypeSchema();
         }
         $type = reset($types);
         // this is only because this serializer does not do a deep populate.
@@ -284,7 +287,7 @@ class OpenApiSchemaGenerator extends SchemaGenerator
     public function convertTypeToSchema(?Type $type, string $operation, array $groups, int $recursion): Schema
     {
         if ($type === null) {
-            return new Schema([]);
+            return SchemaFactory::createAnyTypeSchema();
         }
         if ($type && $type->getBuiltinType() === Type::BUILTIN_TYPE_OBJECT && $type->getClassName() && !$type->isCollection()) {
             $this->oldRecursion++;
@@ -301,7 +304,7 @@ class OpenApiSchemaGenerator extends SchemaGenerator
         ]);
         $propertySchema->type = $this->translateType($type->getBuiltinType());
         if ($propertySchema->type === 'array') {
-            $propertySchema->items = new Schema([]);
+            $propertySchema->items = SchemaFactory::createAnyTypeSchema();
         }
         if (!$type->isNullable()) {
             $propertySchema->nullable = false;
@@ -331,7 +334,7 @@ class OpenApiSchemaGenerator extends SchemaGenerator
                     ]);
                     //array[] typehint...
                     if ($schemaType === 'array') {
-                        $propertySchema->items->items = new Schema([]);
+                        $propertySchema->items->items = SchemaFactory::createAnyTypeSchema();
                     }
                 }
             }
@@ -345,5 +348,51 @@ class OpenApiSchemaGenerator extends SchemaGenerator
             return $this->createSchemaRecursive($className, $operation, $groups, $recursion + 1);
         }
         return $propertySchema;
+    }
+
+    /**
+     * Define an OpenAPI discriminator spec for an interface or base class that have a discriminator column.
+     *
+     * @param string $resourceInterface
+     * @param string $discriminatorColumn
+     * @param array $subclasses
+     * @param string $operation
+     * @param string[] $groups
+     * @return Schema
+     */
+    public function defineSchemaForPolymorphicObject(
+        string $resourceInterface,
+        string $discriminatorColumn,
+        array $subclasses,
+        string $operation = 'get',
+        array $groups = ['get', 'read']
+    ): Schema {
+        $cacheKey = $this->getCacheKey($resourceInterface, $operation, $groups);
+        /** @var Schema[] $subschemas */
+        $subschemas = [];
+        $discriminatorMapping = [];
+        foreach ($subclasses as $keyValue => $subclass) {
+            $subschemas[$subclass] = $discriminatorMapping[$keyValue] = $this->createSchema($subclass, $operation, $groups);
+            $properties = $subschemas[$subclass]->properties;
+            if (isset($properties[$discriminatorColumn])) {
+                $properties[$discriminatorColumn]->default = $keyValue;
+                $properties[$discriminatorColumn]->example = $keyValue;
+            } else {
+                $properties[$discriminatorColumn] = SchemaFactory::createStringSchema(null, $keyValue);
+            }
+            $subschemas[$subclass]->properties = $properties;
+        }
+        $this->alreadyDefined[$cacheKey . ',0'] = new Schema([
+            'type' => 'object',
+            'properties' => [
+                $discriminatorColumn => SchemaFactory::createStringSchema(),
+            ],
+            'oneOf' => array_values($subschemas),
+            'discriminator' => new Discriminator($discriminatorColumn, $discriminatorMapping)
+        ]);
+        for ($i = 1; $i < self::MAX_RECURSION; $i++) {
+            $this->alreadyDefined[$cacheKey . ',' . $i] = $this->alreadyDefined[$cacheKey . ',0'];
+        }
+        return $this->alreadyDefined[$cacheKey . ',0'];
     }
 }

@@ -2,7 +2,7 @@
 namespace W2w\Lib\Apie\Core\SearchFilters;
 
 use W2w\Lib\Apie\Exceptions\NameAlreadyDefinedException;
-use W2w\Lib\Apie\Exceptions\NameNotFoundException;
+use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\NameNotFoundException;
 
 /**
  * Search Filter class is used to filter on the GET all resources action, for example

@@ -46,10 +46,10 @@ class PrimaryKeyReferenceNormalizerTest extends TestCase
                     null,
                     null
                 ),
-                'simple_popo',
+                '/simple_popo/42',
                 '42'
             )
         );
-        $this->assertEquals('simple_popo/42', $actual);
+        $this->assertEquals('/simple_popo/42', $actual);
     }
 }

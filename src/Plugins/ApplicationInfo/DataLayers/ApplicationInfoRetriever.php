@@ -72,10 +72,8 @@ class ApplicationInfoRetriever implements ApiResourceRetrieverInterface
         array $context,
         SearchFilterRequest $searchFilterRequest
     ): iterable {
-        if ($searchFilterRequest->getPageIndex() > 0) {
-            return [];
-        }
-
-        return [$this->retrieve($resourceClass, '', $context)];
+        return [
+            $this->retrieve($resourceClass, '', $context)
+        ];
     }
 }

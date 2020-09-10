@@ -18,13 +18,14 @@ use W2w\Lib\Apie\Events\RetrieveSingleResourceEvent;
 use W2w\Lib\Apie\Events\StoreExistingResourceEvent;
 use W2w\Lib\Apie\Events\StoreNewResourceEvent;
 use W2w\Lib\Apie\Exceptions\MethodNotAllowedException;
-use W2w\Lib\Apie\Exceptions\ValidationException;
+use W2w\Lib\Apie\OpenApiSchema\Factories\SchemaFactory;
 use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
 use W2w\Lib\Apie\Plugins\ApplicationInfo\ApiResources\ApplicationInfo;
 use W2w\Lib\Apie\Plugins\FakeAnnotations\FakeAnnotationsPlugin;
 use W2w\Lib\Apie\Plugins\StaticConfig\StaticConfigPlugin;
 use W2w\Lib\Apie\Plugins\StaticConfig\StaticResourcesPlugin;
 use W2w\Lib\Apie\Plugins\StatusCheck\ApiResources\Status;
+use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ValidationException;
 use W2w\Test\Apie\Mocks\ApiResources\FullRestObject;
 use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
 use W2w\Test\Apie\Mocks\ApiResources\SumExample;
@@ -100,7 +101,7 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
         $request = new ServerRequest('GET', '/full_rest_object/', []);
         $this->assertEquals(
             [$expected],
-            $facade->getAll(FullRestObject::class, $request)->getResource()
+            $facade->getAll(FullRestObject::class, $request)->getResource()->getCurrentPageResults()
         );
 
         // now put the resource
@@ -115,7 +116,7 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
         $request = new ServerRequest('GET', '/full_rest_object/', []);
         $this->assertEquals(
             [$expected],
-            $facade->getAll(FullRestObject::class, $request)->getResource()
+            $facade->getAll(FullRestObject::class, $request)->getResource()->getCurrentPageResults()
         );
 
         $this->assertEquals(
@@ -201,7 +202,7 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
         $actual = $testItem->getApiResourceFacade()->getAll(FullRestObject::class, $request);
         $this->assertEquals(
             [],
-            $actual->getResource()
+            $actual->getResource()->getCurrentPageResults()
         );
         $request = (new ServerRequest('GET', '/full_rest_object/'))
             ->withQueryParams(['stringValue' => 'value1', 'valueObject' => 'pizza', 'page' => 0, 'limit' => 500]);
@@ -237,8 +238,8 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
             new StaticConfigPlugin('/test-url'),
         ];
         $testItem = DefaultApie::createDefaultApie(true, $plugins);
-        $testItem->getSchemaGenerator()->defineSchemaForResource(DateTimeInterface::class, new Schema(['type' => 'string', 'format' => 'date-time']));
-        $testItem->getSchemaGenerator()->defineSchemaForResource(Uuid::class, new Schema(['format' => 'uuid', 'type' => 'string']));
+        $testItem->getSchemaGenerator()->defineSchemaForResource(DateTimeInterface::class, SchemaFactory::createStringSchema('date-time'));
+        $testItem->getSchemaGenerator()->defineSchemaForResource(Uuid::class, SchemaFactory::createStringSchema('uuid'));
         // file_put_contents(__DIR__ . '/expected-specs.yml',$testItem->getOpenApiSpecGenerator('/test-url')->getOpenApiSpec()->toYaml(20, 2));
 
         $this->assertEquals(
@@ -260,8 +261,6 @@ class FeatureTest extends TestCase implements ResourceLifeCycleInterface
             $serializer->postData($outputClass, json_encode($data), 'application/json');
             $this->fail('A validation exception should have been thrown!');
         } catch (ValidationException $validationException) {
-            $this->assertEquals($expectedErrorsOld, $validationException->getErrors());
-        } catch (\W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ValidationException $validationException) {
             $this->assertEquals($expectedErrors, $validationException->getErrors());
         }
     }

@@ -4,11 +4,11 @@
 namespace W2w\Test\Apie\Features;
 
 use DateTime;
+use PHPUnit\Framework\TestCase;
 use W2w\Lib\Apie\DefaultApie;
-use W2w\Test\Apie\ForwardsCompatibleTestCase;
 use W2w\Test\Apie\Mocks\ApiResources\SimplePopo;
 
-class HydrateWithReflectionTest extends ForwardsCompatibleTestCase
+class HydrateWithReflectionTest extends TestCase
 {
     public function testHydrateWithReflection()
     {

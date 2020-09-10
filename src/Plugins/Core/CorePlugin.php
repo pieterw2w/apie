@@ -7,20 +7,13 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Cache\PhpFileCache;
-use Pjordaan\AlternateReflectionExtractor\ReflectionExtractor;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
-use Symfony\Component\PropertyInfo\Extractor\SerializerExtractor;
-use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
-use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Serializer\Encoder\JsonEncode;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Mapping\ClassDiscriminatorFromClassMetadata;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
@@ -42,14 +35,12 @@ use W2w\Lib\Apie\PluginInterfaces\CacheItemPoolProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\EncoderProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\NormalizerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\ObjectAccessProviderInterface;
+use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
 use W2w\Lib\Apie\PluginInterfaces\SerializerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SymfonyComponentProviderInterface;
 use W2w\Lib\Apie\Plugins\Core\Encodings\FormatRetriever;
 use W2w\Lib\Apie\Plugins\Core\ResourceFactories\FallbackFactory;
 use W2w\Lib\Apie\Plugins\Core\Serializers\Mapping\BaseGroupLoader;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\ApieObjectNormalizer;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\ContextualNormalizer;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\EvilReflectionPropertyNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Normalizers\ExceptionNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Serializers\SymfonySerializerAdapter;
 use W2w\Lib\ApieObjectAccessNormalizer\Normalizers\ApieObjectAccessNormalizer;
@@ -77,11 +68,11 @@ class CorePlugin implements SerializerProviderInterface,
 
     private $propertyConverter;
 
-    private $propertyAccessor;
-
-    private $propertyTypeExtractor;
-
     private $annotationReader;
+
+    private $arrayAdapter;
+
+    private $apiResourceFactory;
 
     /**
      * {@inheritDoc}
@@ -91,7 +82,8 @@ class CorePlugin implements SerializerProviderInterface,
         $normalizers = $this->getApie()->getNormalizers();
         $encoders = $this->getApie()->getEncoders();
         $serializer = new Serializer($normalizers, $encoders);
-        return new SymfonySerializerAdapter($serializer, $this->getApie()->getFormatRetriever(), $this->getApie()->getResourceLifecycles());
+        $lifecycles = $this->apie->getPluginsWithInterface(ResourceLifeCycleInterface::class);
+        return new SymfonySerializerAdapter($serializer, $this->getApie()->getFormatRetriever(), $lifecycles);
     }
 
     /**
@@ -99,35 +91,10 @@ class CorePlugin implements SerializerProviderInterface,
      */
     public function getNormalizers(): array
     {
-        $classMetadataFactory = $this->getApie()->getClassMetadataFactory();
-
-        $classDiscriminator = new ClassDiscriminatorFromClassMetadata($classMetadataFactory);
-
-        $objectNormalizer = new ApieObjectNormalizer(
-            $classMetadataFactory,
-            $this->getApie()->getPropertyConverter(),
-            $this->getApie()->getPropertyAccessor(),
-            $this->getApie()->getPropertyTypeExtractor(),
-            $classDiscriminator,
-            null,
-            []
-        );
-        $evilObjectNormalizer = new EvilReflectionPropertyNormalizer(
-            $classMetadataFactory,
-            $this->getApie()->getPropertyConverter(),
-            $this->getApie()->getPropertyAccessor(),
-            $this->getApie()->getPropertyTypeExtractor(),
-            $classDiscriminator,
-            null,
-            []
-        );
-        ContextualNormalizer::disableDenormalizer(EvilReflectionPropertyNormalizer::class);
-        ContextualNormalizer::disableNormalizer(EvilReflectionPropertyNormalizer::class);
-
         $apieObjectAccessNormalizer = new ApieObjectAccessNormalizer(
             $this->getApie()->getObjectAccess(),
             $this->getApie()->getPropertyConverter(),
-            $classMetadataFactory
+            $this->getApie()->getClassMetadataFactory()
         );
 
         return [
@@ -135,7 +102,6 @@ class CorePlugin implements SerializerProviderInterface,
             new JsonSerializableNormalizer(),
             new ArrayDenormalizer(),
             new MethodCallDenormalizer($this->getApie()->getObjectAccess(), $apieObjectAccessNormalizer, $this->getApie()->getPropertyConverter()),
-            new ContextualNormalizer([$evilObjectNormalizer, $objectNormalizer]),
             $apieObjectAccessNormalizer,
         ];
 
@@ -175,55 +141,12 @@ class CorePlugin implements SerializerProviderInterface,
     /**
      * {@inheritDoc}
      */
-    public function getPropertyAccessor(): PropertyAccessor
-    {
-        if (!$this->propertyAccessor) {
-            $this->propertyAccessor = PropertyAccess::createPropertyAccessorBuilder()
-                ->setCacheItemPool($this->getApie()->getCacheItemPool())
-                ->getPropertyAccessor();
-        }
-        return $this->propertyAccessor;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getPropertyTypeExtractor(): PropertyTypeExtractorInterface
-    {
-        if (!$this->propertyTypeExtractor) {
-            $factory = $this->getApie()->getClassMetadataFactory();
-            $reflectionExtractor = new ReflectionExtractor();
-            $phpDocExtractor = new PhpDocExtractor();
-
-            $this->propertyTypeExtractor = new PropertyInfoExtractor(
-                [
-                    new SerializerExtractor($factory),
-                    $reflectionExtractor,
-                ] + $this->getApie()->getListExtractors(),
-                $this->getApie()->getTypeExtractors() +[
-                    $phpDocExtractor,
-                    $reflectionExtractor,
-                ],
-                $this->getApie()->getDescriptionExtractors() + [
-                    $phpDocExtractor,
-                ] ,
-                $this->getApie()->getAccessExtractors() + [
-                    $reflectionExtractor,
-                ] ,
-                $this->getApie()->getInitializableExtractors() + [
-                    $reflectionExtractor,
-                ]
-            );
-        }
-        return $this->propertyTypeExtractor;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getCacheItemPool(): CacheItemPoolInterface
     {
-        return new ArrayAdapter(0, true);
+        if (!$this->arrayAdapter) {
+            $this->arrayAdapter = new ArrayAdapter(0, true);
+        }
+        return $this->arrayAdapter;
     }
 
     /**
@@ -276,10 +199,13 @@ class CorePlugin implements SerializerProviderInterface,
      */
     public function getApiResourceFactory(): ApiResourceFactoryInterface
     {
-        return new FallbackFactory(
-            $this->getApie()->getPropertyAccessor(),
-            $this->getApie()->getIdentifierExtractor()
-        );
+        if (!$this->apiResourceFactory) {
+            $this->apiResourceFactory = new FallbackFactory(
+                $this->getApie()->getObjectAccess(),
+                $this->getApie()->getIdentifierExtractor()
+            );
+        }
+        return $this->apiResourceFactory;
     }
 
     /**

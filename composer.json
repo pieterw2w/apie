@@ -19,7 +19,7 @@
         "jeroen/rewindable-generator": "^1.2",
         "laminas/laminas-diactoros": "^2.1",
         "phpdocumentor/reflection-docblock": "^4.3|5.*",
-        "pjordaan/alternate-reflection-extractor": "^4.3|^5.0",
+        "pagerfanta/pagerfanta": "^2.4",
         "psr/cache": "^1.0",
         "psr/container": "^1.0",
         "psr/http-message": "^1.0",
@@ -30,7 +30,7 @@
         "symfony/property-access": "^4.0|^5.0",
         "symfony/property-info": "^4.0|^5.0",
         "symfony/serializer": "^4.3|^5.0",
-        "w2w/apie-object-access-normalizer": "^1.7.0"
+        "w2w/apie-object-access-normalizer": "^2.0|>=2.0.1"
     },
     "autoload": {
         "psr-4": {
@@ -43,17 +43,17 @@
         }
     },
     "require-dev": {
-        "nesbot/carbon": "*",
-        "phpunit/phpunit": "^7.0.0|^8.0.0",
+        "doctrine/cache": "^1.9",
         "guzzlehttp/guzzle": "^6.3",
         "haydenpierce/class-finder": "^0.4.0",
-        "webonyx/graphql-php": "^0.13.8",
-        "phpstan/phpstan": "^0.12.3",
-        "doctrine/cache": "^1.9",
-        "phpstan/extension-installer": "^1.0",
-        "phpstan/phpstan-phpunit": "0.12.6",
         "jangregor/phpstan-prophecy": "0.5.1",
-        "tightenco/collect": "^7.12"
+        "nesbot/carbon": "*",
+        "phpstan/extension-installer": "^1.0",
+        "phpstan/phpstan": "^0.12.3",
+        "phpstan/phpstan-phpunit": "0.12.6",
+        "phpunit/phpunit": "^7.0.0|^8.0.0",
+        "tightenco/collect": "^7.12",
+        "webonyx/graphql-php": "^0.13.8"
     },
     "archive": {
         "exclude": ["/tests"]

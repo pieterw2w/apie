@@ -1,23 +1,64 @@
 <?php
 namespace W2w\Lib\Apie\Core\SearchFilters;
 
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Pagerfanta;
 use W2w\Lib\Apie\Interfaces\ValueObjectInterface;
+use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccessInterface;
 
 class SearchFilterHelper
 {
+    static public function applyPaginationToSearchFilter(
+        array $input,
+        SearchFilterRequest  $searchFilterRequest,
+        ObjectAccessInterface $objectAccess
+    ): Pagerfanta {
+        $paginator = new Pagerfanta(new ArrayAdapter(
+            array_values(array_filter($input, function ($item) use ($searchFilterRequest, $objectAccess) {
+                return self::filter($objectAccess, $item, $searchFilterRequest);
+            }))
+        ));
+        $searchFilterRequest->updatePaginator($paginator);
+        return $paginator;
+    }
+
+    static private function filter(
+        ObjectAccessInterface $accessor,
+        $item,
+        SearchFilterRequest $searchFilterRequest
+    ): bool {
+        foreach ($searchFilterRequest->getSearches() as $name => $value) {
+            $foundValue = self::getValue($accessor, $item, $name);
+            if ($foundValue instanceof ValueObjectInterface) {
+                $foundValue = $foundValue->toNative();
+            }
+            if ($foundValue !== $value) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static private function getValue(ObjectAccessInterface $objectAccess, $resource, string $fieldName)
+    {
+        if (is_array($resource)) {
+            return $resource[$fieldName] ?? null;
+        }
+        return $objectAccess->getValue($resource, $fieldName);
+    }
+
     /**
      * Applies pagination and search on an array.
      *
      * @param array $input
      * @param SearchFilterRequest $searchFilterRequest
-     * @param PropertyAccessorInterface $accessor
+     * @param ObjectAccessInterface $accessor
      * @return array
      */
     static public function applySearchFilter(
         array $input,
         SearchFilterRequest $searchFilterRequest,
-        PropertyAccessorInterface $accessor
+        ObjectAccessInterface $accessor
     ) {
         $count = 0;
         $offset = $searchFilterRequest->getOffset();
@@ -26,14 +67,8 @@ class SearchFilterHelper
             if ($count >= $max) {
                 return false;
             }
-            foreach ($searchFilterRequest->getSearches() as $name => $value) {
-                $foundValue = $accessor->getValue($item, $name);
-                if ($foundValue instanceof ValueObjectInterface) {
-                    $foundValue = $foundValue->toNative();
-                }
-                if ($foundValue !== $value) {
-                    return false;
-                }
+            if (!self::filter($accessor, $item, $searchFilterRequest)) {
+                return false;
             }
             $count++;
             return ($count > $offset);

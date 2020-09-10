@@ -63,6 +63,11 @@ class ApiResourceFacade
      */
     private $nameConverter;
 
+    /**
+     * @var ApiResourceFacadeResponseFactory
+     */
+    private $responseFactory;
+
     public function __construct(
         ApiResourceRetriever $retriever,
         ApiResourcePersister $persister,
@@ -71,6 +76,7 @@ class ApiResourceFacade
         FormatRetrieverInterface $formatRetriever,
         SubActionContainer $subActionContainer,
         NameConverterInterface $nameConverter,
+        ApiResourceFacadeResponseFactory  $responseFactory,
         iterable $resourceLifeCycles
     ) {
         $this->retriever = $retriever;
@@ -80,6 +86,7 @@ class ApiResourceFacade
         $this->formatRetriever = $formatRetriever;
         $this->subActionContainer = $subActionContainer;
         $this->nameConverter = $nameConverter;
+        $this->responseFactory = $responseFactory;
         $this->resourceLifeCycles = $resourceLifeCycles;
     }
 
@@ -129,7 +136,7 @@ class ApiResourceFacade
         }
         $this->runLifeCycleEvent('onPostRetrieveResource', $event);
 
-        return $this->createResponse($event->getResource(), $request);
+        return $this->responseFactory->createResponseForResource($event->getResource(), $request);
     }
 
     /**
@@ -152,7 +159,7 @@ class ApiResourceFacade
         }
         $this->runLifeCycleEvent('onPostRetrieveAllResources', $event);
 
-        return $this->createResponse($event->getResources(), $request);
+        return $this->responseFactory->createResponseListForResource($event->getResources(), $resourceClass, $searchFilterRequest, $request);
     }
 
     /**
@@ -184,7 +191,7 @@ class ApiResourceFacade
         $event->setResource($this->persister->persistExisting($event->getResource(), $id));
         $this->runLifeCycleEvent('onPostPersistExistingResource', $event);
 
-        return $this->createResponse($event->getResource(), $request);
+        return $this->responseFactory->createResponseForResource($event->getResource(), $request);
     }
 
     /**
@@ -211,7 +218,7 @@ class ApiResourceFacade
         $event->setResource($this->persister->persistNew($event->getResource()));
         $this->runLifeCycleEvent('onPostPersistNewResource', $event);
 
-        return $this->createResponse($event->getResource(), $request);
+        return $this->responseFactory->createResponseForResource($event->getResource(), $request);
     }
 
     /**
@@ -248,23 +255,6 @@ class ApiResourceFacade
             'json',
             $context
         );
-        return $this->createResponse($data, $request);
-    }
-
-    /**
-     * Creates a ApiResourceFacadeResponse instance.
-     *
-     * @param mixed $resource
-     * @param RequestInterface|null $request
-     * @return ApiResourceFacadeResponse
-     */
-    private function createResponse($resource, ?RequestInterface $request): ApiResourceFacadeResponse
-    {
-        return new ApiResourceFacadeResponse(
-            $this->serializer,
-            $resource,
-            ($request && $request->hasHeader('Accept')) ? $request->getHeader('Accept')[0] : 'application/json',
-            $this->resourceLifeCycles
-        );
+        return $this->responseFactory->createResponseForResource($data, $request);
     }
 }

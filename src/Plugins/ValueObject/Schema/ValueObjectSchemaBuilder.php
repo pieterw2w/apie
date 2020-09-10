@@ -3,7 +3,8 @@
 
 namespace W2w\Lib\Apie\Plugins\ValueObject\Schema;
 
-use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
+use erasys\OpenApi\Spec\v3\Schema;
+use W2w\Lib\Apie\OpenApiSchema\OpenApiSchemaGenerator;
 use W2w\Lib\Apie\PluginInterfaces\DynamicSchemaInterface;
 
 class ValueObjectSchemaBuilder implements DynamicSchemaInterface
@@ -13,8 +14,8 @@ class ValueObjectSchemaBuilder implements DynamicSchemaInterface
         string $operation,
         array $groups,
         int $recursion,
-        SchemaGenerator $generator
-    ) {
+        OpenApiSchemaGenerator $generator
+    ): ?Schema {
         return $resourceClass::toSchema();
     }
 }

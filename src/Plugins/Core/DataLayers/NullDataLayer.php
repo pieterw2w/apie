@@ -1,6 +1,8 @@
 <?php
 namespace W2w\Lib\Apie\Plugins\Core\DataLayers;
 
+use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Pagerfanta;
 use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
 use W2w\Lib\Apie\Exceptions\ResourceNotFoundException;
 use W2w\Lib\Apie\Interfaces\ApiResourcePersisterInterface;
@@ -47,6 +49,6 @@ class NullDataLayer implements ApiResourcePersisterInterface, ApiResourceRetriev
      */
     public function retrieveAll(string $resourceClass, array $context, SearchFilterRequest $searchFilterRequest
     ): iterable {
-        return [];
+        return new Pagerfanta(new ArrayAdapter([]));
     }
 }

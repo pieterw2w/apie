@@ -2,25 +2,22 @@
 
 namespace W2w\Lib\Apie\Plugins\Core\Serializers;
 
+use Laminas\Diactoros\Response\TextResponse;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Serializer\Serializer;
 use W2w\Lib\Apie\Events\DecodeEvent;
 use W2w\Lib\Apie\Interfaces\FormatRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\ResourceSerializerInterface;
 use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\ApieObjectNormalizer;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\ContextualNormalizer;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\EvilReflectionPropertyNormalizer;
 use W2w\Lib\ApieObjectAccessNormalizer\ObjectAccess\ObjectAccess;
-use Zend\Diactoros\Response\TextResponse;
 
 /**
  * Wrapper around Symfony Serializer.
- *
- * @TODO: in version 4 move resourceLifeCycles to ApiResourceFacade.
  */
 class SymfonySerializerAdapter implements ResourceSerializerInterface
 {
+    const INTERNAL_FOR_DATALAYER = 'datalayer';
+
     private $serializer;
 
     private $formatRetriever;
@@ -40,6 +37,13 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
         $this->serializer = $serializer;
         $this->formatRetriever = $formatRetriever;
         $this->resourceLifeCycles = $resourceLifeCycles;
+    }
+
+    private function toFormat(?string $acceptHeader): string
+    {
+        return $acceptHeader === self::INTERNAL_FOR_DATALAYER
+            ? self::INTERNAL_FOR_DATALAYER
+            : ($this->formatRetriever->getFormat($acceptHeader) ?? 'json');
     }
 
     /**
@@ -71,7 +75,7 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
      */
     public function putData(object $resource, string $requestBody, string $contentType): object
     {
-        $contentFormat = $this->formatRetriever->getFormat($contentType) ?? 'json';
+        $contentFormat = $this->toFormat($contentType);
         $event = new DecodeEvent($requestBody, $contentType, $resource, get_class($resource));
         $this->runLifeCycleEvent('onPreDecodeRequestBody', $event);
         if (!$event->hasDecodedData()) {
@@ -91,17 +95,11 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
     }
 
     /**
-     * Decodes a request body to primitives. Forwards compatible with Apie version 4.
-     *
-     * @TODO change in inheritDoc in version 4
-     *
-     * @param string $requestBody
-     * @param string $contentType
-     * @return string|int|bool|float|array
+     * {@inheritDoc}
      */
     public function decodeRequestBody(string $requestBody, string $contentType)
     {
-        $contentFormat = $this->formatRetriever->getFormat($contentType) ?? 'json';
+        $contentFormat = $this->toFormat($contentType);
         return $this->serializer->decode($requestBody, $contentFormat, []);
     }
 
@@ -110,7 +108,7 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
      */
     public function postData(string $resourceClass, string $requestBody, string $contentType): object
     {
-        $contentFormat = $this->formatRetriever->getFormat($contentType) ?? 'json';
+        $contentFormat = $this->toFormat($contentType);
         $event = new DecodeEvent($requestBody, $contentType, null, $resourceClass);
         $this->runLifeCycleEvent('onPreDecodeRequestBody', $event);
         if (!$event->hasDecodedData()) {
@@ -132,7 +130,7 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
      */
     public function toResponse($resource, string $acceptHeader): ResponseInterface
     {
-        $format = $this->formatRetriever->getFormat($acceptHeader) ?? 'json';
+        $format = $this->toFormat($acceptHeader);
         $contentType = $this->formatRetriever->getContentType($format);
         $response = $this->serializer->serialize($resource, $format, ['groups' => ['base', 'read', 'get']]);
 
@@ -144,7 +142,7 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
      */
     public function normalize($resource, string $acceptHeader)
     {
-        $format = $this->formatRetriever->getFormat($acceptHeader);
+        $format = $this->toFormat($acceptHeader);
         return $this->serializer->normalize($resource, $format, ['groups' => ['base', 'read', 'get']]);
     }
 
@@ -153,24 +151,11 @@ class SymfonySerializerAdapter implements ResourceSerializerInterface
      */
     public function hydrateWithReflection(array $data, string $resourceClass)
     {
-        if (!ContextualNormalizer::isNormalizerEnabled(ApieObjectNormalizer::class)) {
-            return $this->serializer->denormalize(
-                $data,
-                $resourceClass,
-                null,
-                ['object_access' => new ObjectAccess(false, true)]
-            );
-        }
-        ContextualNormalizer::enableDenormalizer(EvilReflectionPropertyNormalizer::class);
-        try {
-            return $this->serializer->denormalize(
-                $data,
-                $resourceClass,
-                null,
-                ['disable_type_enforcement' => true]
-            );
-        } finally {
-            ContextualNormalizer::disableDenormalizer(EvilReflectionPropertyNormalizer::class);
-        }
+        return $this->serializer->denormalize(
+            $data,
+            $resourceClass,
+           self::INTERNAL_FOR_DATALAYER,
+           ['object_access' => new ObjectAccess(false, true), 'keep_setter_calls' => true]
+        );
     }
 }

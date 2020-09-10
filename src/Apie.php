@@ -6,8 +6,6 @@ use Doctrine\Common\Annotations\Reader;
 use erasys\OpenApi\Spec\v3\Document;
 use erasys\OpenApi\Spec\v3\Info;
 use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
@@ -17,29 +15,31 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use W2w\Lib\Apie\Core\ApieCore;
 use W2w\Lib\Apie\Core\ApiResourceFacade;
 use W2w\Lib\Apie\Core\ApiResourceMetadataFactory;
+use W2w\Lib\Apie\Core\Bridge\ChainedFrameworkConnection;
+use W2w\Lib\Apie\Core\Bridge\FrameworkLessConnection;
 use W2w\Lib\Apie\Core\ClassResourceConverter;
 use W2w\Lib\Apie\Core\Encodings\ChainableFormatRetriever;
 use W2w\Lib\Apie\Core\IdentifierExtractor;
 use W2w\Lib\Apie\Core\PluginContainer;
 use W2w\Lib\Apie\Core\ResourceFactories\ChainableFactory;
+use W2w\Lib\Apie\Core\SearchFilters\SearchFilterRequest;
 use W2w\Lib\Apie\Exceptions\BadConfigurationException;
 use W2w\Lib\Apie\Interfaces\ApiResourceFactoryInterface;
 use W2w\Lib\Apie\Interfaces\FormatRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\ResourceSerializerInterface;
+use W2w\Lib\Apie\OpenApiSchema\OpenApiSchemaGenerator;
 use W2w\Lib\Apie\OpenApiSchema\OpenApiSpecGenerator;
-use W2w\Lib\Apie\OpenApiSchema\SchemaGenerator;
 use W2w\Lib\Apie\PluginInterfaces\AnnotationReaderProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\ApieAwareInterface;
 use W2w\Lib\Apie\PluginInterfaces\ApieConfigInterface;
 use W2w\Lib\Apie\PluginInterfaces\ApiResourceFactoryProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\CacheItemPoolProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\EncoderProviderInterface;
+use W2w\Lib\Apie\PluginInterfaces\FrameworkConnectionInterface;
 use W2w\Lib\Apie\PluginInterfaces\NormalizerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\ObjectAccessProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\OpenApiEventProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\OpenApiInfoProviderInterface;
-use W2w\Lib\Apie\PluginInterfaces\PropertyInfoExtractorProviderInterface;
-use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
 use W2w\Lib\Apie\PluginInterfaces\ResourceProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SchemaProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SerializerProviderInterface;
@@ -63,9 +63,9 @@ final class Apie implements SerializerProviderInterface,
     ApieConfigInterface,
     SchemaProviderInterface,
     OpenApiEventProviderInterface,
-    PropertyInfoExtractorProviderInterface
+    FrameworkConnectionInterface
 {
-    const VERSION = "3.0";
+    const VERSION = "4.0";
 
     /**
      * @var bool
@@ -165,23 +165,7 @@ final class Apie implements SerializerProviderInterface,
             SerializerProviderInterface::class,
             new BadConfigurationException('I have no resource serializer set up')
         )->getResourceSerializer();
-        if (!is_callable([$serializer, 'decodeRequestBody'])) {
-            @trigger_error(
-                'Class ' . get_class($serializer) . ' has no method decodeRequestBody and this will be required in Apie version 4',
-                E_USER_DEPRECATED
-            );
-        }
         return $serializer;
-    }
-
-    /**
-     * @internal
-     * @deprecated is only added in CorePlugin, will be removed in 4.0.
-     * @return iterable
-     */
-    public function getResourceLifecycles(): iterable
-    {
-        return $this->pluginContainer->getPluginsWithInterface(ResourceLifeCycleInterface::class);
     }
 
     /**
@@ -210,6 +194,15 @@ final class Apie implements SerializerProviderInterface,
         return $this->pluginContainer->merge(EncoderProviderInterface::class, 'getEncoders');
     }
 
+    /**
+     * @param string $interface
+     * @return mixed[]
+     */
+    public function getPluginsWithInterface(string $interface): array
+    {
+        return $this->pluginContainer->getPluginsWithInterface($interface);
+    }
+
     public function getClassMetadataFactory(): ClassMetadataFactoryInterface
     {
         return $this->pluginContainer->first(
@@ -224,22 +217,6 @@ final class Apie implements SerializerProviderInterface,
             SymfonyComponentProviderInterface::class,
             new BadConfigurationException('I have no symfony component provider set up')
         )->getPropertyConverter();
-    }
-
-    public function getPropertyAccessor(): PropertyAccessor
-    {
-        return $this->pluginContainer->first(
-            SymfonyComponentProviderInterface::class,
-            new BadConfigurationException('I have no symfony component provider set up')
-        )->getPropertyAccessor();
-    }
-
-    public function getPropertyTypeExtractor(): PropertyTypeExtractorInterface
-    {
-        return $this->pluginContainer->first(
-            SymfonyComponentProviderInterface::class,
-            new BadConfigurationException('I have no symfony component provider set up')
-        )->getPropertyTypeExtractor();
     }
 
     public function getCacheItemPool(): CacheItemPoolInterface
@@ -288,7 +265,7 @@ final class Apie implements SerializerProviderInterface,
         return $this->apieCore->getOpenApiSpecGenerator();
     }
 
-    public function getSchemaGenerator(): SchemaGenerator
+    public function getSchemaGenerator(): OpenApiSchemaGenerator
     {
         return $this->apieCore->getSchemaGenerator();
     }
@@ -353,47 +330,7 @@ final class Apie implements SerializerProviderInterface,
         return $document;
     }
 
-    /**
-     * @deprecated  use getObjectAccess instead
-     */
-    public function getListExtractors(): array
-    {
-        return $this->pluginContainer->merge(PropertyInfoExtractorProviderInterface::class, 'getListExtractors');
-    }
-
-    /**
-     * @deprecated  use getObjectAccess instead
-     */
-    public function getTypeExtractors(): array
-    {
-        return $this->pluginContainer->merge(PropertyInfoExtractorProviderInterface::class, 'getTypeExtractors');
-    }
-
-    /**
-     * @deprecated  use getObjectAccess instead
-     */
-    public function getDescriptionExtractors(): array
-    {
-        return $this->pluginContainer->merge(PropertyInfoExtractorProviderInterface::class, 'getDescriptionExtractors');
-    }
-
-    /**
-     * @deprecated  use getObjectAccess instead
-     */
-    public function getAccessExtractors(): array
-    {
-        return $this->pluginContainer->merge(PropertyInfoExtractorProviderInterface::class, 'getAccessExtractors');
-    }
-
-    /**
-     * @deprecated  use getObjectAccess instead
-     */
-    public function getInitializableExtractors(): array
-    {
-        return $this->pluginContainer->merge(PropertyInfoExtractorProviderInterface::class, 'getInitializableExtractors');
-    }
-
-    public function getObjectAccess(): ObjectAccessInterface
+     public function getObjectAccess(): ObjectAccessInterface
     {
         $objectAccess = new ObjectAccess();
         $objectAccesses = $this->pluginContainer->getPluginsWithInterface(ObjectAccessProviderInterface::class);
@@ -408,5 +345,44 @@ final class Apie implements SerializerProviderInterface,
             return new CachedObjectAccess($objectAccess, $this->getCacheItemPool());
         }
         return $objectAccess;
+    }
+
+    public function getFrameworkConnection(): FrameworkConnectionInterface
+    {
+        $res = new ChainedFrameworkConnection(
+            $this->getPluginsWithInterface(FrameworkConnectionInterface::class),
+            new FrameworkLessConnection($this)
+        );
+        return $res;
+    }
+
+    public function getService(string $id): object
+    {
+        return $this->getFrameworkConnection()->getService($id);
+    }
+
+    public function getUrlForResource(object $resource): ?string
+    {
+        return $this->getFrameworkConnection()->getUrlForResource($resource);
+    }
+
+    public function getOverviewUrlForResourceClass(string $resourceClass, ?SearchFilterRequest $filterRequest = null
+    ): ?string {
+        return $this->getFrameworkConnection()->getOverviewUrlForResourceClass($resourceClass, $filterRequest);
+    }
+
+    public function getAcceptLanguage(): ?string
+    {
+        return $this->getFrameworkConnection()->getAcceptLanguage();
+    }
+
+    public function getContentLanguage(): ?string
+    {
+        return $this->getFrameworkConnection()->getContentLanguage();
+    }
+
+    public function getExampleUrl(string $resourceClass): ?string
+    {
+        return $this->getFrameworkConnection()->getExampleUrl($resourceClass);
     }
 }

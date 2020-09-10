@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Apie
-  version: '3.0'
+  version: '4.0'
 paths:
   /full_rest_object:
     get:
@@ -9,17 +9,23 @@ paths:
         200:
           description: 'Retrieves all instances of full_rest_object'
           headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-count:
+              $ref: '#/components/headers/Count'
+            x-pagination-previous:
+              $ref: '#/components/headers/Url'
+            x-pagination-next:
+              $ref: '#/components/headers/Url'
+            x-pagination-first:
+              $ref: '#/components/headers/Url'
+            x-pagination-last:
+              $ref: '#/components/headers/Url'
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  title: full_rest_object
-                  description: 'full_rest_object get for groups get, read'
+                  title: FullRestObject
+                  description: 'FullRestObject get for groups get, read'
                   type: object
                   properties:
                     uuid:
@@ -31,14 +37,12 @@ paths:
                     value_object:
                       type: string
                       format: value_object
-                  xml:
-                    name: item
             application/xml:
               schema:
                 type: array
                 items:
-                  title: full_rest_object
-                  description: 'full_rest_object get for groups get, read'
+                  title: FullRestObject
+                  description: 'FullRestObject get for groups get, read'
                   type: object
                   properties:
                     uuid:
@@ -54,16 +58,6 @@ paths:
                     name: item
                 xml:
                   name: response
-        401:
-          $ref: '#/components/responses/NotAuthorized'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
       summary: 'get/search all instances of full_rest_object'
@@ -105,16 +99,12 @@ paths:
       responses:
         200:
           description: 'Creates a new instance of full_rest_object'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -126,12 +116,10 @@ paths:
                   value_object:
                     type: string
                     format: value_object
-                xml:
-                  name: item
             application/xml:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -145,20 +133,10 @@ paths:
                     format: value_object
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         415:
           $ref: '#/components/responses/InvalidFormat'
         422:
           $ref: '#/components/responses/ValidationError'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
       summary: 'create a new single instance of full_rest_object'
@@ -167,8 +145,8 @@ paths:
         content:
           application/json:
             schema:
-              title: full_rest_object
-              description: 'full_rest_object post for groups post, write'
+              title: FullRestObject
+              description: 'FullRestObject post for groups post, write'
               type: object
               properties:
                 uuid:
@@ -182,8 +160,8 @@ paths:
                   format: value_object
           application/xml:
             schema:
-              title: full_rest_object
-              description: 'full_rest_object post for groups post, write'
+              title: FullRestObject
+              description: 'FullRestObject post for groups post, write'
               type: object
               properties:
                 uuid:
@@ -205,15 +183,21 @@ paths:
         200:
           description: 'Retrieves a single instance of full_rest_object'
           headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-count:
+              $ref: '#/components/headers/Count'
+            x-pagination-previous:
+              $ref: '#/components/headers/Url'
+            x-pagination-next:
+              $ref: '#/components/headers/Url'
+            x-pagination-first:
+              $ref: '#/components/headers/Url'
+            x-pagination-last:
+              $ref: '#/components/headers/Url'
           content:
             application/json:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -225,12 +209,10 @@ paths:
                   value_object:
                     type: string
                     format: value_object
-                xml:
-                  name: item
             application/xml:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -244,18 +226,8 @@ paths:
                     format: value_object
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
       summary: 'retrieve a single instance of full_rest_object'
@@ -264,16 +236,12 @@ paths:
       responses:
         200:
           description: 'Retrieves and update a single instance of full_rest_object'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -285,12 +253,10 @@ paths:
                   value_object:
                     type: string
                     format: value_object
-                xml:
-                  name: item
             application/xml:
               schema:
-                title: full_rest_object
-                description: 'full_rest_object get for groups get, read'
+                title: FullRestObject
+                description: 'FullRestObject get for groups get, read'
                 type: object
                 properties:
                   uuid:
@@ -304,22 +270,12 @@ paths:
                     format: value_object
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         404:
           $ref: '#/components/responses/NotFound'
         415:
           $ref: '#/components/responses/InvalidFormat'
         422:
           $ref: '#/components/responses/ValidationError'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
       summary: 'modify a single instance of full_rest_object'
@@ -328,8 +284,8 @@ paths:
         content:
           application/json:
             schema:
-              title: full_rest_object
-              description: 'full_rest_object put for groups put, write'
+              title: FullRestObject
+              description: 'FullRestObject put for groups put, write'
               type: object
               properties:
                 string_value:
@@ -340,8 +296,8 @@ paths:
                   format: value_object
           application/xml:
             schema:
-              title: full_rest_object
-              description: 'full_rest_object put for groups put, write'
+              title: FullRestObject
+              description: 'FullRestObject put for groups put, write'
               type: object
               properties:
                 string_value:
@@ -358,23 +314,9 @@ paths:
       responses:
         204:
           description: 'Deletes a single instance of full_rest_object'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
       summary: 'delete a single instance of full_rest_object'
@@ -392,23 +334,9 @@ paths:
       responses:
         200:
           description: 'Retrieves return value of md5'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
       summary: ''
@@ -440,23 +368,9 @@ paths:
       responses:
         200:
           description: 'Retrieves return value of reflection'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
       summary: ''
@@ -488,23 +402,9 @@ paths:
       responses:
         200:
           description: 'Retrieves return value of other'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - full_rest_object
       summary: ''
@@ -537,17 +437,23 @@ paths:
         200:
           description: 'Retrieves all instances of simple_popo'
           headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-count:
+              $ref: '#/components/headers/Count'
+            x-pagination-previous:
+              $ref: '#/components/headers/Url'
+            x-pagination-next:
+              $ref: '#/components/headers/Url'
+            x-pagination-first:
+              $ref: '#/components/headers/Url'
+            x-pagination-last:
+              $ref: '#/components/headers/Url'
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  title: simple_popo
-                  description: 'simple_popo get for groups get, read'
+                  title: SimplePopo
+                  description: 'SimplePopo get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -556,17 +462,13 @@ paths:
                     created_at:
                       type: string
                       format: date-time
-                    arbitrary_field:
-                      type: string
-                      nullable: true
-                  xml:
-                    name: item
+                    arbitrary_field: {  }
             application/xml:
               schema:
                 type: array
                 items:
-                  title: simple_popo
-                  description: 'simple_popo get for groups get, read'
+                  title: SimplePopo
+                  description: 'SimplePopo get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -575,23 +477,11 @@ paths:
                     created_at:
                       type: string
                       format: date-time
-                    arbitrary_field:
-                      type: string
-                      nullable: true
+                    arbitrary_field: {  }
                   xml:
                     name: item
                 xml:
                   name: response
-        401:
-          $ref: '#/components/responses/NotAuthorized'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - simple_popo
       summary: 'get/search all instances of simple_popo'
@@ -615,16 +505,12 @@ paths:
       responses:
         200:
           description: 'Creates a new instance of simple_popo'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
-                title: simple_popo
-                description: 'simple_popo get for groups get, read'
+                title: SimplePopo
+                description: 'SimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -633,15 +519,11 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
-                xml:
-                  name: item
+                  arbitrary_field: {  }
             application/xml:
               schema:
-                title: simple_popo
-                description: 'simple_popo get for groups get, read'
+                title: SimplePopo
+                description: 'SimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -650,25 +532,13 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
+                  arbitrary_field: {  }
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         415:
           $ref: '#/components/responses/InvalidFormat'
         422:
           $ref: '#/components/responses/ValidationError'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - simple_popo
       summary: 'create a new single instance of simple_popo'
@@ -677,22 +547,18 @@ paths:
         content:
           application/json:
             schema:
-              title: simple_popo
-              description: 'simple_popo post for groups post, write'
+              title: SimplePopo
+              description: 'SimplePopo post for groups post, write'
               type: object
               properties:
-                arbitrary_field:
-                  type: string
-                  nullable: true
+                arbitrary_field: {  }
           application/xml:
             schema:
-              title: simple_popo
-              description: 'simple_popo post for groups post, write'
+              title: SimplePopo
+              description: 'SimplePopo post for groups post, write'
               type: object
               properties:
-                arbitrary_field:
-                  type: string
-                  nullable: true
+                arbitrary_field: {  }
               xml:
                 name: item
         description: 'the resource as JSON to persist'
@@ -711,23 +577,9 @@ paths:
       responses:
         200:
           description: 'Retrieves return value of md5'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - simple_popo
       summary: ''
@@ -759,23 +611,9 @@ paths:
       responses:
         200:
           description: 'Retrieves return value of reflection'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - simple_popo
       summary: ''
@@ -807,23 +645,9 @@ paths:
       responses:
         200:
           description: 'Retrieves return value of other'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - simple_popo
       summary: ''
@@ -855,16 +679,12 @@ paths:
       responses:
         200:
           description: 'Creates a new instance of sum_example'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
-                title: sum_example
-                description: 'sum_example get for groups get, read'
+                title: SumExample
+                description: 'SumExample get for groups get, read'
                 type: object
                 properties:
                   addition:
@@ -873,8 +693,8 @@ paths:
                     nullable: false
             application/xml:
               schema:
-                title: sum_example
-                description: 'sum_example get for groups get, read'
+                title: SumExample
+                description: 'SumExample get for groups get, read'
                 type: object
                 properties:
                   addition:
@@ -883,20 +703,10 @@ paths:
                     nullable: false
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         415:
           $ref: '#/components/responses/InvalidFormat'
         422:
           $ref: '#/components/responses/ValidationError'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - sum_example
       summary: 'create a new single instance of sum_example'
@@ -905,8 +715,8 @@ paths:
         content:
           application/json:
             schema:
-              title: sum_example
-              description: 'sum_example post for groups post, write'
+              title: SumExample
+              description: 'SumExample post for groups post, write'
               type: object
               properties:
                 one:
@@ -919,8 +729,8 @@ paths:
                   nullable: false
           application/xml:
             schema:
-              title: sum_example
-              description: 'sum_example post for groups post, write'
+              title: SumExample
+              description: 'SumExample post for groups post, write'
               type: object
               properties:
                 one:
@@ -941,17 +751,23 @@ paths:
         200:
           description: 'Retrieves all instances of another_simple_popo'
           headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-count:
+              $ref: '#/components/headers/Count'
+            x-pagination-previous:
+              $ref: '#/components/headers/Url'
+            x-pagination-next:
+              $ref: '#/components/headers/Url'
+            x-pagination-first:
+              $ref: '#/components/headers/Url'
+            x-pagination-last:
+              $ref: '#/components/headers/Url'
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  title: another_simple_popo
-                  description: 'another_simple_popo get for groups get, read'
+                  title: AnotherSimplePopo
+                  description: 'AnotherSimplePopo get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -960,17 +776,13 @@ paths:
                     created_at:
                       type: string
                       format: date-time
-                    arbitrary_field:
-                      type: string
-                      nullable: true
-                  xml:
-                    name: item
+                    arbitrary_field: {  }
             application/xml:
               schema:
                 type: array
                 items:
-                  title: another_simple_popo
-                  description: 'another_simple_popo get for groups get, read'
+                  title: AnotherSimplePopo
+                  description: 'AnotherSimplePopo get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -979,23 +791,11 @@ paths:
                     created_at:
                       type: string
                       format: date-time
-                    arbitrary_field:
-                      type: string
-                      nullable: true
+                    arbitrary_field: {  }
                   xml:
                     name: item
                 xml:
                   name: response
-        401:
-          $ref: '#/components/responses/NotAuthorized'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
       summary: 'get/search all instances of another_simple_popo'
@@ -1019,16 +819,12 @@ paths:
       responses:
         200:
           description: 'Creates a new instance of another_simple_popo'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
-                title: another_simple_popo
-                description: 'another_simple_popo get for groups get, read'
+                title: AnotherSimplePopo
+                description: 'AnotherSimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1037,15 +833,11 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
-                xml:
-                  name: item
+                  arbitrary_field: {  }
             application/xml:
               schema:
-                title: another_simple_popo
-                description: 'another_simple_popo get for groups get, read'
+                title: AnotherSimplePopo
+                description: 'AnotherSimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1054,25 +846,13 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
+                  arbitrary_field: {  }
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         415:
           $ref: '#/components/responses/InvalidFormat'
         422:
           $ref: '#/components/responses/ValidationError'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
       summary: 'create a new single instance of another_simple_popo'
@@ -1081,22 +861,18 @@ paths:
         content:
           application/json:
             schema:
-              title: another_simple_popo
-              description: 'another_simple_popo post for groups post, write'
+              title: AnotherSimplePopo
+              description: 'AnotherSimplePopo post for groups post, write'
               type: object
               properties:
-                arbitrary_field:
-                  type: string
-                  nullable: true
+                arbitrary_field: {  }
           application/xml:
             schema:
-              title: another_simple_popo
-              description: 'another_simple_popo post for groups post, write'
+              title: AnotherSimplePopo
+              description: 'AnotherSimplePopo post for groups post, write'
               type: object
               properties:
-                arbitrary_field:
-                  type: string
-                  nullable: true
+                arbitrary_field: {  }
               xml:
                 name: item
         description: 'the resource as JSON to persist'
@@ -1106,16 +882,12 @@ paths:
       responses:
         200:
           description: 'Retrieves a single instance of another_simple_popo'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
-                title: another_simple_popo
-                description: 'another_simple_popo get for groups get, read'
+                title: AnotherSimplePopo
+                description: 'AnotherSimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1124,15 +896,11 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
-                xml:
-                  name: item
+                  arbitrary_field: {  }
             application/xml:
               schema:
-                title: another_simple_popo
-                description: 'another_simple_popo get for groups get, read'
+                title: AnotherSimplePopo
+                description: 'AnotherSimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1141,23 +909,11 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
+                  arbitrary_field: {  }
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
       summary: 'retrieve a single instance of another_simple_popo'
@@ -1166,16 +922,12 @@ paths:
       responses:
         200:
           description: 'Retrieves and update a single instance of another_simple_popo'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
-                title: another_simple_popo
-                description: 'another_simple_popo get for groups get, read'
+                title: AnotherSimplePopo
+                description: 'AnotherSimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1184,15 +936,11 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
-                xml:
-                  name: item
+                  arbitrary_field: {  }
             application/xml:
               schema:
-                title: another_simple_popo
-                description: 'another_simple_popo get for groups get, read'
+                title: AnotherSimplePopo
+                description: 'AnotherSimplePopo get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1201,27 +949,15 @@ paths:
                   created_at:
                     type: string
                     format: date-time
-                  arbitrary_field:
-                    type: string
-                    nullable: true
+                  arbitrary_field: {  }
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         404:
           $ref: '#/components/responses/NotFound'
         415:
           $ref: '#/components/responses/InvalidFormat'
         422:
           $ref: '#/components/responses/ValidationError'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
       summary: 'modify a single instance of another_simple_popo'
@@ -1230,22 +966,18 @@ paths:
         content:
           application/json:
             schema:
-              title: another_simple_popo
-              description: 'another_simple_popo put for groups put, write'
+              title: AnotherSimplePopo
+              description: 'AnotherSimplePopo put for groups put, write'
               type: object
               properties:
-                arbitrary_field:
-                  type: string
-                  nullable: true
+                arbitrary_field: {  }
           application/xml:
             schema:
-              title: another_simple_popo
-              description: 'another_simple_popo put for groups put, write'
+              title: AnotherSimplePopo
+              description: 'AnotherSimplePopo put for groups put, write'
               type: object
               properties:
-                arbitrary_field:
-                  type: string
-                  nullable: true
+                arbitrary_field: {  }
               xml:
                 name: item
         description: 'the resource as JSON to persist'
@@ -1254,23 +986,9 @@ paths:
       responses:
         204:
           description: 'Deletes a single instance of another_simple_popo'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
       summary: 'delete a single instance of another_simple_popo'
@@ -1288,23 +1006,9 @@ paths:
       responses:
         200:
           description: 'Retrieves return value of md5'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
       summary: ''
@@ -1336,23 +1040,9 @@ paths:
       responses:
         200:
           description: 'Retrieves return value of reflection'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
       summary: ''
@@ -1384,23 +1074,9 @@ paths:
       responses:
         200:
           description: 'Retrieves return value of other'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
       summary: ''
@@ -1432,16 +1108,12 @@ paths:
       responses:
         200:
           description: 'Retrieves return value of sub'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
-                title: sum_example
-                description: 'sum_example get for groups get, read'
+                title: SumExample
+                description: 'SumExample get for groups get, read'
                 type: object
                 properties:
                   addition:
@@ -1450,8 +1122,8 @@ paths:
                     nullable: false
             application/xml:
               schema:
-                title: sum_example
-                description: 'sum_example get for groups get, read'
+                title: SumExample
+                description: 'SumExample get for groups get, read'
                 type: object
                 properties:
                   addition:
@@ -1460,18 +1132,8 @@ paths:
                     nullable: false
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - another_simple_popo
       summary: ''
@@ -1516,17 +1178,23 @@ paths:
         200:
           description: 'Retrieves all instances of application_info'
           headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-count:
+              $ref: '#/components/headers/Count'
+            x-pagination-previous:
+              $ref: '#/components/headers/Url'
+            x-pagination-next:
+              $ref: '#/components/headers/Url'
+            x-pagination-first:
+              $ref: '#/components/headers/Url'
+            x-pagination-last:
+              $ref: '#/components/headers/Url'
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  title: application_info
-                  description: 'application_info get for groups get, read'
+                  title: ApplicationInfo
+                  description: 'ApplicationInfo get for groups get, read'
                   type: object
                   properties:
                     app_name:
@@ -1541,14 +1209,12 @@ paths:
                     debug:
                       type: boolean
                       nullable: false
-                  xml:
-                    name: item
             application/xml:
               schema:
                 type: array
                 items:
-                  title: application_info
-                  description: 'application_info get for groups get, read'
+                  title: ApplicationInfo
+                  description: 'ApplicationInfo get for groups get, read'
                   type: object
                   properties:
                     app_name:
@@ -1567,16 +1233,6 @@ paths:
                     name: item
                 xml:
                   name: response
-        401:
-          $ref: '#/components/responses/NotAuthorized'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - application_info
       summary: 'get/search all instances of application_info'
@@ -1602,17 +1258,23 @@ paths:
         200:
           description: 'Retrieves all instances of status'
           headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+            x-pagination-count:
+              $ref: '#/components/headers/Count'
+            x-pagination-previous:
+              $ref: '#/components/headers/Url'
+            x-pagination-next:
+              $ref: '#/components/headers/Url'
+            x-pagination-first:
+              $ref: '#/components/headers/Url'
+            x-pagination-last:
+              $ref: '#/components/headers/Url'
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  title: status
-                  description: 'status get for groups get, read'
+                  title: Status
+                  description: 'Status get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -1626,28 +1288,18 @@ paths:
                       nullable: true
                     context:
                       type: array
-                      items:
-                        oneOf:
-                          -
-                            type: string
-                            nullable: true
-                          -
-                            type: integer
-                          -
-                            type: boolean
+                      items: {  }
                       nullable: true
                     no_errors:
                       description: 'Returns true to tell the status check is ''healthy''.'
                       type: boolean
                       nullable: false
-                  xml:
-                    name: item
             application/xml:
               schema:
                 type: array
                 items:
-                  title: status
-                  description: 'status get for groups get, read'
+                  title: Status
+                  description: 'Status get for groups get, read'
                   type: object
                   properties:
                     id:
@@ -1661,15 +1313,7 @@ paths:
                       nullable: true
                     context:
                       type: array
-                      items:
-                        oneOf:
-                          -
-                            type: string
-                            nullable: true
-                          -
-                            type: integer
-                          -
-                            type: boolean
+                      items: {  }
                       nullable: true
                     no_errors:
                       description: 'Returns true to tell the status check is ''healthy''.'
@@ -1679,16 +1323,6 @@ paths:
                     name: item
                 xml:
                   name: response
-        401:
-          $ref: '#/components/responses/NotAuthorized'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - status
       summary: 'get/search all instances of status'
@@ -1719,16 +1353,12 @@ paths:
       responses:
         200:
           description: 'Retrieves a single instance of status'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
+          headers: {  }
           content:
             application/json:
               schema:
-                title: status
-                description: 'status get for groups get, read'
+                title: Status
+                description: 'Status get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1742,26 +1372,16 @@ paths:
                     nullable: true
                   context:
                     type: array
-                    items:
-                      oneOf:
-                        -
-                          type: string
-                          nullable: true
-                        -
-                          type: integer
-                        -
-                          type: boolean
+                    items: {  }
                     nullable: true
                   no_errors:
                     description: 'Returns true to tell the status check is ''healthy''.'
                     type: boolean
                     nullable: false
-                xml:
-                  name: item
             application/xml:
               schema:
-                title: status
-                description: 'status get for groups get, read'
+                title: Status
+                description: 'Status get for groups get, read'
                 type: object
                 properties:
                   id:
@@ -1775,15 +1395,7 @@ paths:
                     nullable: true
                   context:
                     type: array
-                    items:
-                      oneOf:
-                        -
-                          type: string
-                          nullable: true
-                        -
-                          type: integer
-                        -
-                          type: boolean
+                    items: {  }
                     nullable: true
                   no_errors:
                     description: 'Returns true to tell the status check is ''healthy''.'
@@ -1791,18 +1403,8 @@ paths:
                     nullable: false
                 xml:
                   name: item
-        401:
-          $ref: '#/components/responses/NotAuthorized'
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - status
       summary: 'retrieve a single instance of status'
@@ -1820,23 +1422,9 @@ paths:
       responses:
         200:
           description: 'Retrieves return value of md5'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - status
       summary: ''
@@ -1868,23 +1456,9 @@ paths:
       responses:
         200:
           description: 'Retrieves return value of reflection'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - status
       summary: ''
@@ -1916,23 +1490,9 @@ paths:
       responses:
         200:
           description: 'Retrieves return value of other'
-          headers:
-            x-ratelimit-limit:
-              $ref: '#/components/headers/x-ratelimit-limit'
-            x-ratelimit-remaining:
-              $ref: '#/components/headers/x-ratelimit-remaining'
-        401:
-          $ref: '#/components/responses/NotAuthorized'
+          headers: {  }
         404:
           $ref: '#/components/responses/NotFound'
-        429:
-          $ref: '#/components/responses/TooManyRequests'
-        500:
-          $ref: '#/components/responses/InternalError'
-        502:
-          $ref: '#/components/responses/ServerDependencyError'
-        503:
-          $ref: '#/components/responses/MaintenanceMode'
       tags:
         - status
       summary: ''
@@ -1991,6 +1551,15 @@ components:
         application/xml:
           schema:
             $ref: '#/components/schemas/Error'
+    NotFound:
+      description: 'Response when resource could not be found'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
     ValidationError:
       description: 'The body input was in a proper format, but the input values were not valid'
       content:
@@ -2042,68 +1611,14 @@ components:
                     type: string
             xml:
               name: response
-    TooManyRequests:
-      description: 'Too many requests per seconds were sent'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Error'
-    MaintenanceMode:
-      description: 'App is in maintenance mode'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: 'Response when resource could not be found'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotAuthorized:
-      description: 'You have no permission to do this call'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Error'
-    InternalError:
-      description: 'An internal error occured'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Error'
-    ServerDependencyError:
-      description: 'The server required an external response which threw an error'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Error'
   headers:
-    x-ratelimit-limit:
-      description: 'Request limit per hour'
+    Count:
+      description: 'number of results'
       schema:
-        type: integer
-      example: 100
-    x-ratelimit-remaining:
-      description: 'Request limit per hour'
+        type: number
+        format: int
+    Url:
+      description: 'pagination url'
       schema:
-        type: integer
-      example: 94
+        type: string
+        format: url

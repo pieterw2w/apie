@@ -4,6 +4,7 @@ namespace W2w\Lib\Apie\Plugins\ValueObject\ValueObjects;
 use erasys\OpenApi\Spec\v3\Schema;
 use ReflectionClass;
 use W2w\Lib\Apie\Exceptions\InvalidValueForValueObjectException;
+use W2w\Lib\Apie\OpenApiSchema\Factories\SchemaFactory;
 
 trait StringTrait
 {
@@ -34,9 +35,8 @@ trait StringTrait
     final static public function toSchema(): Schema
     {
         $refl = new ReflectionClass(__CLASS__);
-        return new Schema([
-            'type' => 'string',
-            'format' => strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $refl->getShortName()))
-        ]);
+        return SchemaFactory::createStringSchema(
+            strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $refl->getShortName()))
+        );
     }
 }
