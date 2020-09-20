@@ -8,6 +8,8 @@ use W2w\Lib\ApieObjectAccessNormalizer\Exceptions\ValidationException;
 
 /**
  * Class that normalizes a throwable class.
+ *
+ * @deprecated use ExceptionObjectAccess instead
  */
 class ExceptionNormalizer implements NormalizerInterface
 {

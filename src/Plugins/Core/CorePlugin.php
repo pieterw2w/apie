@@ -9,7 +9,6 @@ use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Cache\PhpFileCache;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Serializer\Encoder\JsonEncode;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -24,6 +23,7 @@ use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\JsonSerializableNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Throwable;
 use W2w\Lib\Apie\Interfaces\ApiResourceFactoryInterface;
 use W2w\Lib\Apie\Interfaces\FormatRetrieverInterface;
 use W2w\Lib\Apie\Interfaces\ResourceSerializerInterface;
@@ -39,9 +39,9 @@ use W2w\Lib\Apie\PluginInterfaces\ResourceLifeCycleInterface;
 use W2w\Lib\Apie\PluginInterfaces\SerializerProviderInterface;
 use W2w\Lib\Apie\PluginInterfaces\SymfonyComponentProviderInterface;
 use W2w\Lib\Apie\Plugins\Core\Encodings\FormatRetriever;
+use W2w\Lib\Apie\Plugins\Core\ObjectAccess\ExceptionObjectAccess;
 use W2w\Lib\Apie\Plugins\Core\ResourceFactories\FallbackFactory;
 use W2w\Lib\Apie\Plugins\Core\Serializers\Mapping\BaseGroupLoader;
-use W2w\Lib\Apie\Plugins\Core\Normalizers\ExceptionNormalizer;
 use W2w\Lib\Apie\Plugins\Core\Serializers\SymfonySerializerAdapter;
 use W2w\Lib\ApieObjectAccessNormalizer\Normalizers\ApieObjectAccessNormalizer;
 use W2w\Lib\ApieObjectAccessNormalizer\Normalizers\MethodCallDenormalizer;
@@ -98,7 +98,6 @@ class CorePlugin implements SerializerProviderInterface,
         );
 
         return [
-            new ExceptionNormalizer($this->getApie()->isDebug()),
             new JsonSerializableNormalizer(),
             new ArrayDenormalizer(),
             new MethodCallDenormalizer($this->getApie()->getObjectAccess(), $apieObjectAccessNormalizer, $this->getApie()->getPropertyConverter()),
@@ -214,7 +213,8 @@ class CorePlugin implements SerializerProviderInterface,
     public function getObjectAccesses(): array
     {
         return [
-            SelfObjectAccessInterface::class => new SelfObjectAccess()
+            SelfObjectAccessInterface::class => new SelfObjectAccess(),
+            Throwable::class => new ExceptionObjectAccess($this->getApie()->isDebug()),
         ];
     }
 }
