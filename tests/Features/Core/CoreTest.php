@@ -56,7 +56,6 @@ class CoreTest extends TestCase
             [
                 'message' => 'A validation error occurred',
                 'code' => 0,
-                'status_code' => 422,
                 'errors' => [
                     'key' => ['required']
                 ],
@@ -87,6 +86,42 @@ class CoreTest extends TestCase
                         'type' => 'integer',
                         'nullable' => false,
                     ],
+                ]
+            ],
+            $actual
+        );
+    }
+
+    public function testValidationExceptionHasProperSchema()
+    {
+        $apie = DefaultApie::createDefaultApie(false);
+        $actual = $apie->getSchemaGenerator()->createSchema(
+            ValidationException::class,
+            'get',
+            ['get', 'read']
+        )->toArray();
+        $this->assertEquals(
+            [
+                'title' => 'ValidationException',
+                'description' => 'ValidationException get for groups get, read',
+                'type' => 'object',
+                'properties' => [
+                    'message' => [
+                        'type' => 'string',
+                        'nullable' => false,
+                    ],
+                    'code' => [
+                        'type' => 'integer',
+                        'nullable' => false,
+                    ],
+                    'errors' => [
+                        'type' => 'object',
+                        'nullable' => false,
+                        'additionalProperties' => [
+                            'type' => 'array',
+                            'items' => [],
+                        ]
+                    ]
                 ]
             ],
             $actual

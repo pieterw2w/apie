@@ -310,35 +310,7 @@ class OpenApiSchemaGenerator
             $propertySchema->nullable = false;
         }
         if ($type->isCollection()) {
-            $propertySchema->type = 'array';
-            $propertySchema->items = new Schema([]);
-            $arrayType = $type->getCollectionValueType();
-            if ($arrayType) {
-                if ($arrayType->getClassName()) {
-                    $this->oldRecursion++;
-                    try {
-                        $propertySchema->items = $this->createSchemaRecursive(
-                            $arrayType->getClassName(),
-                            $operation,
-                            $groups,
-                            $recursion + 1
-                        );
-                    } finally {
-                        $this->oldRecursion--;
-                    }
-                } elseif ($arrayType->getBuiltinType()) {
-                    $schemaType = $this->translateType($arrayType->getBuiltinType());
-                    $propertySchema->items = new Schema([
-                        'type' => $schemaType,
-                        'format' => ($schemaType === 'number') ? $arrayType->getBuiltinType() : null,
-                    ]);
-                    //array[] typehint...
-                    if ($schemaType === 'array') {
-                        $propertySchema->items->items = SchemaFactory::createAnyTypeSchema();
-                    }
-                }
-            }
-            return $propertySchema;
+            return $this->convertTypeArrayToSchema($type, $operation, $groups, $recursion);
         }
         if ($propertySchema->type === 'number') {
             $propertySchema->format = $type->getBuiltinType();
@@ -347,6 +319,50 @@ class OpenApiSchemaGenerator
         if (Type::BUILTIN_TYPE_OBJECT === $type->getBuiltinType() && $recursion < self::MAX_RECURSION && !is_null($className)) {
             return $this->createSchemaRecursive($className, $operation, $groups, $recursion + 1);
         }
+        return $propertySchema;
+    }
+
+    private function convertTypeArrayToSchema(Type $type, string $operation, array $groups, int $recursion): Schema
+    {
+        $propertySchema = new Schema([
+            'type' => 'array',
+            'nullable' => $type->isNullable(),
+        ]);
+        $propertySchema->type = 'array';
+        $propertySchema->items = new Schema([]);
+        $arrayType = $type->getCollectionValueType();
+        if ($arrayType) {
+            if ($arrayType->getClassName()) {
+                $this->oldRecursion++;
+                try {
+                    $propertySchema->items = $this->createSchemaRecursive(
+                        $arrayType->getClassName(),
+                        $operation,
+                        $groups,
+                        $recursion + 1
+                    );
+                } finally {
+                    $this->oldRecursion--;
+                }
+            } elseif ($arrayType->getBuiltinType()) {
+                $schemaType = $this->translateType($arrayType->getBuiltinType());
+                $propertySchema->items = new Schema([
+                    'type' => $schemaType,
+                    'format' => ($schemaType === 'number') ? $arrayType->getBuiltinType() : null,
+                ]);
+                //array[] typehint...
+                if ($schemaType === 'array') {
+                    $propertySchema->items->items = SchemaFactory::createAnyTypeSchema();
+                }
+            }
+        }
+        $keyType = $type->getCollectionKeyType();
+        if ($keyType && $keyType->getBuiltinType() !== Type::BUILTIN_TYPE_INT) {
+            $propertySchema->type = 'object';
+            $propertySchema->additionalProperties = $propertySchema->items;
+            $propertySchema->items = null;
+         }
+
         return $propertySchema;
     }
 

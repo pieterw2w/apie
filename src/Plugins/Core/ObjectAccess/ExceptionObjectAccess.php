@@ -54,6 +54,7 @@ class ExceptionObjectAccess extends ObjectAccess
             unset($mapping['i18n']);
             unset($mapping['errorBag']);
             unset($mapping['headers']);
+            unset($mapping['statusCode']);
         }
         return $mapping;
     }
